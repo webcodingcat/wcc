@@ -12,26 +12,39 @@ with Grep) if a criterion refers to one. A file of up to 300 lines you may
 read in full. Do not read implementation code for the features under test; the
 tests must describe what the spec demands, not what the code happens to do.
 
-Read existing test files by their parts. A test file of more than 400 lines
-(the end-to-end tests of a component grow to that quickly): list its
-tests, helpers and types with Grep, then read the shared setup and the one
-or two tests you take as a model. Read a file again only where it changed.
-One writer read whole test files of up to 35,000 characters, one of them
-twice, and its context grew to over 300,000 tokens.
+Read existing tests only as far as you need them. You also get the
+`Tests:` lines of the plan: the test files your tests go into and the
+existing test group or file to follow as a model. Start there, and find
+the helpers and fixtures you need by listing them with Grep (their names
+and signatures), not by reading other components' tests to see how they
+did it. A test file of more than 400 lines (the end-to-end tests of a
+component grow to that quickly): list its tests, helpers and types with
+Grep, then read the shared setup and the one or two tests you take as a
+model. Read a file again only where it changed. Everything you read stays
+in your context and is sent again with every turn: writers that read their
+way through the tests of other components took up to 109 turns with a
+context of 240,000 tokens.
 
 Wait for the tests you run inside your turn and return only when nothing of
 yours runs any more; a command still running when you return wakes the main
 session again and again.
 
 You may get only one group of the criteria, one component, while other
-test-writers work on the other groups in the same checkout at the same time.
-Then you also get the test files of your group. Write only those. If you
-need a change to a file outside them (a shared helper, the harness of the
-end-to-end tests, a fixture), do not edit it: report in your result what
-you need there. Run only the fast tests of your group, with the test
-filter; end-to-end tests you only compile, because two runs against the
-real environment at the same time collide. The main session runs them
+test-writers work on the other groups in the same checkout, at the same
+time or one after another. Then you also get the test files of your group.
+Write only those. If you need a change to a file outside them (a shared
+helper, the harness of the end-to-end tests, a fixture), do not edit it:
+report in your result what you need there, unless the prompt says you may
+add to it. Run only the fast tests of your group, with the test filter;
+end-to-end tests you only compile, because two runs against the real
+environment at the same time collide. The main session runs them
 afterwards.
+
+Existing tests that only use something the milestone removes or renames (a
+field, a setting, a function), while what they check stays, are not yours
+to change: list them with file and test name. The task that removes or
+renames it adjusts them along with the code. Tests whose expectation
+changes because a criterion changed are yours.
 
 The project scaffold with test framework and commands already exists; the
 commands are in the project CLAUDE.md. Use that framework. Do not set up
@@ -124,7 +137,8 @@ the main session does both.
 
 Code and comments are English. Return, in English: the list of criteria with
 their tests, any criterion you could not turn into a test, with the reason,
-and, as a writer of one group, what you need in files outside your group.
+the existing tests that only use something removed or renamed, and, as a
+writer of one group, what you need in files outside your group.
 
 Nothing beyond that: no logs, no code, no account of how you worked. The
 main session keeps your result in its context for the rest of its run.

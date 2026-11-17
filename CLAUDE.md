@@ -548,7 +548,36 @@ when working with Claude Code without such rules.
   only their fast tests: end-to-end runs at the same time would collide in
   the real environment, so the main session runs the new end-to-end tests
   once when all are done. Small milestones keep one writer, since every
-  writer reads its sections first.
+  writer reads its sections first. Since 0.30.0 the split no longer
+  depends on the option; see below.
+- **Smaller agent contexts (version 0.30.0).** A measurement over the
+  subagents of one project after 0.26.0 showed where the tokens go:
+  implementers 52 %, test-writers 25 % from only three runs, verifier
+  10 %, reviewers 6 %, doc-writer 4 %. The cost of an agent is its turns
+  times its context, because every turn sends the context again. Single
+  test-writers took 85 to 109 turns while their context grew from 14,000
+  to 240,000 tokens, about 60 % of their calls reading existing tests of
+  other components; one of them spent 35 edits across ten packages
+  removing a retired configuration field from old tests. One implementer
+  task changed 1,200 lines in 14 files and alone used 29 % of all tokens.
+  Four changes. The criteria are split into one writer per component
+  whatever `Parallel agents` says; the option decides only whether the
+  writers run at once or one after another, so splitting costs no
+  parallelism. The plan names per task the test files and the existing
+  group to follow (`Tests:`), so the writer looks up helpers with Grep
+  instead of reading its way through other tests. Existing tests that
+  only use something a milestone removes or renames are listed by the
+  writer and adjusted by the task that removes it (`Adjusts:`), the one
+  exception to "change a test only if it contradicts SPEC.md". And a task
+  covers one component and about 400 changed lines; a change that does the
+  same thing in several components becomes a shared first task and one
+  task per component. Writing the tests per task, interleaved with the
+  implementation, was rejected: a writer for a later task would work in a
+  checkout that already holds the implementation of the earlier ones,
+  tests of tasks running in parallel worktrees must be committed before
+  any of them starts, and the shared end-to-end setup (rule 4 of the
+  `test-writer`) needs a view over all criteria of a component. The
+  reviewers were left as they are; the verifier reads each file once.
 - **ARCHITECTURE.md is checked against the code (version 0.24.0).** When
   the same project slimmed down its ARCHITECTURE.md, the cleanup found
   about 25 places where it said something other than the code: option
@@ -754,7 +783,10 @@ These points can only be settled in a running Claude Code installation.
    test suite (since version 0.21.0), the narrower checks per task and the
    shared reviews (since version 0.22.0), parallel test-writers (since
    version 0.23.0), and the check of ARCHITECTURE.md against the code
-   (since version 0.24.0). The version 0.12.0 given for the
+   (since version 0.24.0), and the test-writers split per component
+   independent of the option, the `Tests:` and `Adjusts:` lines of the
+   plan and the size limit of tasks (since version 0.30.0). The version
+   0.12.0 given for the
    option `Full e2e run` in the migration catalogue is inferred, not
    confirmed. `claude plugin validate .` has not been run since version
    0.3.0.

@@ -42,3 +42,6 @@ Return, in English, two lists:
 - **Backlog**: everything else worth noting, one line each.
 
 If there are no blockers, say so in one line. Do not edit any file.
+
+Nothing beyond that: no account of how you worked. The main session keeps
+your result in its context for the rest of its run.

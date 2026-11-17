@@ -92,9 +92,11 @@ back, because the limit is the user's choice for all following runs.
 
 ## Parallelism
 
-How many implementation subagents may run at the same time is the user's
-choice: parallel agents finish sooner, but they use up the usage limits of the
-account just as much faster, and a run that hits the limit stands still.
+How many subagents may run at the same time is the user's choice: parallel
+agents finish sooner, but they use up the usage limits of the account just
+as much faster, and a run that hits the limit stands still. The limit
+counts every running subagent of the run: test-writers, implementers and
+the reviewers of finished tasks.
 
 - `--parallel <n>` was given, with `n` a whole number from 1 to 5: write it to
   STATUS.md as `- Parallel agents: <n>` under "Options", creating the
@@ -209,6 +211,24 @@ SPEC.md names elevated rights and this session does not have them, set
    documentation, assets or configuration, even when the task writes a
    document there. This plan is for you. Do not present it for approval.
 
+   Keep every task to one component and about 400 changed lines. An agent
+   sends its whole context again with every turn, so a large task costs far
+   more than two halves: in one project a task that moved seven end-to-end
+   test groups onto a shared environment changed 1,200 lines in 14 files,
+   took 153 turns with a context of up to 300,000 tokens and used more than
+   a quarter of all tokens of its milestone. A change that does the same
+   thing in several components becomes a first task that builds what they
+   share and then one task per component.
+
+   Give every task a line `Tests:` with the test files its tests go into
+   and, where one exists, the existing test group or file they join as the
+   model to follow; take it from the file names with Glob, without reading
+   the files. The `test-writer` otherwise searches the existing tests for
+   it and reads far more of them than it needs. Where the milestone removes
+   or renames something (a field, a setting, a function), the `test-writer`
+   lists the existing tests that only use it (step 6), and you add them
+   under `Adjusts:` to the task that removes or renames it.
+
    Small tasks in the same component that run one after another may share
    one review: mark the later ones `Review: with T<n>`, naming the first of
    the group. At most three tasks, together a change of about 300 lines.
@@ -235,23 +255,30 @@ SPEC.md names elevated rights and this session does not have them, set
 6. **Tests first.** Give the `test-writer` agent the acceptance criteria of
    this milestone, the criteria `D<n>` from "Documentation" that have no
    test yet, and the names of the SPEC.md and ARCHITECTURE.md sections with
-   those requirements and their interfaces. It
-   writes the tests without seeing any implementation. The tests must fail
-   before implementation starts. Commit them right away: a worktree contains
-   only what is committed, so uncommitted tests would not reach the subagents.
+   those requirements and their interfaces, and the `Tests:` lines of the
+   plan. It writes the tests without seeing any implementation. The tests
+   must fail before implementation starts. Commit them right away: a
+   worktree contains only what is committed, so uncommitted tests would not
+   reach the subagents.
 
-   With `Parallel agents` above 1, split the criteria by component into
-   groups whose tests go into different test files, and give each group to
-   a `test-writer` of its own, at most as many at once as `Parallel agents`
-   allows. Writing the tests of a large milestone took one writer over
-   twenty minutes. Split only where each group has several criteria; for a
-   handful, one writer is faster than several that each read their sections.
-   All writers work in this checkout, without worktrees, and do not commit,
-   so they must not touch the same file:
+   Split the criteria by component into groups whose tests go into
+   different test files, and give each group to a `test-writer` of its own,
+   whatever the value of `Parallel agents`. A writer's context grows with
+   every test file it reads, and every turn sends it again: in one project
+   single writers took 85 to 109 turns, their context grew from 14,000 to
+   240,000 tokens, and they used a quarter of all tokens of their
+   milestones. Writers that each cover one component start small again and
+   read only that component's tests. Split only where each group has
+   several criteria; for a handful, one writer is cheaper than several that
+   each read their sections. With `Parallel agents` above 1, up to that
+   many writers run at the same time, otherwise one after another. All
+   writers work in this checkout, without worktrees, and do not commit:
    - Name for each group its test files. A shared file (a helper, the
-     harness of the end-to-end tests, a fixture) belongs to one group only;
-     the others report what they need there instead of editing it, and the
-     owner's writer or you add it afterwards.
+     harness of the end-to-end tests, a fixture) belongs to one group only.
+     Writers running at the same time must not touch the same file, so the
+     others report what they need there instead of editing it, and the
+     owner's writer or you add it afterwards. A writer that runs after the
+     owner's may add to it.
    - The criteria `D<n>` go to one group.
    - Writers run only the fast tests of their group. Two runs of end-to-end
      tests at the same time can collide in the real environment, so they
@@ -259,13 +286,19 @@ SPEC.md names elevated rights and this session does not have them, set
      tests yourself, once, with the filter of their criterion IDs, and hand
      a test that fails for the wrong reason (it does not compile, the setup
      breaks) back to a `test-writer` for its group.
+   - Writers do not adjust existing tests that only use something the
+     milestone removes or renames; they list them. Add them under
+     `Adjusts:` to the task that removes or renames it (step 5): the change
+     is mechanical, belongs to that task, and in one project took a writer
+     35 edits across ten packages.
 
    Then commit all tests together.
 7. **Implement.** Give each task except `Documentation` to the
    `implementer` agent with only its task, the names of the sections with
    the relevant interfaces, the research results and EXPERIMENTS.md
-   entries it needs, the tests it has to satisfy, the commands of its
-   checks (step 8), and UI-SPEC.md if it builds user interface. Its result
+   entries it needs, the tests it has to satisfy, the tests listed under
+   `Adjusts:`, the commands of its checks (step 8), and UI-SPEC.md if it
+   builds user interface. Its result
    lists every change to what other components use, additions included:
    ARCHITECTURE.md learns of them only from that list. Fixes of blockers,
    of the verifier's findings and of failures of the full suite go to the

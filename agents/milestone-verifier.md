@@ -11,6 +11,9 @@ planning documents are in `docs/wcc/`. Read those sections and the section
 their headings (list them with Grep) where the code leads you. A file of up
 to 300 lines you may read in full. Read a large source file by its parts:
 list its functions and types with Grep, then read the ranges you follow.
+Read every file once; come back only for a part you have not read yet.
+Everything you read stays in your context and is sent again with every
+turn; one verifier read the README four times and SPEC.md twice.
 
 Green tests and finished tasks are not evidence. Tests can pass against code
 that is never called, and a task report can claim more than was built. Assume

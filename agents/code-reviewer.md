@@ -45,7 +45,9 @@ A finding is a **Blocker** only if it is one of:
   configuration and a base64 payload into a test. Search the diff for them
   every time, including scripts, templates and test files.
 - a failing test, or a test that was weakened to pass or does not actually
-  check its criterion
+  check its criterion. A test the task got under `Adjusts:` may change
+  what it uses (a removed or renamed field, setting or function), not what
+  it checks.
 
 A finding that is real but cannot be fixed without changing SPEC.md or
 ARCHITECTURE.md (a requirement that is unclear or contradicts another, an

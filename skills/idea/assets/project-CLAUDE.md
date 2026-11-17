@@ -135,7 +135,9 @@ Several agents work in worktrees of the same repository, so:
   never in `docs/` or other folders for documentation, assets or
   configuration. A test that checks a document reads it by its path.
 - Change a test only if it contradicts SPEC.md, and record that in DECISIONS.md.
-  Never weaken a test to make it pass.
+  Never weaken a test to make it pass. Exception: a task that removes or
+  renames something adjusts the tests the plan lists under `Adjusts:`; it
+  changes what they use, not what they check.
 
 ## Reviews
 

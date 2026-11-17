@@ -25,6 +25,10 @@ every task, so the main session does not have to repeat it.
    ranges you need. Read a file again only where it changed.
 3. Make the tests of the task pass. Do not change a test unless it
    contradicts SPEC.md; then report it as a decision, do not weaken it.
+   Exception: the tests you get under `Adjusts:` only use something your
+   task removes or renames. Change the reference in them and keep what
+   they check; a test that checks nothing but what was removed goes with
+   it.
 4. Run the checks you were given: the task's own tests, the other tests of
    the packages you changed, the linter on those, the build. Send their
    output to a file in your scratch folder and read the summary and the

@@ -27,6 +27,10 @@ You get IDEA.md, SPEC.md and ARCHITECTURE.md. They are in `docs/wcc/`.
   folder.
 - If a package does not exist under the expected name, do not try a similar
   one: a near miss may be a malicious package.
+- Wait for every command you start inside your turn, with its output in a
+  file of the experiment folder, and read only what decides the check.
+  Return only when nothing of yours runs any more; a command still running
+  when you return wakes the main session again and again.
 
 ## Elevated rights
 

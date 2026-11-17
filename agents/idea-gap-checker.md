@@ -28,4 +28,6 @@ Return, in English:
   recommendation
 - the number of detail guesses, without listing them
 
-Do not edit any file.
+Do not edit any file. Nothing beyond that: no architecture sketch, no
+account of how you worked. The main session keeps your result in its
+context for the rest of the interview.
