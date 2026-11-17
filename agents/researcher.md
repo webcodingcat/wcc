@@ -33,3 +33,6 @@ something chosen turns out to be unusable. Do not edit any file.
 
 Return, in English: per question the answer in a few lines, with the link to
 the source.
+
+Nothing beyond that: no logs, no code, no account of how you worked. The
+main session keeps your result in its context for the rest of its run.

@@ -22,6 +22,15 @@ Format:
 
 Newest entries first.
 
+## 0.25.0 One milestone per run
+
+- Detect: the section "Options" in STATUS.md has a line `Stop after each
+  milestone`.
+- Do: remove that line. Every `/wcc:milestone` now stops after one
+  milestone, so the option has no effect. If it said `no`, tell the user
+  that runs no longer chain milestones and that each one is started with
+  `/wcc:milestone`, best in a new session.
+
 ## 0.19.0 End-to-end tests selectable per criterion
 
 - Detect: the option `Full e2e run` in STATUS.md is `backlog and stage end`,

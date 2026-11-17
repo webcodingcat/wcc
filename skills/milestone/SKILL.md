@@ -1,10 +1,10 @@
 ---
 name: milestone
-description: Plan and implement the next open milestone from the wcc roadmap test-first and without questions, then continue with the following milestones until the current stage is done or the run has to wait for the user. Use this whenever the user wants to start, continue or resume the implementation of a wcc project, or says "continue with the implementation", "next milestone" or "implement the roadmap".
-argument-hint: "[--once | --all] [--parallel <n>]"
+description: Plan and implement the next open milestone from the wcc roadmap test-first and without questions, then stop, so the user starts the following one, best in a fresh session. Use this whenever the user wants to start, continue or resume the implementation of a wcc project, or says "continue with the implementation", "next milestone" or "implement the roadmap".
+argument-hint: "[--parallel <n>]"
 ---
 
-# milestone: implement the roadmap unattended
+# milestone: implement one milestone unattended
 
 Arguments: $ARGUMENTS
 
@@ -67,7 +67,8 @@ findings first (see "Feedback"). Then act on the status:
     SPEC.md says, point to `/wcc:change` and stop.
   - When none of its checks is open any more: close the milestone that was
     waiting (step 9), then set `IN_PROGRESS`, or `DONE` if the stage is
-    complete.
+    complete. That close is the milestone of this run: report and stop as
+    "After the milestone" describes.
 - `DONE`: say so. The next stage is planned with `/wcc:change`, which also
   takes up the open decisions, if any; name how many. Stop.
 - anything earlier: point to `/wcc:spec` and stop.
@@ -75,14 +76,13 @@ findings first (see "Feedback"). Then act on the status:
 ## Options
 
 The section "Options" in STATUS.md holds the user's settings for the run;
-`/wcc:options` sets them. Re-read them before every milestone. A missing
+`/wcc:options` sets them. Read them at the start of the run. A missing
 line means its default; a missing section means an older project, so look
-for `Parallel agents` under "Current state" as well.
+for `Parallel agents` under "Current state" as well. A line `Stop after each
+milestone` from a project before version 0.25.0 has no effect: every run
+stops after one milestone.
 
 - `Parallel agents` (1 to 5, default 1): see "Parallelism".
-- `Stop after each milestone` (`yes` or `no`, default `no`): `yes` means
-  every run behaves as if `--once` was given. The argument `--all` overrides
-  it for this run only and is not written anywhere.
 - `Backlog milestone after` (0 to 10, default 3): see "Backlog milestones".
 - `Full e2e run` (`every milestone` or `backlog and stage end`, default
   `every milestone`): see "End-to-end tests".
@@ -104,8 +104,8 @@ account just as much faster, and a run that hits the limit stands still.
   line is missing.
 
 The value lives in STATUS.md and not in this conversation, so it survives
-interruptions and holds for every following milestone and run until the user
-gives another one. With 1, nothing runs in parallel and no worktrees are
+interruptions and holds for every following run until the user gives
+another one. With 1, nothing runs in parallel and no worktrees are
 needed: every task is implemented one after another on the milestone branch.
 
 ## Reading the planning documents
@@ -131,8 +131,8 @@ milestone needs.
 Where the headings do not tell, search the file for an identifier (a
 requirement ID, a type, a file path). When in doubt whether a section
 matters, read it: overlooking a decision costs more than one more section.
-Every new milestone selects afresh; a selection from an earlier milestone in
-the context does not carry over.
+Select afresh in every run; a selection from earlier conversation does not
+carry over.
 
 Pass the selection on. The `test-writer`, `code-reviewer` and
 `milestone-verifier` get the names of the sections that concern their task
@@ -147,6 +147,32 @@ meaning, data schema, formats, flows. How a component does its work inside
 comment at that place in the code, where whoever changes it finds it, and
 in the plan.
 
+## Keeping the main session small
+
+Everything that reaches this session stays in its context until the run
+ends and is sent again with every later call. Logs and long reports there
+cost the user's usage limits many times over and push out what matters.
+
+- Run every build, test and lint command with its output in a file, here and
+  in every subagent, and read only the summary and the failures. Never read a
+  whole log of a passing run.
+- Ask every subagent you start for a short result in a fixed form, nothing
+  else: no logs, no code, no repetition of its task, no account of how it
+  worked. For an implementation task:
+
+  ```
+  Status: green | not green after <n> attempts | stopped: <reason>
+  Commit: <hash>
+  Files: <changed files, one line>
+  Decisions: <one line each: what, why, cost of change>
+  Interface changes: <one line each, additions included; or none>
+  Findings: <one line each, for BACKLOG.md or "Open decisions"; or none>
+  Failures: <only if not green: failing tests with the decisive message line>
+  ```
+
+  The agents in `agents/` have their own result forms; pass them nothing
+  that asks for more.
+
 ## Preflight
 
 The folder is a git repository with a clean working tree, and the build and
@@ -157,8 +183,7 @@ SPEC.md names elevated rights and this session does not have them, set
 
 ## Per milestone
 
-1. **Pick.** First record the findings in FEEDBACK.md, if it exists (see
-   "Feedback"). Then pick the first unchecked entry of the current stage in ROADMAP.md. The
+1. **Pick.** Pick the first unchecked entry of the current stage in ROADMAP.md. The
    current stage is the first section with unchecked entries, never "Target
    vision (rough)". Set STATUS.md to `IN_PROGRESS`. An entry `B<n>` is a backlog
    milestone, an entry `F<n>` a feedback milestone, see below.
@@ -241,8 +266,9 @@ SPEC.md names elevated rights and this session does not have them, set
    relevant interfaces, the research results and EXPERIMENTS.md entries it
    needs, the tests it has to
    satisfy, the commands of its checks (step 8), and UI-SPEC.md if it
-   builds user interface. Ask it to list in its result every change to
-   what other components use, an added field, parameter, return value or
+   builds user interface. Ask for its result in the form under "Keeping the
+   main session small". Its interface changes list every change to what
+   other components use, an added field, parameter, return value or
    endpoint included: such additions are allowed, but ARCHITECTURE.md
    learns of them only from that list. Run tasks in
    parallel, each in its own worktree, only if they do not depend on each
@@ -305,7 +331,8 @@ SPEC.md names elevated rights and this session does not have them, set
     look at, with the hint that `/wcc:feedback` shows how to test them and
     takes their results and anything else the user notices, and the
     decisions added to "Open decisions" by this milestone (ID and question),
-    with how many are open in all and that `/wcc:change` takes the answers.
+    with how many are open in all and that `/wcc:change` takes the answers,
+    and the next command (see "After the milestone").
 
 ## End-to-end tests
 
@@ -341,8 +368,8 @@ regression of an earlier milestone: fix it like a task of the milestone that
 is closing.
 
 After a fix, first run only the tests that failed, then the whole selection
-once more. Send the output of a long run to a file and read the summary and
-the failures, not the whole log.
+once more. Output goes to a file as "Keeping the main session small"
+describes.
 
 ## Tasks that cannot be finished
 
@@ -363,7 +390,7 @@ Do not stop the run at that point. Block late:
    decision or action needed from the user, report and stop. The milestone
    stays unchecked and its branch unmerged.
 
-This way one stuck task costs the user one decision, not the whole night.
+This way one stuck task costs the user one decision, not the whole run.
 
 ## Shared files and merges
 
@@ -406,8 +433,8 @@ these guides to the user.
   unchecked and its branch unmerged, set STATUS.md to `MANUAL_CHECK`, report
   and stop. The next call of this skill closes it with the user, as described
   under "At the start".
-- Otherwise: close the milestone and continue. The criteria wait in the list
-  until the run stops anyway.
+- Otherwise: close the milestone. The criteria wait in the list, and the
+  report names them.
 
 ## Open decisions
 
@@ -450,8 +477,9 @@ in BACKLOG.md, results of manual checks in STATUS.md. While a run is going,
 it writes them to FEEDBACK.md instead, so it does not edit files under the
 run's feet.
 
-So at the start and before picking each entry (step 1), read FEEDBACK.md if
-it exists. Its findings are already sorted and confirmed by the user, so
+So at the start, before picking the entry (step 1), read FEEDBACK.md if it
+exists. Findings the user queues while this run is going wait for the next
+run. Its findings are already sorted and confirmed by the user, so
 record them without questions, the way `/wcc:feedback` does:
 
 - check ok: remove the check from "Open manual checks" in STATUS.md.
@@ -464,9 +492,10 @@ record them without questions, the way `/wcc:feedback` does:
 - wish: "Open decisions" in STATUS.md, source `feedback` (see "Open
   decisions").
 
-Then commit the changed planning documents and delete FEEDBACK.md. While a
-milestone branch is checked out, do this only at the next pick, after the
-merge, so the base branch gets the entry.
+Then commit the changed planning documents and delete FEEDBACK.md. If the
+run starts on a milestone branch (an interrupted milestone it resumes), do
+this after that milestone's merge, before the report, so the base branch
+gets the entry.
 
 ## Feedback milestones
 
@@ -534,25 +563,33 @@ A backlog milestone works on the branch `wcc/b<n>` like this:
 Findings from the review of a backlog milestone go back into BACKLOG.md for
 the next one; they do not extend the current one.
 
-## Continue
+## After the milestone
 
-After the report start the next entry without asking, re-reading the project
-files instead of relying on context. Stop when:
+A run implements one roadmap entry and stops after its report. Do not start
+the next entry, also when it is a backlog or feedback milestone you just
+inserted. Every milestone reads the project files afresh anyway, so what
+this one left in the context would only make every later step of the session
+more expensive and the work less precise: each call sends the whole
+conversation again. The next entry starts with the user's next
+`/wcc:milestone`, best in a new session or after `/clear`.
 
+Set STATUS.md before the report:
+
+- entries of the current stage are still open: `IN_PROGRESS`, with the next
+  entry named as not yet started under "Next", so the next run picks it up
+  without questions.
 - the current stage is complete: tag the base branch `wcc-stage-<n>`, unless
   that tag exists already (a feedback milestone after the stage end), and set
   `DONE`, or `MANUAL_CHECK` if manual criteria are still open. If "Open
   decisions" has entries, list them in the report and name `/wcc:change`
-  under "Next" in STATUS.md: the next stage is planned there anyway
-- a task could not be finished: `BLOCKED`, as described above
-- a milestone waits for a manual check
-- the argument `--once` was given, or `Stop after each milestone: yes` is
-  set in STATUS.md and `--all` was not given: stop after the report of this
-  one entry.
-  If entries of the stage are still open, STATUS.md stays `IN_PROGRESS` and
-  names the next entry as not yet started, so the next `/wcc:milestone`
-  picks it up without questions. If this entry completed the stage, or it
-  waits for a manual check, the rules above apply instead.
+  under "Next" in STATUS.md: the next stage is planned there anyway.
+- a task could not be finished: `BLOCKED`, as described above.
+- the milestone waits for a manual check: `MANUAL_CHECK`, as described under
+  "Manual criteria".
+
+End the report with the next command: `/wcc:milestone` in a new session for
+`IN_PROGRESS`, `/wcc:feedback` and then `/wcc:milestone` for
+`MANUAL_CHECK`, `/wcc:milestone` for `BLOCKED`, `/wcc:change` for `DONE`.
 
 Do not start a target vision item on your own. It needs a decision by the user,
 which `/wcc:change` turns into the next stage.

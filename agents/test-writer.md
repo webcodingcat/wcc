@@ -84,3 +84,6 @@ the main session does both.
 Code and comments are English. Return, in English: the list of criteria with
 their tests, any criterion you could not turn into a test, with the reason,
 and, as a writer of one group, what you need in files outside your group.
+
+Nothing beyond that: no logs, no code, no account of how you worked. The
+main session keeps your result in its context for the rest of its run.

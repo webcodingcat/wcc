@@ -101,8 +101,8 @@ plan under its feet would end up in its commits or collide with them. Ask
 whether a run is going, in the question of step 3.
 
 - A run is going: write the confirmed findings to FEEDBACK.md, the queue
-  (see 6), and touch nothing else. The run takes them up before its next
-  milestone. A wish cannot go to `/wcc:change` now, because that edits
+  (see 6), and touch nothing else. The next `/wcc:milestone` takes them up
+  at its start. A wish cannot go to `/wcc:change` now, because that edits
   SPEC.md under the run's feet: queue it as `wish`. The run adds it to
   "Open decisions" in STATUS.md; tell the user to run `/wcc:change` once
   the run has stopped.
@@ -143,8 +143,8 @@ Create it if it is missing:
 # FEEDBACK
 
 Findings from manual testing, already sorted with the user by /wcc:feedback
-while a milestone run was going. /wcc:milestone records them before its
-next milestone and then deletes this file.
+while a milestone run was going. The next /wcc:milestone records them at
+its start and then deletes this file.
 
 - <class>: <the finding, written as in section 5>
 ```

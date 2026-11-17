@@ -6,8 +6,8 @@ tested code, with as little of your time as possible once the idea is clear.
 You describe what you want. Claude interviews you until the idea is
 complete, picks and checks the technology, writes a spec and a plan, and
 then builds the project milestone by milestone: tests first, reviewed,
-without asking you anything while it works. You can leave it running
-overnight and come back to finished milestones.
+without asking you anything while it works. You start each milestone
+with one command and can leave it alone until it is finished.
 
 ## How it works
 
@@ -17,7 +17,7 @@ overnight and come back to finished milestones.
   /wcc:idea  "I want …"  ──►  interview, a few questions at a time  ──►  IDEA.md
   /wcc:spec              ──►  stack, feasibility check, spec, plan   ──►  summary for your OK
   /wcc:prepare           ──►  checks your machine, sets up the repo  ──►  build and tests run
-  /wcc:milestone         ──►  plans, writes tests, builds, reviews   ──►  milestone after milestone
+  /wcc:milestone         ──►  plans, writes tests, builds, reviews   ──►  one milestone per call
                                … unattended …
   try it, /wcc:feedback  ──►  sorts what you found into the plan     ──►  fixed in the next run
 ```
@@ -163,9 +163,13 @@ Each milestone is built on its own branch `wcc/m<n>` and merged into your
 branch only when it is finished, so a run that stops never leaves half a
 milestone there. A finished stage is tagged `wcc-stage-<n>`.
 
-Then the next milestone starts, until the stage is done or the run needs
-you. After every few milestones a **backlog milestone** works off the
-collected review findings.
+Then the run stops and names the next command. **Each milestone is started
+by hand**, best in a new session or after `/clear`. Every milestone reads
+the project files afresh, so the old conversation would only fill the
+context: each step of a long session sends all of it again, which uses up
+your usage limits faster and makes the work less precise. After every few
+milestones a **backlog milestone** works off the collected review findings;
+it is the next entry in the roadmap and is started the same way.
 
 **During a run Claude asks nothing.** When something is unclear, it picks
 the simplest solution that fits the spec and records the decision in
@@ -190,17 +194,15 @@ interview, it is discussed in a separate session, and the next
 ## Leaving a run alone
 
 Switch the session to auto mode before `/wcc:milestone`, so permission
-prompts do not stop the run. A run ends when `docs/wcc/STATUS.md` says one
-of these:
+prompts do not stop the run. A run builds one milestone and ends with one
+of these in `docs/wcc/STATUS.md`:
 
 | Status | Meaning | What you do |
 |--------|---------|-------------|
+| `IN_PROGRESS` | The milestone is finished, more are open in this stage | Start the next one with `/wcc:milestone`, best in a new session |
 | `DONE` | The current stage is finished | Try it; plan the next stage with `/wcc:change` |
 | `MANUAL_CHECK` | A later milestone depends on something only you can check | `/wcc:feedback` shows how to test it; `/wcc:milestone` asks for the result and continues |
 | `BLOCKED` | A task needs a decision, an approval, a credential or a step only you can take | `/wcc:milestone` shows the question and continues after your answer |
-
-If a run stops early in practice, set a goal first, for example
-`/goal docs/wcc/STATUS.md says DONE, BLOCKED or MANUAL_CHECK`.
 
 Several agents in parallel finish sooner but use up your usage limits just
 as much faster, and a run that hits the limit stands still. That is why the
@@ -254,13 +256,11 @@ you change them:
 | Option | Default | Effect |
 |--------|---------|--------|
 | `parallel=<1-5>` | 1 | Agents writing tests or implementing tasks at the same time. 1 runs everything one after another; more finish sooner but use up your usage limits just as much faster. |
-| `once=<yes\|no>` | no | `yes` stops every run after one milestone, so you can look at each one. |
 | `backlog=<0-10>` | 3 | A backlog milestone runs after this many milestones; 0 only at the end of a stage. |
 | `e2e=<every\|backlog>` | every | When all end-to-end tests run. `every` at the close of every milestone; `backlog` only at backlog milestones and at the end of a stage, while an ordinary milestone runs just the end-to-end tests of its own criteria. Worth it when the end-to-end tests take long. |
 
-For a single run, `/wcc:milestone --once` stops after one milestone and
-`--all` runs on despite `once=yes`. `/wcc:milestone --parallel <n>` sets the
-parallelism like `/wcc:options` does.
+`/wcc:milestone --parallel <n>` sets the parallelism like `/wcc:options`
+does.
 
 ## After a plugin update
 
@@ -285,7 +285,7 @@ change.
 | `/wcc:idea <idea>` | start | Interview, then `IDEA.md` |
 | `/wcc:spec` | after the interview | Stack, feasibility check, `SPEC.md`, `ARCHITECTURE.md`, `ROADMAP.md`, summary for approval |
 | `/wcc:prepare` | after the approval, on a new machine or checkout | Machine, accounts and secrets checked, git repository, scaffold, working build and test commands |
-| `/wcc:milestone` | to build | Milestones one after another, test-first, until done or the run needs you |
+| `/wcc:milestone` | to build | The next milestone, test-first, then it stops; start each one in a new session |
 | `/wcc:feedback [what you noticed]` | any time | Without text: open manual checks with test guides. With text: a finding, sorted with you and recorded for the next run |
 | `/wcc:change [change]` | any time | A change worked into all documents, the next stage planned, or the open decisions answered |
 | `/wcc:status` | any time | Where the project stands and which command comes next |

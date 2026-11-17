@@ -43,6 +43,11 @@ Read STATUS.md and ROADMAP.md, FEEDBACK.md if it exists, and the plan of the cur
 | `IN_PROGRESS`, `MANUAL_CHECK`, `BLOCKED` | `/wcc:milestone` |
 | `DONE` | `/wcc:change` for the next stage |
 
+Every `/wcc:milestone` builds one milestone and stops. For `IN_PROGRESS`
+between two milestones, recommend starting it in a new session or after
+`/clear`: the next milestone reads the project files afresh and needs
+nothing from the old context.
+
 Check that the files agree with each other and name every contradiction, for
 example `DONE` with unchecked milestones, `IN_PROGRESS` without an approved
 spec, or a checked milestone whose plan has open tasks. Do not repair

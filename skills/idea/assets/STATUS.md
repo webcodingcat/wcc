@@ -11,10 +11,9 @@ STATUS: IDEA
 
 ## Options
 
-<!-- Set with /wcc:options. Read by /wcc:milestone before every milestone. -->
+<!-- Set with /wcc:options. Read by /wcc:milestone at the start of every run. -->
 
 - Parallel agents: 1
-- Stop after each milestone: no
 - Backlog milestone after: 3
 - Full e2e run: every milestone
 

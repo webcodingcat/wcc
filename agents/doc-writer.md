@@ -42,3 +42,6 @@ Everything you write is English. Return, in English: the documents you
 changed, the criteria `D<n>` they now meet, and anything you could not
 document, with the reason (behaviour that contradicts SPEC.md, an example
 that fails, a feature you could not reach).
+
+Nothing beyond that: no logs, no code, no account of how you worked. The
+main session keeps your result in its context for the rest of its run.

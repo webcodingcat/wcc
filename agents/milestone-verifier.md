@@ -81,3 +81,6 @@ Return, in English:
 
 If there are no blockers, say so in one line. Do not edit any file. There is
 no second round, so be complete the first time.
+
+Nothing beyond that: no logs, no code, no account of how you worked. The
+main session keeps your result in its context for the rest of its run.

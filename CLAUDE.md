@@ -25,8 +25,7 @@ accident. The README is for the people who use the plugin.
   planning documents in `docs/wcc/`, so that others can work on the
   project. "Customising" says how to change that.
 - The terms in the documents are keys that the skills and agents search for
-  (`manual`, `Parallel agents`, `Stop after each milestone`, `Backlog
-  milestone after`, `Stops for: manual check`, `Cost of change`, `(working
+  (`manual`, `Parallel agents`, `Backlog milestone after`, `Stops for: manual check`, `Cost of change`, `(working
   title)`, "Target vision", "Open manual checks", "Findings", `does not
   fit, see plan`, `F<n>`, `Start`/`Setup`/`Steps`/`Expected`,
   "Open decisions", `Q<n>`, `waits for Q<n>`, `In clarification`,
@@ -39,8 +38,9 @@ accident. The README is for the people who use the plugin.
 ## What the workflow is for
 
 The user hands over an idea. It is worked out, the stack is chosen, and the
-project is then implemented automatically: in parallel where possible, and
-without questions during the implementation. The user's attention goes
+project is then implemented milestone by milestone: each one started with a
+single command, in parallel where possible, and without questions while it
+runs. The user's attention goes
 almost entirely into the first step.
 
 ```
@@ -66,7 +66,7 @@ almost entirely into the first step.
 skills/idea/                      interview; assets = scaffold for new projects
 skills/spec/                      spec, architecture, roadmap; assets = templates
 skills/prepare/                   machine check and project setup, repeatable
-skills/milestone/                 unattended implementation loop
+skills/milestone/                 unattended implementation of one milestone
 skills/change/                    change requests and the next stage
 skills/status/                    state and next command, read only
 skills/feedback/                  take and sort findings from manual testing
@@ -121,7 +121,7 @@ Status values: `IDEA`, `IDEA_DONE`, `SPEC_REVIEW`, `READY`, `IN_PROGRESS`,
 | `IDEA_DONE` | IDEA.md is finished | `/wcc:spec` |
 | `SPEC_REVIEW` | Summary waits for approval | `/wcc:spec` (shows it again) |
 | `READY` | Approved, or a new stage planned | `/wcc:prepare`, then `/wcc:milestone` |
-| `IN_PROGRESS` | Implementation running or interrupted | `/wcc:milestone` |
+| `IN_PROGRESS` | Implementation running, interrupted, or between two milestones | `/wcc:milestone`, best in a new session |
 | `MANUAL_CHECK` | Run waits for a manual check | `/wcc:milestone` (asks for the result) |
 | `BLOCKED` | Run needs a decision | `/wcc:milestone` (asks for it) or `/wcc:change` |
 | `DONE` | Current stage finished | `/wcc:change` for the next one |
@@ -155,8 +155,27 @@ when working with Claude Code without such rules.
 - **Detailed plans are not shown to the user.** They are too detailed to
   read and would be approved blindly. The user gets a summary of at most ten
   lines.
-- **Milestones run one after another automatically.** Starting every
-  milestone by hand is tedious and prevents unattended runs.
+- **One milestone per run, started by hand (version 0.25.0).** Up to
+  0.24.0 a run chained the milestones of a stage in one session. Every
+  milestone reads the project files afresh anyway, so what the earlier ones
+  left in the context helped nothing, but every later call sent it again:
+  the session grew with each milestone, used up the usage limits faster
+  and worked less precisely once the context was long or compacted. The
+  alternatives were rejected: a child session per milestone works only in
+  Claude Code Desktop, and its reports and chained starts are not reliable
+  there; a subagent per milestone cannot start the `test-writer` and the
+  reviewers, because subagents start no subagents; an external loop around
+  `claude -p` was not wanted. The price: the user starts every milestone,
+  backlog and feedback milestones included, best in a new session or after
+  `/clear`. A milestone itself still runs unattended. The option `Stop
+  after each milestone` and the arguments `--once` and `--all` were
+  removed with it.
+- **The main session stays small.** Whatever reaches it stays in its
+  context for the rest of the run. So build, test and lint output goes to
+  files and only the summary and the failures are read, and every subagent
+  returns a short result in a fixed form, without logs, code or an account
+  of how it worked (section "Keeping the main session small" in
+  `skills/milestone/SKILL.md`, last paragraph of the agents used there).
 - **Reviews have a stopping rule.** Only blockers are fixed, the rest goes
   to BACKLOG.md, one round per task, the architecture is not up for debate.
   Reviewers without this limit always find something and hold everything
@@ -248,12 +267,11 @@ when working with Claude Code without such rules.
   milestones. The default is 1 (since version 0.11.0, 3 before): a run
   should not use up the limits faster than the user explicitly chose.
 - **Options live in the project, in STATUS.md.** Section "Options" with
-  `Parallel agents`, `Stop after each milestone`, `Backlog milestone after`
-  and `Full e2e run`, set with `/wcc:options`. There they survive
-  interruptions like the rest of the state, and `/wcc:milestone` re-reads
-  them before every milestone. Arguments of a call hold only for that run;
-  `--all` overrides `Stop after each milestone: yes` once. Exception:
-  `--parallel` is written back, as it was before the skill existed.
+  `Parallel agents`, `Backlog milestone after` and `Full e2e run`, set
+  with `/wcc:options`. There they survive interruptions like the rest of
+  the state, and `/wcc:milestone` reads them at the start of every run.
+  Arguments of a call hold only for that run. Exception: `--parallel` is
+  written back, as it was before the skill existed.
   Projects without the section get it with the first `/wcc:options` or
   `/wcc:upgrade`; until then the defaults apply, plus a `Parallel agents`
   line under "Current state".
@@ -490,7 +508,7 @@ Typical changes and where to make them:
 | More machine checks | Step 1 in `skills/prepare/SKILL.md` |
 | What is allowed without stopping, what counts as consequential | Section "During a milestone run" in `skills/idea/assets/project-CLAUDE.md`, explanation in `skills/idea/assets/DECISIONS.md` |
 | Number of repair attempts, reasons to stop | `skills/idea/assets/project-CLAUDE.md` and section "Tasks that cannot be finished" in `skills/milestone/SKILL.md` |
-| Number of parallel agents, stop after each milestone, backlog rhythm in a project | `/wcc:options` or section "Options" in STATUS.md |
+| Number of parallel agents, backlog rhythm in a project | `/wcc:options` or section "Options" in STATUS.md |
 | Another option | Table in `skills/options/SKILL.md`, section "Options" in `skills/milestone/SKILL.md` and the place that reads it, template `skills/idea/assets/STATUS.md`, README |
 | Default value and limits of an option | `skills/options/SKILL.md`, section "Options" in `skills/milestone/SKILL.md`, template `skills/idea/assets/STATUS.md`, README |
 | Branch and tag names | `skills/milestone/SKILL.md` |
@@ -601,9 +619,9 @@ own. They can be changed without consequences for the rest.
 - **Throwaway prototype (assumption):** a separate, optional skill
   `/wcc:prototype`. The interview recommends it for games whose rules are
   still unclear.
-- **`/goal` (assumption):** the milestone skill sets no goal itself,
-  because it chains the milestones on its own. `/goal` is an optional tip in
-  the README.
+- **No `/goal` (version 0.25.0):** a goal such as "STATUS.md says DONE"
+  would chain the milestones in one session again, which this version
+  removed. The tip is gone from the README.
 - **marketplace.json** uses the source `"./"`. That is the form the
   documentation intends for a plugin published from its own repository.
 
@@ -621,8 +639,9 @@ These points can only be settled in a running Claude Code installation.
    `/wcc:prepare` and the first milestone with `/wcc:milestone --once` ran
    without notable problems. `--parallel <n>` also ran in a run with
    `--once` and worked. Not yet run: `/wcc:change`, `/wcc:status`,
-   `/wcc:options`, `/wcc:prototype`, chaining several milestones without
-   `--once`, a backlog milestone and the close of a stage. Also not yet run:
+   `/wcc:options`, `/wcc:prototype`, a backlog milestone and the close of
+   a stage. Also not yet run: the fixed result form of subagents and the
+   run that stops after one milestone (since version 0.25.0). Also not yet run:
    the documentation task with the `doc-writer` (since version 0.13.0),
    `/wcc:feedback` with a feedback milestone (since version 0.15.0) and
    `/wcc:upgrade` (since version 0.16.0), the open decisions (since
