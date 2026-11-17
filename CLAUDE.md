@@ -255,6 +255,15 @@ when working with Claude Code without such rules.
   which refuse to lose anything, never with force, and at the start of a
   run the merged ones of earlier runs. The worktree of a blocked task
   stays.
+- **After a fix only what it can break runs again (version 0.29.0).**
+  The close of a feedback milestone ran the full end-to-end suite for 64
+  minutes; one subtest failed on a race in its own query, the fix changed
+  two test files, and the rule "run the whole selection once more" ran
+  everything again for 62 minutes. Now the whole selection runs again only
+  when a fix changes product code, the shared harness, the build or the
+  configuration; a fix in single tests reruns those and the tests using
+  what changed, a race three times. A failed run whose failures touched
+  only single tests still counts as a measurement of run time.
 - **Large files are read by their parts (version 0.26.0).** Agents read source and test
   files of up to 35,000 characters in full, some twice; a test-writer's
   context grew past 300,000 tokens. Files of more than 400 lines are read
@@ -727,12 +736,14 @@ These points can only be settled in a running Claude Code installation.
    without notable problems. `--parallel <n>` also ran in a run with
    `--once` and worked. Not yet run: `/wcc:change`, `/wcc:status`,
    `/wcc:options`, `/wcc:prototype`, a backlog milestone and the close of
-   a stage. Also not yet run: the fixed result form of subagents and the
-   run that stops after one milestone (since version 0.25.0), the
-   `implementer` agent, its waiting loop, its own end-to-end runs and the
-   reuse of green end-to-end runs (since version 0.26.0).
-   Whether a plugin agent may list `PowerShell` and `TaskStop` in `tools:`
-   is inferred from the documentation, not tried. Also not yet run:
+   a stage. A feedback milestone with 0.26.0 ran well: one milestone per
+   run, the fixed result forms, the `implementer` with its waiting loop
+   and its own end-to-end runs; the main session stayed under 200,000
+   tokens, no agent woke it while waiting, and `PowerShell` works in the
+   `tools:` of a plugin agent. Not yet run: the reuse of green end-to-end
+   runs (since version 0.26.0), the removal of task worktrees (since
+   0.28.0) and the reruns after a fix (since 0.29.0). Whether `TaskStop`
+   works in `tools:` is inferred from the documentation, not tried. Also not yet run:
    the documentation task with the `doc-writer` (since version 0.13.0),
    `/wcc:feedback` with a feedback milestone (since version 0.15.0) and
    `/wcc:upgrade` (since version 0.16.0), the open decisions (since

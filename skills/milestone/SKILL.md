@@ -328,9 +328,8 @@ SPEC.md names elevated rights and this session does not have them, set
    it all requirements of the stage, so it checks the documentation as a
    whole before the stage is tagged. Fix its blockers and the failures of
    the suite and the linter like tasks, once the suite has ended, so the fixes do not
-   change the code under the running tests. Then run the tests that failed
-   and the tests the fixes touch, and the whole selection once more only if
-   the suite had failures. Write the verifier's decisions to "Open
+   change the code under the running tests. Then check the fixes as
+   "After a fix" under "End-to-end tests" describes. Write the verifier's decisions to "Open
    decisions", send the rest to BACKLOG.md. For each of its architecture
    differences: where the code is right because of a recorded decision, a
    task of the plan or an allowed addition, update ARCHITECTURE.md now
@@ -396,9 +395,31 @@ A full run that fails at a backlog milestone or a stage end found a
 regression of an earlier milestone: fix it like a task of the milestone that
 is closing.
 
-After a fix, first run only the tests that failed, then the whole selection
-once more. Output goes to a file as "Keeping the main session small"
-describes.
+### After a fix
+
+The unit suite and the linter are fast: after a fix, run them in full
+again. For the end-to-end tests, what runs again depends on what the fix
+changed (`git diff --name-only` over the fix commits):
+
+- Product code, the shared harness of the end-to-end tests (setup,
+  teardown, shared steps, helpers many groups use), the build or the
+  configuration: run the whole selection again. Such a change can break
+  any test.
+- Only the code of single tests, or helpers only they use: run the tests
+  that failed and every test in the changed files or using the changed
+  helpers, not the whole selection. The rest ran green on the same
+  product code.
+- A failure that looks like a race or a flake (passes on its own, depends
+  on timing): after the fix, run the affected tests three times in a row.
+  One green run does not show that a race is gone.
+
+When the run was also a measurement (the plan of a finding about run time
+names one), take the duration from the run that failed if its failures
+touched only single tests, and say so; do not run everything again only to
+measure. In one project a 64-minute full run failed in one subtest, the fix
+changed two test files, and the whole suite ran again for 62 minutes.
+
+Output goes to a file as "Keeping the main session small" describes.
 
 ## Tasks that cannot be finished
 
@@ -589,7 +610,9 @@ flakiness (the run time before and after, a repeated run).
   CLAUDE.md and the `test-writer`, and the review checks them.
 - Plan the change with its measurement: the command, the value before
   (from the finding or a run on the base branch) and where the result is
-  noted, usually "Last done" in STATUS.md. Where tests are restructured,
+  noted, usually "Last done" in STATUS.md. A run whose only failures were
+  in single tests still counts as the measurement (see "After a fix").
+  Where tests are restructured,
   the plan lists for every criterion its test or subtest before and
   after, so the review can see that none was lost or weakened.
 
