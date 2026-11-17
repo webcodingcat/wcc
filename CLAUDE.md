@@ -247,6 +247,14 @@ when working with Claude Code without such rules.
   the `test-writer` and are checked by the review, not by tests that fix
   a structure (section "Findings about the tests" in
   `skills/milestone/SKILL.md`).
+- **Task worktrees are removed after the merge (version 0.28.0).** The
+  tool removes a subagent's worktree only when nothing changed in it, and
+  a task always commits; after two parallel runs nine merged worktrees
+  with their branches were left in one project. The main session removes
+  each one after its merge with `git worktree remove` and `git branch -d`,
+  which refuse to lose anything, never with force, and at the start of a
+  run the merged ones of earlier runs. The worktree of a blocked task
+  stays.
 - **Large files are read by their parts (version 0.26.0).** Agents read source and test
   files of up to 35,000 characters in full, some twice; a test-writer's
   context grew past 300,000 tokens. Files of more than 400 lines are read

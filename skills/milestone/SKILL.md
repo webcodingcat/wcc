@@ -440,6 +440,17 @@ If a merge conflicts anyway, resolve it in the main session when it is
 mechanical. Otherwise drop the later task's branch and redo that task on top of
 the merged state. A merge conflict is never a reason for `BLOCKED`.
 
+Once a task's branch is merged, remove its worktree and branch:
+`git worktree remove <path>`, then `git branch -d <branch>`. Both refuse
+when something would be lost (uncommitted changes, unmerged commits); then
+leave them and name them in the report. Never add `--force` or `-D`. Keep
+the worktree of a task marked `[!]`: its branch is unmerged on purpose.
+At the start of a run, remove the same way the worktrees of earlier runs
+whose branches are merged into the base branch (`git worktree list`). The
+tool that creates a worktree for a subagent removes it only when nothing
+changed in it, and a task always commits; in one project nine of them
+were left after two runs.
+
 ## Manual criteria
 
 `manual` criteria cannot be checked by the run. At the close of a milestone,
