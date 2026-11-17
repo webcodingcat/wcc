@@ -76,7 +76,7 @@ skills/upgrade/                   bring an existing project up to the installed 
 skills/prototype/                 optional throwaway prototype
 agents/                           idea-gap-checker, researcher,
                                   feasibility-checker, spec-reviewer,
-                                  test-writer, code-reviewer,
+                                  test-writer, implementer, code-reviewer,
                                   doc-writer, milestone-verifier
 ```
 
@@ -176,6 +176,70 @@ when working with Claude Code without such rules.
   returns a short result in a fixed form, without logs, code or an account
   of how it worked (section "Keeping the main session small" in
   `skills/milestone/SKILL.md`, last paragraph of the agents used there).
+- **Implementation runs in an agent of its own (version 0.26.0).** Up to
+  0.24.0 the main session gave tasks to general-purpose subagents and wrote
+  the rules into every prompt. In one night of the same project they used
+  64 % of all subagent tokens: such an agent starts with about 55,000
+  tokens of context, a restricted plugin agent with about 13,000, and an
+  implementation task takes dozens of turns, each sending that context
+  again. `agents/implementer.md` has only the tools it needs and carries
+  the fixed rules (checks, debugging, waiting, result form), so the prompt
+  holds only the task.
+- **No debug access in the product (version 0.26.0).** In the same night
+  an implementer debugging a failing end-to-end test built a debug script
+  into the boot configuration of a VM and a base64 payload into a test.
+  The main session stopped it after a warning of the system. The cause was
+  a protection of the project: the agent could not reach the protected
+  control of the VM and built a service that made its internal state
+  readable for every server. Now the implementer rule and the project
+  `CLAUDE.md` forbid debug access and any way around a protection of the
+  project, a cause that cannot be found otherwise stops the task, the
+  implementer prefers designs the tests can check from outside, and the
+  `code-reviewer` searches every diff for both as blockers.
+- **The implementer runs its end-to-end tests itself, the full run waits
+  for the last review (version 0.26.0).** The run report of the same
+  night named two losses: the main session ran the first end-to-end run
+  of a task itself, waited for it and handed the failures over, about ten
+  minutes per milestone; and it started the 90-minute full run of a
+  backlog milestone before the last review, which then found a blocker in
+  a test, so part of it ran again. Now step 8 has the implementer run the
+  filtered end-to-end tests of its criteria, two such tasks never run at
+  the same time, and step 9 states why the full run starts only after
+  every review, its fixes and the documentation task.
+- **Agents wait for their own commands inside their turn (version
+  0.26.0).** A background subagent that ends its turn while its own
+  command still runs wakes the main session, and again each time it
+  resumes and stops; with `tail -f` or the `Monitor` tool one agent
+  returned its result four times. Each wake-up sends the whole context of
+  the main session. The implementer runs short commands in the foreground
+  with a `timeout` of up to ten minutes and waits for long ones with a
+  foreground loop that ends on its own, which keeps it in its turn; the
+  documentation is silent on a better way. The main session answers such
+  notices without a tool call.
+- **A green end-to-end test is not run twice on the same code (version
+  0.26.0).** The close of a milestone ran an end-to-end selection again
+  for 17 minutes that the last task had run green, with only documentation
+  changed since. A test counts if it ran on a commit after which no file
+  the build or the tests use changed and its log shows it passed. The
+  implementer reports its end-to-end runs with commit and log file for
+  this.
+- **End-to-end tests share across components and wait in parallel
+  (version 0.26.0).** The full end-to-end run of the same project took 90
+  minutes at a backlog milestone. Every component group started and tore
+  down its own environment (about a fifth of the time), six subtests each
+  restarted it to check what survives a restart, and variants per image
+  ran one after another without any parallelism. The `test-writer` (rules
+  4 and 5) now shares one environment for the whole run, one run of an
+  expensive step for all checks that need it, and runs waiting subtests in
+  parallel within the capacity of the environment. One subtest per
+  criterion stays, so the filtered runs keep working. Existing projects
+  are not converted by `/wcc:upgrade`: that is test code, for a backlog or
+  feedback milestone.
+- **Large files are read by their parts (version 0.26.0).** Agents read source and test
+  files of up to 35,000 characters in full, some twice; a test-writer's
+  context grew past 300,000 tokens. Files of more than 400 lines are read
+  by listing their functions with Grep first, as the planning documents
+  are read by their headings.
 - **Reviews have a stopping rule.** Only blockers are fixed, the rest goes
   to BACKLOG.md, one round per task, the architecture is not up for debate.
   Reviewers without this limit always find something and hold everything
@@ -515,6 +579,7 @@ Typical changes and where to make them:
 | Scope of the final check | `agents/milestone-verifier.md` |
 | Kind and scope of the documentation | Interview question in `skills/idea/SKILL.md` and recommendations in `skills/idea/references/project-types.md`, section "Documentation" in `skills/idea/assets/IDEA.md` and `skills/spec/assets/SPEC.md`, rules in `skills/spec/SKILL.md` and `skills/spec/references/project-types.md`, writing rules in `agents/doc-writer.md`, check in `agents/milestone-verifier.md` |
 | Model of an agent | `model` in the header of `agents/*.md` |
+| How tasks are implemented: checks, debugging, waiting, result form | `agents/implementer.md`; the prompt it gets in step 7 of `skills/milestone/SKILL.md` |
 | What an upgrade changes in existing projects | `skills/upgrade/references/migrations.md`; the procedure in `skills/upgrade/SKILL.md` |
 | Handling of findings from manual testing | `skills/feedback/SKILL.md`, sections "Feedback" and "Feedback milestones" in `skills/milestone/SKILL.md`, README |
 | Which parts of the planning documents a milestone and its agents read | Section "Reading the planning documents" in `skills/milestone/SKILL.md`, the opening paragraph of `agents/test-writer.md`, `agents/code-reviewer.md` and `agents/milestone-verifier.md`, step 1 in `skills/feedback/SKILL.md` |
@@ -559,6 +624,8 @@ resource types, for example).
   with git and run the tests. Its prompt forbids any change to files. The
   `feasibility-checker` does not only judge, it tries things out: it has
   write access, and its prompt restricts it to `docs/wcc/experiments/`.
+  The `implementer` writes code and has no web access: what it needs to
+  know about libraries comes from the `researcher` through the plan.
 - Raise `version` in `plugin.json` with every change that changes the
   behaviour. If the change needs something in existing projects, it comes
   with an entry in `skills/upgrade/references/migrations.md`.
@@ -641,7 +708,11 @@ These points can only be settled in a running Claude Code installation.
    `--once` and worked. Not yet run: `/wcc:change`, `/wcc:status`,
    `/wcc:options`, `/wcc:prototype`, a backlog milestone and the close of
    a stage. Also not yet run: the fixed result form of subagents and the
-   run that stops after one milestone (since version 0.25.0). Also not yet run:
+   run that stops after one milestone (since version 0.25.0), the
+   `implementer` agent, its waiting loop, its own end-to-end runs and the
+   reuse of green end-to-end runs (since version 0.26.0).
+   Whether a plugin agent may list `PowerShell` and `TaskStop` in `tools:`
+   is inferred from the documentation, not tried. Also not yet run:
    the documentation task with the `doc-writer` (since version 0.13.0),
    `/wcc:feedback` with a feedback milestone (since version 0.15.0) and
    `/wcc:upgrade` (since version 0.16.0), the open decisions (since

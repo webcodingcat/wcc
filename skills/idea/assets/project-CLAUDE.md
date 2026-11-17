@@ -57,6 +57,13 @@ something is unclear.
   - When in doubt, it is not allowed.
 - Stay within the task. Fix a problem in other code only if it blocks the
   task; otherwise report it for BACKLOG.md.
+- Never build a way into the product or the tests for debugging: no debug
+  script, endpoint, port, account, key, shell access, hidden command or
+  encoded payload. Temporary aids stay outside the repository and are
+  never committed. A protection the project builds (access control, an
+  isolated component, a network boundary) is never worked around, not even
+  temporarily. If a cause cannot be found without such access, the task
+  stops and reports it.
 - A task cannot be finished, and must not be forced, when:
   - something destructive or irreversible would be needed
   - a decision with high consequences is needed that nothing settles yet
@@ -117,9 +124,13 @@ Several agents work in worktrees of the same repository, so:
   `docs/wcc/STATUS.md`.
 - Tests that need expensive setup (a running service, a VM, a database, a
   logged-in browser session) share one instance unless they test the setup
-  itself. Each criterion still has a test or subtest of its own that carries
-  its ID and no other, so the test filter can select it alone. No fixed waits
-  in tests; wait for a condition with a deadline.
+  itself, also across components: one instance for the whole run, not one
+  per group. Checks that need an expensive step (a restart, a recreation)
+  share one run of it. Independent subtests that mostly wait (variants per
+  image or platform, a VM booting) run in parallel, within the capacity of
+  the environment. Each criterion still has a test or subtest of its own
+  that carries its ID and no other, so the test filter can select it
+  alone. No fixed waits in tests; wait for a condition with a deadline.
 - Test files live next to the code under test or in the test directory,
   never in `docs/` or other folders for documentation, assets or
   configuration. A test that checks a document reads it by its path.

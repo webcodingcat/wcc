@@ -156,22 +156,21 @@ cost the user's usage limits many times over and push out what matters.
 - Run every build, test and lint command with its output in a file, here and
   in every subagent, and read only the summary and the failures. Never read a
   whole log of a passing run.
-- Ask every subagent you start for a short result in a fixed form, nothing
-  else: no logs, no code, no repetition of its task, no account of how it
-  worked. For an implementation task:
-
-  ```
-  Status: green | not green after <n> attempts | stopped: <reason>
-  Commit: <hash>
-  Files: <changed files, one line>
-  Decisions: <one line each: what, why, cost of change>
-  Interface changes: <one line each, additions included; or none>
-  Findings: <one line each, for BACKLOG.md or "Open decisions"; or none>
-  Failures: <only if not green: failing tests with the decisive message line>
-  ```
-
-  The agents in `agents/` have their own result forms; pass them nothing
-  that asks for more.
+- Every agent of this plugin returns a short result in a fixed form, without
+  logs, code or an account of how it worked. Ask for nothing more.
+- Implementation goes to the `implementer` agent, not to a general-purpose
+  one. A general-purpose agent starts with about four times the context,
+  which every one of its turns sends again, and an implementation task
+  takes dozens of turns. The `implementer` also carries the rules for
+  checks, debugging, waiting and its result, so the prompt holds only the
+  task: what to build, the criteria, the tests, the section names, the
+  research and EXPERIMENTS.md entries, the check commands, the branch.
+  Do not repeat the project CLAUDE.md or the agent's rules in it.
+- A notice that an agent "is waiting on its own background work" needs
+  nothing from you: end the turn without a tool call and wait for its
+  result. Every call you make there sends the whole context once more. The
+  same holds for your own waiting: start a long run in the background with
+  its output in a file, and wait for its notice instead of checking on it.
 
 ## Preflight
 
@@ -262,20 +261,22 @@ SPEC.md names elevated rights and this session does not have them, set
      breaks) back to a `test-writer` for its group.
 
    Then commit all tests together.
-7. **Implement.** Give each task except `Documentation` to a subagent with only its task, the
-   relevant interfaces, the research results and EXPERIMENTS.md entries it
-   needs, the tests it has to
-   satisfy, the commands of its checks (step 8), and UI-SPEC.md if it
-   builds user interface. Ask for its result in the form under "Keeping the
-   main session small". Its interface changes list every change to what
-   other components use, an added field, parameter, return value or
-   endpoint included: such additions are allowed, but ARCHITECTURE.md
-   learns of them only from that list. Run tasks in
+7. **Implement.** Give each task except `Documentation` to the
+   `implementer` agent with only its task, the names of the sections with
+   the relevant interfaces, the research results and EXPERIMENTS.md
+   entries it needs, the tests it has to satisfy, the commands of its
+   checks (step 8), and UI-SPEC.md if it builds user interface. Its result
+   lists every change to what other components use, additions included:
+   ARCHITECTURE.md learns of them only from that list. Fixes of blockers,
+   of the verifier's findings and of failures of the full suite go to the
+   `implementer` as well. Run tasks in
    parallel, each in its own worktree, only if they do not depend on each
    other and touch different files, and never more at once than the value
    of `Parallel agents` in STATUS.md (see "Parallelism"). Everything else
    runs one after another. The limit counts every subagent that is running,
-   so the `code-reviewer` of a finished task takes one of the places.
+   so the `code-reviewer` of a finished task takes one of the places. Two
+   tasks whose tests include end-to-end tests do not run at the same time:
+   their runs would collide in the real environment.
 8. **Done means green, then reviewed.** A task is done when its own tests,
    the other tests of the packages or modules it changed, the linter on
    those and the build pass. The whole unit suite and the linter over the
@@ -285,6 +286,14 @@ SPEC.md names elevated rights and this session does not have them, set
    narrower form of the commands in the project CLAUDE.md (a package path, a
    directory, the test filter of step 6); if a tool takes no such argument,
    run its full command. Tests of tasks that are still open may fail.
+
+   The task's own tests include its end-to-end tests, selected with the
+   filter of its criterion IDs, and the `implementer` runs them itself.
+   Do not run them in the main session first and hand the failures over:
+   you would wait for the run and the agent would have to read the log
+   anyway. Give it the end-to-end command with the filter. Before the
+   review, check in its result that the run is green on the commit it
+   names (see "End-to-end tests" for its log).
 
    Commit, then run the `code-reviewer` agent once with the task, its
    criteria, the commit and the names of the SPEC.md and ARCHITECTURE.md
@@ -301,7 +310,13 @@ SPEC.md names elevated rights and this session does not have them, set
    and treat it like any other task (step 8). What it could not document
    goes to BACKLOG.md; behaviour it found to contradict SPEC.md is a bug to
    fix like a task. Then start the full test suite and the linter over the
-   whole project in the background, with their output in files; now every
+   whole project in the background, with their output in files. Start it
+   only now: after every task is reviewed and its blockers are fixed, and
+   after the documentation task has run. Started earlier to save time, it
+   tests code a review may still change, so its end-to-end part runs
+   again; in one project a review found a blocker in a test after the
+   90-minute run had started. And the `doc-writer` cannot run its examples
+   while end-to-end tests hold the real environment. Now every
    test and every lint check must pass. Which end-to-end tests
    belong to it depends on the option `Full e2e run` (see "End-to-end
    tests"). While it runs, run the `milestone-verifier` agent once, with
@@ -363,6 +378,20 @@ The one exception is a change to the shared harness that every end-to-end
 test depends on (its setup, its teardown); then run all and say why. Note in
 STATUS.md under "Last done" the exact command that ran, or that none ran.
 
+Do not run an end-to-end test twice on the same code. A test of the
+selection, or of a full run, that already ran green during this milestone
+counts at the close if all of this holds:
+
+- it ran on a commit, and `git diff --name-only <commit> HEAD` shows no file
+  the build or the tests use (only documentation and planning documents);
+- its log file still exists, ends with the exit line and shows this test or
+  subtest itself as passed, not only its group.
+
+Then run only the rest. Note under "Last done" in STATUS.md which tests
+counted from which commit and log. One end-to-end run often takes a quarter
+of an hour; in one project the close ran a test again for 17 minutes that
+the last task had run green, with nothing but documentation changed since.
+
 A full run that fails at a backlog milestone or a stage end found a
 regression of an earlier milestone: fix it like a task of the milestone that
 is closing.
@@ -377,7 +406,8 @@ A task gets three repair attempts after its first implementation. If its
 tests, the linter or the build still fail after the third, stop working on it.
 The same applies at once when one of the stop conditions in the project
 CLAUDE.md is met: a missing credential, missing elevated rights, a package
-that cannot be installed, a destructive action, an open decision with high
+that cannot be installed, a destructive action, a cause that cannot be
+found without building debug access into the product, an open decision with high
 consequences, a change to SPEC.md or ARCHITECTURE.md beyond what the project
 CLAUDE.md allows.
 

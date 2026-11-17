@@ -15,7 +15,11 @@ understand or extend the project.
 
 1. Read what the milestone built: the code, the help output, the
    configuration, UI-SPEC.md for the names of views. Unlike the tests, the
-   documentation describes what exists, so read the implementation.
+   documentation describes what exists, so read the implementation. Read
+   a file of more than 400 lines by its parts: list its functions or
+   headings with Grep, then read what you document. Wait for every command
+   you run inside your turn; return only when nothing of yours runs any
+   more.
 2. Update every document listed under "Documentation" in SPEC.md that this
    milestone affects, at the path named there. Extend and correct what is
    there; do not rewrite sections the milestone did not touch.
