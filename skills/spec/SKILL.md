@@ -1,0 +1,185 @@
+---
+name: spec
+description: Derive SPEC.md, ARCHITECTURE.md and ROADMAP.md from IDEA.md, choose the tech stack, check feasibility and present a short summary for approval. Use this whenever IDEA.md exists and the user wants the spec, the stack, the architecture or the plan for a project, or says "continue with the spec".
+---
+
+# spec: derive the spec, the architecture and the roadmap
+
+SPEC.md, ARCHITECTURE.md and ROADMAP.md are Claude's documents. The user reads
+only the summary at the end, so these documents must be correct without them
+reading the details.
+
+All planning documents live in `docs/wcc/`; file names below are relative to it.
+
+## Preconditions
+
+- STATUS.md says `IDEA_DONE`: start with step 1.
+- STATUS.md says `SPEC_REVIEW`: an earlier run stopped while waiting for
+  approval. Do not derive anything again; go straight to step 7 and show the
+  summary of the existing documents.
+- Anything earlier: point to `/wcc:idea` and stop. Anything later: the spec is
+  approved; changes go through `/wcc:change`.
+- No clarification session is still open.
+
+## Language
+
+Talk to the user in the language they have configured (the `language`
+setting or their own CLAUDE.md), otherwise in the language they write in,
+also for the summary in step 7; this skill does not set one. A call without
+text carries no language: then use the configured one, or the language of
+the conversation so far, never the language of the documents or of this
+skill, which are English. The options quoted below are given in English:
+offer them in the user's language. Everything written to the repository is
+English: SPEC, ARCHITECTURE, ROADMAP and the other planning documents, code
+and repository docs. Other people may work on the project.
+
+## Step 1: stack
+
+Read everything in `decisions/`. A decision recorded there, for example from a
+stack discussion during the interview, is binding. Respect the constraints in
+IDEA.md. Otherwise choose the stack yourself. Weigh, in this order: fits the
+problem, the user can maintain it, simplicity, mature tooling for automated
+tests.
+
+Do not choose from memory. Before deciding, give the candidates to the
+`researcher` agent: current stable versions, whether they are maintained,
+whether the parts work together in these versions, and known pitfalls for
+this use. A stack planned on outdated knowledge fails late and expensively.
+Write the versions into SPEC.md and record the choice, the rejected
+alternatives and the sources in DECISIONS.md.
+
+## Step 2: SPEC.md
+
+Use `assets/SPEC.md`. Rules:
+
+- Refer to the goals in IDEA.md by number. Do not rephrase them.
+- Every requirement has an ID and at least one checkable acceptance criterion.
+- Every acceptance criterion states how it is verified: `auto` (automated
+  test), `browser` (browser-driven test) or `manual` (visual check by the
+  user). Use `manual` only where nothing else is possible.
+- Cover only the first version. The target vision is handled in the architecture.
+- List under "Accounts and secrets" every account, API key and
+  environment variable the project needs, by name. `/wcc:prepare` checks
+  them while the user is present, so a missing key does not stop the run.
+- Derive "Documentation" from IDEA.md and `references/project-types.md`:
+  one entry `D<n>` per document with path, audience and content, kept apart
+  from `docs/wcc/`, which holds planning documents and is no documentation
+  for anyone but Claude. Give each document criteria that a test can check
+  where possible (every command, endpoint or setting is described; every
+  example runs; every link resolves) and `manual` only for readability.
+  Phrase them against what is built, not against the whole spec, so they
+  hold at the close of every milestone. If a documentation tool is needed
+  (a site generator, a reference generator), it is part of the stack. If
+  IDEA.md says "none" for both, write "none" and the reason.
+- State under "Machine prerequisites" whether build, tests or
+  operation need administrator or root rights, and for what. Avoid the need
+  where the design allows it: a run with elevated rights gives every agent
+  those rights. If it cannot be avoided, the user has to start Claude Code
+  elevated for the milestones, and has to know that before approving.
+
+## Step 3: ARCHITECTURE.md
+
+Use `assets/ARCHITECTURE.md` and read `references/project-types.md` for the
+rules of the project type. Rules:
+
+- Design interfaces and structure for the whole target vision from IDEA.md.
+- For every item of the target vision write one or two sentences on how it will be
+  added later without changing the core. If the honest answer is "the core has
+  to be rebuilt", the design is wrong: fix it now.
+- Do not rule out anything listed under "Possible later".
+- Describe the interfaces between components precisely enough that components
+  can be built in parallel.
+- Settle every decision with high consequences now: data schema, file and
+  save formats, public URLs and API shapes, authentication, anything that
+  later needs a migration or breaks clients. During the run nobody is there
+  to take them, and a run that meets an open one has to wait for the user.
+  Record each in DECISIONS.md with `Cost of change: high`.
+
+If the project has a user interface, also write UI-SPEC.md from
+`assets/UI-SPEC.md`. Agents that build screens in parallel each invent their
+own look unless the decisions are fixed beforehand. Keep it as short as the
+project's interface is small; decide what the user did not specify and record
+it as an assumption.
+
+## Step 4: ROADMAP.md
+
+Use `assets/ROADMAP.md`. Rules:
+
+- Every milestone delivers something that runs and can be checked.
+- Milestone 1 is a walking skeleton including the test harness against the
+  real environment (real hypervisor, real browser, real database). The bare
+  project scaffold is not part of it; `/wcc:prepare` creates that.
+- Plan the first version in detail. List target vision milestones only roughly.
+- Mark which milestones or tasks are independent of each other.
+- Mark every milestone whose `manual` criteria later milestones depend on
+  with `Stops for: manual check`. The run stops there for the user.
+
+## Step 5: feasibility
+
+Run the `feasibility-checker` agent on IDEA, SPEC and ARCHITECTURE. It finds
+the riskiest assumptions and verifies them by research or a small experiment
+in `experiments/`. If an assumption fails, change the architecture now and
+record it in DECISIONS.md.
+
+The agent installs nothing. If it reports missing tools, show the user the
+list in one go: tool, version, what it is needed for, install command. Offer
+"Installed" and "Skip". After "Installed", check that the tools
+are really there and run the agent again for the checks that were waiting.
+A tool the project itself needs goes into the stack or into
+"Machine prerequisites" in SPEC.md, so `/wcc:prepare` checks it on every
+machine.
+
+The agent cannot get administrator rights. For every check it returns as
+`needs elevated rights`, the user is present, so ask now instead of
+guessing: say what is being checked and why it matters, give the exact
+command to run in a terminal with elevated rights, and offer "Report
+result" and "Skip". Evaluate a reported result like any other. A
+skipped check, for a missing tool or for missing rights, becomes an entry in
+DECISIONS.md with `Type: assumption` and `Cost of change: high`, and appears
+in the summary.
+
+If the agent reports that the project itself needs elevated rights, write
+that into "Machine prerequisites" in SPEC.md.
+
+When no check waits for the user any more, write EXPERIMENTS.md from
+`assets/EXPERIMENTS.md`: one entry per checked assumption, with what is
+needed to repeat the check. Refer to the entry (`E<n>`) in DECISIONS.md
+wherever a decision rests on it. Then delete the `experiments/` folder. The
+code of an experiment is not reused, only what it showed; keeping the
+summary instead of the code leaves nothing that ages or gets built by
+accident.
+
+## Step 6: review
+
+Run the `spec-reviewer` agent, once. Fix blockers. Everything else goes to
+BACKLOG.md.
+
+## Step 7: summary and approval
+
+Set STATUS.md to `SPEC_REVIEW`. Then give the user a summary of at most ten
+lines:
+
+- stack, with one line of reasoning
+- components
+- documentation: which documents, for whom, or none
+- milestones of the first version
+- verification in one line: how many criteria are `auto`, `browser` and
+  `manual`, and after which milestones the run stops for a manual check. This
+  tells the user how unattended the run really is and lets them object to a
+  criterion that is manual without need.
+- what the user has to provide before the run: accounts, keys, tools, and
+  elevated rights if the project needs them
+- the decisions with high consequences from DECISIONS.md, and the most
+  consequential assumptions, together at most five. If there are more
+  decisions with high consequences, show them all in a list below the
+  summary: the user approves them here, and nowhere else.
+
+The user is present here, so you may ask bundled questions in the same format
+as in the interview. Wait for approval.
+
+If the user changes something (for example a different stack or an additional
+tool), work it into all affected documents and record it in DECISIONS.md. If the
+change touches the idea itself, change IDEA.md first.
+
+After approval set STATUS.md to `READY` and tell the user the next step is
+`/wcc:prepare`, followed by `/wcc:milestone`.

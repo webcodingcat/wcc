@@ -1,0 +1,11 @@
+{
+  "name": "webcodingcat",
+  "owner": { "name": "WebCodingCat" },
+  "plugins": [
+    {
+      "name": "wcc",
+      "source": "./",
+      "description": "Idea-to-project workflow with interview, spec, and unattended test-driven milestones."
+    }
+  ]
+}
