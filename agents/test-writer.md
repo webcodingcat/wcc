@@ -110,6 +110,15 @@ another one.
     project grows. Such a test is written once and fails until the
     documentation task of the milestone has run.
 
+You may get findings about the tests themselves instead of criteria: the
+end-to-end run is too slow, the harness lacks something. Then write tests
+only for new logic in the harness (a limiter, the synchronisation of a
+shared step, a fixture with state). Write no test that reads the test
+sources to check how tests are written (which test starts what, that a
+step is defined once, that subtests call a helper): such tests fix a
+structure, not a behaviour. Whether the change is right shows in the
+existing tests staying green and in the measurement the plan names.
+
 Write only test files. Do not edit the planning documents and do not commit;
 the main session does both.
 

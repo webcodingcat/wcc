@@ -546,6 +546,8 @@ branch `wcc/f<n>` like a milestone, with these differences:
    as `F<n>.<k>` if it has none, so the user confirms the fix.
    A minor finding stays within SPEC.md and UI-SPEC.md: if the fix would
    change what they say, it is a wish (see 2).
+   A finding about the tests themselves (their run time, their structure,
+   the harness) follows "Findings about the tests" below.
 4. Implement, review and close like a milestone (steps 7 to 9), with the
    documentation task if a fix changes what users or developers see.
    Delete the files in `feedback/` the plan names once it is closed.
@@ -553,6 +555,37 @@ branch `wcc/f<n>` like a milestone, with these differences:
 
 `F` entries do not count as milestones for "Backlog milestone after", and
 they do not reset that count.
+
+## Findings about the tests
+
+A feedback finding or backlog item can concern the tests rather than the
+product: the end-to-end run takes too long, groups set up the same
+environment again, a test is flaky, the harness lacks something. "Tests
+first" does not mean a test about the tests here. What shows that such a
+change is right is that the existing tests stay green with the same
+coverage, plus a measurement where the finding is about run time or
+flakiness (the run time before and after, a repeated run).
+
+- New logic in the harness gets tests of its own, like any code: a
+  limiter, a synchronisation of shared steps, a fixture with state. A
+  fault there makes the long runs unreliable, and a fast test finds it in
+  seconds.
+- No tests that check how the tests are written: none that read the test
+  sources to check which test starts what, that a step is defined once,
+  or that subtests call a helper. They fix a structure instead of a
+  behaviour, and every deliberate exception then costs a change and a
+  recorded decision. Rules about how tests are written live in the project
+  CLAUDE.md and the `test-writer`, and the review checks them.
+- Plan the change with its measurement: the command, the value before
+  (from the finding or a run on the base branch) and where the result is
+  noted, usually "Last done" in STATUS.md. Where tests are restructured,
+  the plan lists for every criterion its test or subtest before and
+  after, so the review can see that none was lost or weakened.
+
+In one project a feedback milestone about a 90-minute end-to-end run got
+twelve new tests: eight for a new limiter and the concurrent use of a
+shared step, which belong there, and four that read the test sources to
+enforce the new structure.
 
 ## Backlog milestones
 
@@ -575,7 +608,8 @@ A backlog milestone works on the branch `wcc/b<n>` like this:
    component into tasks of a few items each, and group small tasks for one
    review as step 5 describes. Documentation gaps among them are
    collected into the documentation task; it runs if one exists or if an
-   item changed behaviour users or developers see.
+   item changed behaviour users or developers see. Items about the tests
+   themselves follow "Findings about the tests" below.
 3. Items that would need a change to SPEC.md or ARCHITECTURE.md move from
    BACKLOG.md to "Open decisions" in STATUS.md (see there) and are listed in
    the report.

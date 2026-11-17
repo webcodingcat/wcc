@@ -235,6 +235,18 @@ when working with Claude Code without such rules.
   criterion stays, so the filtered runs keep working. Existing projects
   are not converted by `/wcc:upgrade`: that is test code, for a backlog or
   feedback milestone.
+- **Findings about the tests get no tests about the tests (version
+  0.27.0).** A feedback milestone about a 90-minute end-to-end run got
+  twelve new tests before anything was changed: eight for a new memory
+  limiter and the concurrent use of a shared step, and four that read the
+  test sources to enforce the new structure. "Tests first" was meant for
+  the product. For a finding about the tests, the proof is that the
+  existing tests stay green with the same coverage, plus a measurement of
+  run time or flakiness. New logic in the harness is code and gets tests;
+  rules about how tests are written live in the project `CLAUDE.md` and
+  the `test-writer` and are checked by the review, not by tests that fix
+  a structure (section "Findings about the tests" in
+  `skills/milestone/SKILL.md`).
 - **Large files are read by their parts (version 0.26.0).** Agents read source and test
   files of up to 35,000 characters in full, some twice; a test-writer's
   context grew past 300,000 tokens. Files of more than 400 lines are read
