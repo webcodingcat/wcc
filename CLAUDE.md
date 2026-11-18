@@ -226,11 +226,17 @@ Code works on a project without such rules.
   they could think of; tests then outgrew the product two to one.
 - **Tests are planned before they are written.** Each phase writes a test
   map: one row per promise, its level, its test name. A promise is tested
-  where it arises, behaviour many resources share is one table-driven test,
-  glue code and configuration get no test, and only edge cases the
+  where it arises, behaviour many resources share is tested with all its
+  cases where it is implemented and with one case per resource to show it
+  is wired in, glue code and configuration get no test, and only edge cases the
   requirement names, that happen in normal operation, or that would destroy
   data or leak a secret. The map is checked before the tests are written;
   afterwards a Grep finds every test name, and finding none is a failure.
+  The rule for shared behaviour once said only "one table-driven row over
+  all of them"; in the reference project's second phase the planner tested
+  paging, filters, sorting and labels where they were implemented and then
+  again with every sort key and filter on every endpoint, and test code
+  grew to 1.5 times the product code.
 - **Tests come first, from a separate agent.** The `test-writer` does not
   see the implementation and writes exactly the rows. Tests written by the
   agent that implements would check what it built, not what was asked; a

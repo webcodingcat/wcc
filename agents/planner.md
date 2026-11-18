@@ -123,8 +123,10 @@ proves it:
   client, a handler mapping errors, a UI backend) gets at most one row for
   the whole path.
 - Behaviour many resources or endpoints share (labels, sorting, paging, not
-  found, body limits, unknown fields) is one table-driven row over all of
-  them, where it is implemented once.
+  found, body limits, unknown fields) is tested where it is implemented
+  once, with all its cases there. Over the resources or endpoints that use
+  it, at most one table-driven row with one case each that proves it is
+  wired in (one filter, one sort key, one page), never the cases again.
 - No rows for glue code, registration of routes or middleware, data types
   and field tags, configuration without logic, and none that read source
   files or fix how code or tests are structured.

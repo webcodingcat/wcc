@@ -70,7 +70,9 @@ conversation, ask when something is unclear.
 - No tests for cases a requirement does not name unless they happen in normal
   operation or their failure destroys data or leaks a secret; none for glue
   code, data types or configuration without logic; none that read source
-  files. Behaviour many resources share is tested once, table-driven.
+  files. Behaviour many resources share is tested with all its cases where
+  it is implemented; across the resources only one case each, to show it
+  is wired in.
   Shared helpers are used, not copied.
 - End-to-end tests share the environment, expensive steps (a restart) and
   booted machines; one subtest per row of the map, named with its requirement
