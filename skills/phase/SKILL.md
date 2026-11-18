@@ -122,9 +122,12 @@ plans, it was interrupted: skip this and resume.
 Otherwise start the `planner` with the phase ID and the open decisions in
 STATUS.md that concern the phase (step 1 of the agent). Present its
 assumptions as one short list, "this is how I would do it", one line each,
-and let the user correct any of it. Ask its questions in the same round,
-each with its options, the recommendation and "I don't know" (take the
-recommendation). Keep its research list for step 4.
+and let the user correct any of it. Then ask its questions, after the list
+and apart from it: each on its own with AskUserQuestion, its options, the
+recommendation and "I don't know" (take the recommendation); without menus,
+numbered, saying that each needs an answer. A reply to the list answers
+none of them; ask again for those still open. Keep its research list for
+step 4.
 
 Write the confirmed assumptions and the answers to `phases/<id>/CONTEXT.md`,
 one line each. An answer that settles an open decision is worked in as

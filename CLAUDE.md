@@ -152,9 +152,12 @@ Code works on a project without such rules.
 - **Each phase starts with "Discuss"**: Claude reads the requirements and the code, presents
   how it would build what they leave open as a list of assumptions to
   confirm, and asks only the open decisions of the phase and real grey
-  areas, in one round, recorded in `CONTEXT.md`. Confirming a list is faster
-  than answering questions, and the user is there anyway because they
-  started the phase.
+  areas, recorded in `CONTEXT.md`. Confirming a list is faster than
+  answering questions, and the user is there anyway because they started
+  the phase. The questions come after the list, each on its own: in the
+  reference project they stood in the same message as the assumptions, the
+  user answered the list with "fits" and three questions were taken as
+  answered with their recommendation.
 - **Questions work without menus.** Where the AskUserQuestion tool is
   missing or its menus do not show (a remote session), the skills ask in
   text with numbered options, without a setting.
