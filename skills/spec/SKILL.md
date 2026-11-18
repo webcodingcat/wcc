@@ -141,7 +141,9 @@ in `research/experiments/`. If an assumption fails, change the architecture now 
 record it in DECISIONS.md.
 
 The agent installs nothing. If it reports missing tools, show the user the
-list in one go: tool, version, what it is needed for, install command. Offer
+list in one go: tool, version, the check that waits for it, install command,
+and whether the project needs it anyway (`/wcc:prepare` would ask for it
+later) or only this check (it can be removed afterwards). Offer
 "Installed" and "Skip". After "Installed", check that the tools
 are really there and run the agent again for the checks that were waiting.
 A tool the project itself needs goes into the stack or into
