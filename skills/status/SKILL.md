@@ -11,24 +11,26 @@ call without text carries no language: then use the configured one, or the
 language of the conversation so far, never the language of the documents or
 of this skill, which are English. This skill only reads; it changes no file.
 
-All planning documents live in `docs/wcc/`. If that folder does not exist,
+All planning documents live in `.project/`. If that folder does not exist,
 say that the project has not been started and that `/wcc:idea` begins it.
 
-Read STATUS.md and ROADMAP.md, FEEDBACK.md if it exists, and the plan of the current milestone in
-`plans/` if there is one. Then report in at most ten lines:
+Read STATUS.md and ROADMAP.md, FEEDBACK.md if it exists, and the plan of the current phase in
+`phases/<id>/PLAN.md` if there is one. Read STATUS.md by its first line,
+"Current state", "Open manual checks" and "Open decisions", and of
+ROADMAP.md the section of the current milestone. Then report in at most ten lines:
 
 - the status and what it means
-- progress: milestones done and open in the current stage, and tasks done and
-  open in the current milestone
+- progress: phases done and open in the current milestone, and plans done
+  and open in the current phase
 - what waits for the user: open manual checks (results go to
-  `/wcc:feedback`), the reason for `BLOCKED`, tasks marked `[!]` in the
+  `/wcc:feedback`), the reason for `BLOCKED`, plans marked `[!]` in the
   plan, entries under "Open decisions" in STATUS.md (answered with
   `/wcc:change`; name those `In clarification` and whether their result
-  file in `decisions/` exists already), and in older projects backlog items marked
-  `needs decision`
-- findings queued in FEEDBACK.md and open `F` entries, if any
-- the options from the section "Options" in STATUS.md in one line, only
-  where they differ from the defaults (`/wcc:options` changes them)
+  file in `decisions/` exists already)
+- findings queued in FEEDBACK.md and open `F` phases, if any
+- the backlog in one line, counted per severity, most severe first (for
+  example `Backlog: 1 security, 2 bug, 3 later`), with `/wcc:change` to
+  take items in; nothing if it is empty
 - the wcc version, only if the line `wcc version:` in the project CLAUDE.md
   is missing or older than `version` in `.claude-plugin/plugin.json` two
   folders above this skill folder: say that `/wcc:upgrade` brings the
@@ -39,16 +41,17 @@ Read STATUS.md and ROADMAP.md, FEEDBACK.md if it exists, and the plan of the cur
 |--------|------|
 | `IDEA` | `/wcc:idea` |
 | `IDEA_DONE`, `SPEC_REVIEW` | `/wcc:spec` |
-| `READY` | `/wcc:prepare`, then `/wcc:milestone` |
-| `IN_PROGRESS`, `MANUAL_CHECK`, `BLOCKED` | `/wcc:milestone` |
-| `DONE` | `/wcc:change` for the next stage |
+| `READY` | `/wcc:prepare`, then `/wcc:phase` |
+| `IN_PROGRESS`, `BLOCKED` | `/wcc:phase` |
+| `MANUAL_CHECK` | `/wcc:feedback`, then `/wcc:phase` |
+| `DONE` | `/wcc:change` for the next milestone |
 
-Every `/wcc:milestone` builds one milestone and stops. For `IN_PROGRESS`
-between two milestones, recommend starting it in a new session or after
-`/clear`: the next milestone reads the project files afresh and needs
+Every `/wcc:phase` builds one phase and stops. For `IN_PROGRESS`
+between two phases, recommend starting it in a new session or after
+`/clear`: the next phase reads the project files afresh and needs
 nothing from the old context.
 
 Check that the files agree with each other and name every contradiction, for
-example `DONE` with unchecked milestones, `IN_PROGRESS` without an approved
-spec, or a checked milestone whose plan has open tasks. Do not repair
+example `DONE` with unchecked phases, `IN_PROGRESS` without an approved
+spec, or a checked phase whose plan has open plans. Do not repair
 anything; say what is inconsistent and let the user decide.

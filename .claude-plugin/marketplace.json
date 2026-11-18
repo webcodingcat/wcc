@@ -5,7 +5,7 @@
     {
       "name": "wcc",
       "source": "./",
-      "description": "Idea-to-project workflow with interview, spec, and unattended test-driven milestones."
+      "description": "Idea-to-project workflow with interview, requirements, spec and test-driven phases."
     }
   ]
 }

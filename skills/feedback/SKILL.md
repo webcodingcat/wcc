@@ -1,162 +1,155 @@
 ---
 name: feedback
-description: Show the open manual checks of a wcc project with a guide how to test each one, and take what the user noticed while trying a wcc project by hand - a bug, something that looks wrong, the result of a manual check, a wish - with or without a screenshot, sort it with the user and record it where the next milestone run picks it up. Use this whenever the user reports a finding from manual testing, says "I noticed", "this does not work", "this looks wrong", "R1.2 fits" or "here is a screenshot" in a wcc project. Without arguments, also use it when the user asks "what do I have to test", "show the manual checks" or "how do I test this".
+description: Walk the user through the open manual checks of a wcc project one at a time, preparing what can be prepared, and take what the user noticed while trying a wcc project by hand - a bug, something that looks wrong, the result of a manual check, a wish - with or without a screenshot, sort it with the user and record it where the next phase picks it up. Use this whenever the user reports a finding from manual testing, says "I noticed", "this does not work", "this looks wrong", "AUTH-03 fits" or "here is a screenshot" in a wcc project. Without arguments, also use it when the user asks "what do I have to test", "show the manual checks" or "how do I test this".
 argument-hint: "[what you noticed]"
 ---
 
-# feedback: record what the user found by hand
+# feedback: manual checks and findings from the user
 
 What the user noticed: $ARGUMENTS
 
-All planning documents live in `docs/wcc/`; file names below are relative to it.
+All planning documents live in `.project/`; file names below are relative to
+it.
 
 Talk to the user in the language they have configured (the `language`
 setting or their own CLAUDE.md), otherwise in the language they write in;
 this skill does not set one. A call without text carries no language: then
 use the configured one, or the language of the conversation so far, never
 the language of the documents or of this skill, which are English.
-Everything written to the repository is English, so a finding is recorded in
-English, whatever language the user reported it in.
+Everything written to the repository is English, whatever language the user
+reported in.
 
-The user is here now, and the milestone run that fixes the finding later is
-not watched. So this skill asks what it needs to know, and records each
-finding so completely that the run can act on it without asking.
+The user is here now; the run that fixes a finding later is not watched. So
+ask what you need, and record each finding so completely that the run can
+act on it without asking.
 
 ## 1. Read
 
-Read STATUS.md, ROADMAP.md, BACKLOG.md, UI-SPEC.md if it exists, and the
-plan of the current milestone in `plans/`. SPEC.md and ARCHITECTURE.md grow
-large; if one has more than 300 lines, list its headings with Grep and read
-the sections the findings concern, as the section "Reading the planning
-documents" of the milestone skill (`../milestone/SKILL.md`) describes.
+Read STATUS.md, ROADMAP.md, UI-SPEC.md if it exists, and the folder of the
+current phase in `phases/`. Read REQUIREMENTS.md, SPEC.md and ARCHITECTURE.md by
+their headings if they have more than 300 lines.
 
 If the status is earlier than `READY`, nothing is built yet: feedback on the
 idea or the spec goes to `/wcc:spec` during `SPEC_REVIEW` and to
 `/wcc:change` otherwise. Say so and stop.
 
-## Without arguments: show the open checks
+If STATUS.md says `IN_PROGRESS`, ask once whether a `/wcc:phase` run is
+going right now; the answer decides where findings go (step 5).
 
-If the user gave no text and no image, show every entry under "Open manual
-checks" in STATUS.md, numbered, each with its test guide: start, setup,
-steps and what to expect. Put the checks of a milestone waiting in
-`MANUAL_CHECK` first and say that the run waits for them. If several checks
-share the start and setup, say that once.
+## 2. Without arguments: guided checks
 
-An entry without a guide (written before version 0.15.0) gets one now,
-from SPEC.md, UI-SPEC.md, the project CLAUDE.md and the code. Show it, but
-do not write it to STATUS.md if a run may be going (see 4).
+Walk through the open manual checks one at a time: those of a phase
+waiting in `MANUAL_CHECK` first, then the others under "Open manual checks"
+in STATUS.md, each with its guide from `phases/<id>/CHECKS.md`. If no
+check is open, say so and that findings can be reported with `/wcc:feedback
+<what you noticed>`.
 
-Then ask for the results, for example "1 and 3 fit, at 2 the animation
-flickers", with screenshots if helpful. Take the answer as the user's
-report and continue with step 2. If no check is open, say so and that
-findings of their own can be reported with `/wcc:feedback <what you
-noticed>`.
+For each check:
 
-## 2. Understand
+1. Prepare what you can, so the user only judges what needs a human: start
+   the program with the command of the project CLAUDE.md, create the data
+   or state the setup names, open the page. Say what you prepared. Do what
+   needs no decision and changes nothing outside the project; leave the
+   rest to the user with the exact step.
+2. Show the steps and what should happen, briefly: "This is what should
+   happen. Does it?" If the next check shares the setup, say so in one line.
+3. Take the answer in the user's words:
+   - "fits", "yes", "ok" or nothing: fits.
+   - a description of what is different: a finding (step 3).
+   - "skip": stays open.
+   - "not now, because ...": stays open, with the reason as a note in
+     `CHECKS.md`.
+   - "would be nice if ...": a wish (step 3).
+4. Record the result right away (step 5), so a session that ends early
+   loses nothing, and go on to the next check.
 
-Split the report into findings, one per problem. For each one, find out:
+A phase that changed start-up, migration or seed code gets one extra
+check first: stop everything, start from scratch, see that it comes up and
+shows real data.
+
+After the last check, sort the findings collected on the way (step 4).
+
+## 3. Understand a finding
+
+Split a report into findings, one per problem. For each:
 
 - what the user did, what happened, what they expected
-- which acceptance criterion it concerns, if any (`R<n>.<m>`). A finding
-  can also be the result of an open manual check in STATUS.md, "fits" or
-  "does not fit".
-- **Screenshots and other images:** look at them closely. The run cannot
-  see images from this conversation, so describe in words everything that
-  matters: the screen, the element, what is wrong with it, any text or
-  error shown. If the user named an image file on disk, also copy it to
-  `feedback/<short-name>.<ext>`.
+- which requirement it concerns (`AUTH-03`), if any; a check that does
+  not fit is a finding on its requirement
+- screenshots and other images: the run cannot see them, so describe in
+  words everything that matters (the screen, the element, what is wrong,
+  any text shown). An image file on disk is also copied to
+  `phases/F<n>/feedback/<short-name>.<ext>` once the `F` phase is known.
 
-Look at the code and SPEC.md to locate the cause; run the app or the tests if
-that settles a question quickly. Do not fix anything here: fixes are built
-test-first by the run. If the description is not enough to reproduce the
-problem, ask, all missing points in one question.
+Look at the code and REQUIREMENTS.md to locate the cause; run the program or a test
+if that settles it quickly. Fix nothing here: fixes are built test-first by
+the run. If the description is not enough to reproduce the problem, ask, all
+missing points in one question.
 
-## 3. Sort and confirm
+## 4. Sort and confirm
 
-Sort each finding:
+- **check ok**: an open check fits.
+- **bug**: the project does not do what REQUIREMENTS.md or UI-SPEC.md says, or is
+  plainly broken (a crash, lost data, an error the user cannot get past).
+- **minor**: within the requirements, cosmetic or nice to have.
+- **wish**: something the requirements do not say or say differently.
 
-- **check ok**: an open manual check fits.
-- **bug**: the project does not do what SPEC.md or UI-SPEC.md says, or it is
-  plainly broken (a crash, lost data, an error the user cannot get past). A
-  check that does not fit is a bug of its criterion.
-- **minor**: within SPEC.md, but cosmetic or nice to have.
-- **wish**: the user wants something SPEC.md does not say or says
-  differently.
-
-Present the findings as one question: one line each with the class, the
-reason and where it will go (see 5). Let the user correct it. Confirming a
-list is faster than a question per finding, and nothing is sorted without
-the user seeing it.
-
-A minor finding waits in the backlog for the next backlog milestone. Say so
-in its line, and offer to fix it **soon** instead: it then goes into the
-feedback milestone like a bug. Offer this once for all minor findings, not
-per finding; the user names the ones they want soon.
-
-## 4. Is a run going?
-
-If STATUS.md says `IN_PROGRESS`, a `/wcc:milestone` run may be working in
-this checkout right now, on its milestone branch. Writing ROADMAP.md or a
-plan under its feet would end up in its commits or collide with them. Ask
-whether a run is going, in the question of step 3.
-
-- A run is going: write the confirmed findings to FEEDBACK.md, the queue
-  (see 6), and touch nothing else. The next `/wcc:milestone` takes them up
-  at its start. A wish cannot go to `/wcc:change` now, because that edits
-  SPEC.md under the run's feet: queue it as `wish`. The run adds it to
-  "Open decisions" in STATUS.md; tell the user to run `/wcc:change` once
-  the run has stopped.
-- Otherwise, and for every other status: record them directly (see 5).
+Present all findings as one question, one line each with class, reason and
+destination, and let the user correct them. A minor finding is parked in
+the backlog; offer once, for all of them, to fix chosen ones **soon** in the
+feedback phase instead.
 
 ## 5. Record
 
-- **check ok**: remove the check from "Open manual checks" in STATUS.md.
-- **bug in a milestone waiting in `MANUAL_CHECK`** (a check of that
-  milestone that does not fit, or a bug in what only it builds): add it to
-  its plan `plans/M<n>.md` under "Findings from manual testing" and leave
-  its check open in STATUS.md with ` - does not fit, see plan`. The next
-  `/wcc:milestone` fixes it on that branch and asks again.
-- **other bugs, and minor findings the user wants soon**: a feedback milestone `- [ ] F<n> Feedback fixes` in
-  ROADMAP.md. If an unchecked `F` entry without tasks in its plan exists,
-  add to it. Otherwise insert a new one before the first unchecked entry of
-  the current stage that has not started (after the milestone waiting in
-  `MANUAL_CHECK`, if there is one), or after the last entry of the last stage
-  if every entry is checked; numbers continue from the highest `F`. Write
-  each one into `plans/F<n>.md` under "Findings", marked `bug` or `minor`:
-  what the user did, what happened, what SPEC.md expects or the user wants
-  instead, the criterion ID, the description of any image and the path of
-  any copied file. If STATUS.md says `DONE`, set it to
-  `READY`, because the roadmap has an open entry again.
-- **other minor findings**: BACKLOG.md, `- [ ] <finding> (source: feedback)`.
-- **wish**: it needs `/wcc:change`, which keeps all documents consistent.
-  Offer to run it now with the wish as its argument; the user is here, so
-  nothing has to wait. If they decline, add it to "Open decisions" in
-  STATUS.md, in the form the milestone skill describes there, with source
-  `feedback`, so it is not lost and shows up at the next `/wcc:milestone`.
+If a run is going, write the confirmed findings to FEEDBACK.md (step 6) and
+touch nothing else; the next `/wcc:phase` records them. A wish then waits
+there too; tell the user to run `/wcc:change` once the run has stopped.
+Otherwise record directly:
+
+- **check ok**: `Result: fits` in its `CHECKS.md`, and remove its line from
+  "Open manual checks".
+- **bug of a phase waiting in `MANUAL_CHECK`**: add it to
+  `phases/<id>/PLAN.md` under "Findings from manual testing", and set
+  `Result: does not fit, see plan` in `CHECKS.md`. The next `/wcc:phase`
+  fixes it on that branch and asks again.
+- **other bugs, and minor findings wanted soon**: an `F` entry in
+  ROADMAP.md. Add to an unchecked `F` phase whose `PLAN.md` has no plans yet;
+  otherwise insert `- [ ] F<n> Feedback fixes` before the first entry of the
+  current milestone that has not started (after a phase waiting in
+  `MANUAL_CHECK`), or after the last entry if all are checked; numbers
+  continue from the highest `F`. Write each finding into
+  `phases/F<n>/PLAN.md` under "Findings", marked `bug` or `minor`, with
+  what the user did, what happened, what the requirement expects, its ID,
+  the description of any image and the path of any copied file. If STATUS.md
+  says `DONE`, set `READY`.
+- **other minor findings**: BACKLOG.md, `- [ ] minor: <component>: <what
+  is wrong> (source: feedback)`. The backlog is a parking lot the user
+  empties with `/wcc:change`.
+- **wish**: offer to run `/wcc:change` now with the wish. If the user
+  declines, add it to "Open decisions" in STATUS.md in the form the
+  phase skill gives, with source `feedback`.
 
 ## 6. The queue
 
-FEEDBACK.md exists only while findings wait for a running milestone run.
+FEEDBACK.md exists only while findings wait for a running phase.
 Create it if it is missing:
 
 ```
 # FEEDBACK
 
 Findings from manual testing, already sorted with the user by /wcc:feedback
-while a milestone run was going. The next /wcc:milestone records them at
+while a phase was running. The next /wcc:phase records them at
 its start and then deletes this file.
 
 - <class>: <the finding, written as in section 5>
 ```
 
-Append one line per finding (with indented lines for details), in English,
-with its class (`minor, soon` for a minor finding the user wants fixed
-soon, `wish` for a wish) and, for a check, its ID. Do not
-commit it: the run stages files by name, so the file stays out of its
-commits until it is processed.
+One line per finding (with indented details), in English, with its class
+(`check ok`, `bug`, `minor`, `minor, soon`, `wish`) and, for a check, its ID.
+Do not commit it.
 
 ## 7. Report
 
-In at most five lines: where each finding went, and what comes next. If
-something waits for a run, the next command is `/wcc:milestone`; if a run
-is going, it picks the findings up by itself.
+In at most five lines: which checks fit and which stay open, where each
+finding went, and what comes next: `/wcc:phase` if something waits for
+a run; nothing if a run is going, which picks the findings up by itself.

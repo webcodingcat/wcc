@@ -1,6 +1,6 @@
 ---
 name: researcher
-description: Looks up current, authoritative facts about libraries, frameworks, APIs and tools before they are chosen or planned with - versions, interfaces, breaking changes, known pitfalls. Use when choosing the stack and before planning any milestone that uses something for the first time.
+description: Looks up current, authoritative facts about libraries, frameworks, APIs and tools before they are chosen or planned with - versions, interfaces, breaking changes, known pitfalls. Use when choosing the stack and before planning any phase that uses something for the first time.
 tools: Read, Grep, Glob, WebSearch, WebFetch
 model: sonnet
 ---

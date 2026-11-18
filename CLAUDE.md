@@ -1,792 +1,444 @@
 # wcc: development notes for Claude Code
 
-This repository is a plugin for Claude Code. It bundles a workflow that takes
-a project from a raw idea to unattended, test-driven implementation.
+This repository is a plugin for Claude Code. It takes a project from a raw
+idea to tested code, phase by phase. This file is for whoever develops the
+plugin: what it is for, how it is built, and why the rules are as they are,
+so changes do not break the workflow by accident. The README is for the
+people who use it.
 
-This file is for Claude Code when someone wants to develop the plugin further
-or adapt it to their own way of working. It explains purpose, structure and
-the reasons behind the rules, so that changes do not break the workflow by
-accident. The README is for the people who use the plugin.
+## Words
+
+The words wcc uses:
+
+| Word | Meaning |
+|------|---------|
+| Milestone | A version of the project (`## Milestone <n>` in ROADMAP.md). Ends with all end-to-end tests and the tag `wcc-milestone-<n>`. |
+| Phase | A slice of a milestone that runs and can be checked; `/wcc:phase` builds one. IDs `01`, `02`, …, `F<n>` for feedback, `B<n>` for backlog phases. Folder `phases/<id>/`, branch `wcc/phase-<id>`. |
+| Plan | One run of the `implementer` for one component inside a phase (`03-02`), one to three tasks, a wave, a size. |
+| Task | A step inside a plan. |
+| Wave | Plans without dependencies on each other; at most two agents run at the same time. |
+| Requirement | One checkable capability in REQUIREMENTS.md (`AUTH-03`) with its test level. |
+| Success criteria | Two to five observable results of a phase in ROADMAP.md. |
+| Test map | `TESTS.md` of a phase: one row per promise of a requirement. |
 
 ## Language
 
 - Everything in this repository is English: this file, skills, agents,
-  README and the templates for planning documents in `skills/*/assets/`.
-- The plugin does not set a conversation language, neither in the skills
-  nor in the project `CLAUDE.md`. Claude talks to everyone in the language
-  they write in or have configured locally. A rule in the project would
-  force it on everyone who clones the repository. The configured language
-  comes first in the skills: a skill called without text carries no
-  language, and the English skill text and documents in the context then
-  pulled the answer into a random one (version 0.17.1). The answer options in the
-  skills are therefore written in English, with the instruction to offer
-  them in the user's language. Everything that ends up in a project's
-  repository is English: code, comments, repository docs and also the
-  planning documents in `docs/wcc/`, so that others can work on the
-  project. "Customising" says how to change that.
-- The terms in the documents are keys that the skills and agents search for
-  (`manual`, `Parallel agents`, `Backlog milestone after`, `Stops for: manual check`, `Cost of change`, `(working
-  title)`, "Target vision", "Open manual checks", "Findings", `does not
-  fit, see plan`, `F<n>`, `Start`/`Setup`/`Steps`/`Expected`,
-  "Open decisions", `Q<n>`, `waits for Q<n>`, `In clarification`,
-  `Context`/`Options`/`Recommendation`/`Affects`, "Documentation",
-  `wcc version:` and so on). Whoever changes one of them in
-  a template changes it in the skills and agents too.
-- Talk to the person working on this repository in the language they use
-  with you.
+  README and the templates in `skills/*/assets/`.
+- The plugin does not set a conversation language. Claude talks to everyone
+  in the language they write in or have configured; a rule in a project
+  would force one on everyone who clones it. Because a skill called without
+  text carries no language and the English skill text would pull the answer
+  into English, every skill says to use the configured language first, and
+  quoted answer options are offered in the user's language.
+- Everything that ends up in a project's repository is English, the
+  planning documents included, so others can work on the project.
+- Terms in the templates are keys the skills and agents search for:
+  `STATUS:` and its values, `## Milestone <n>`, "Later", "Out of scope",
+  "Coverage", the requirement IDs `<CAT>-<NN>`, the test levels
+  `unit`/`e2e`/`none`/`manual`, `DOC`, "Success criteria", "Requirements:",
+  `Stops for: manual check`, `Wave:`, `Depends on:`, `Review:`, `Size:`,
+  `Adjusts:`, `Tests:`, `TESTS.md`, `CHECKS.md`, `CONTEXT.md`, `Result:`,
+  `does not fit, see plan`, "Findings", "Findings from manual testing",
+  "Items", "Close", "In clarification", `F<n>`, `B<n>`,
+  `Q<n>`, `waits for Q<n>`, `In clarification`,
+  `Context`/`Options`/`Recommendation`/`Affects`, "Open manual checks",
+  "Open decisions", `Start`/`Setup`/`Steps`/`Expected`, `Cost of change`,
+  `Type`, `(working title)`, "Documentation", `D<n>`, the backlog
+  severities `security`/`data`/`bug`/`later`/`minor`, `wcc version:`.
+  Whoever renames one changes it everywhere.
+- Talk to the person working on this repository in their language.
 
-## What the workflow is for
-
-The user hands over an idea. It is worked out, the stack is chosen, and the
-project is then implemented milestone by milestone: each one started with a
-single command, in parallel where possible, and without questions while it
-runs. The user's attention goes
-almost entirely into the first step.
+## The workflow
 
 ```
 /wcc:idea       interview                          -> IDEA.md (the user's document)
-/wcc:spec       derive, check, summarise           -> SPEC.md, ARCHITECTURE.md, ROADMAP.md
+/wcc:spec       derive, check, summarise           -> REQUIREMENTS, SPEC, ARCHITECTURE, ROADMAP
 /wcc:prepare    check the machine, set up project  -> git, scaffold, working build and test commands
-/wcc:milestone  plan, test, build                  -> code, milestone by milestone
-/wcc:feedback   show open checks, take findings    -> F milestone, BACKLOG.md or /wcc:change
-/wcc:change     change request, next stage,        -> all documents updated consistently
-                answers to open decisions
+/wcc:phase      discuss, plan, test, build         -> one phase
+/wcc:feedback   guided manual checks, findings     -> F phase, BACKLOG.md or /wcc:change
+/wcc:change     change request, next milestone,    -> all documents updated consistently
+                open decisions, backlog items
 /wcc:status     state and next command             -> read only
-/wcc:options    options for the runs               -> section "Options" in STATUS.md
-/wcc:upgrade    after a plugin update              -> project CLAUDE.md and documents on the new version
+/wcc:upgrade    after a plugin update              -> project files on the new version
 /wcc:prototype  throwaway prototype (optional)     -> decisions/prototype-learnings.md
 ```
+
+The user's attention goes into the interview, the approval of the spec and
+the start of each phase. A phase may ask at its start ("Discuss") and then
+runs without questions.
 
 ## Structure
 
 ```
 .claude-plugin/plugin.json        manifest
-.claude-plugin/marketplace.json   makes the repository its own marketplace
-                                  (source "./", as the docs intend for this case)
-skills/idea/                      interview; assets = scaffold for new projects
-skills/spec/                      spec, architecture, roadmap; assets = templates
+.claude-plugin/marketplace.json   makes the repository its own marketplace (source "./")
+skills/idea/                      interview; assets = scaffold and templates for new projects
+skills/spec/                      requirements, spec, architecture, roadmap; assets = templates
 skills/prepare/                   machine check and project setup, repeatable
-skills/milestone/                 unattended implementation of one milestone
-skills/change/                    change requests and the next stage
+skills/phase/                     one phase; references/ = e2e, backlog, feedback,
+                                  read only when they apply
+skills/change/                    changes, next milestone, open decisions, backlog
 skills/status/                    state and next command, read only
-skills/feedback/                  take and sort findings from manual testing
-skills/options/                   show and set the options of milestone runs
-skills/upgrade/                   bring an existing project up to the installed version;
+skills/feedback/                  guided manual checks and findings
+skills/upgrade/                   bring a project up to the installed version;
                                   references/migrations.md = catalogue per version
 skills/prototype/                 optional throwaway prototype
-agents/                           idea-gap-checker, researcher,
-                                  feasibility-checker, spec-reviewer,
-                                  test-writer, implementer, code-reviewer,
-                                  doc-writer, milestone-verifier
+agents/                           idea-gap-checker, researcher, feasibility-checker,
+                                  spec-reviewer, test-writer, implementer,
+                                  code-reviewer, doc-writer, verifier
 ```
 
-The rules that must hold in every session of a project (no questions during
-the implementation, tests, reviews, language) are not in the plugin itself.
-A plugin cannot ship a CLAUDE.md that is always loaded. So `/wcc:idea`
-copies the template `skills/idea/assets/project-CLAUDE.md` into the project.
-The consequence: a change to that template reaches existing projects only
-through `/wcc:upgrade` (see "Bringing existing projects along").
+A plugin cannot ship a CLAUDE.md that is always loaded, so `/wcc:idea`
+copies `skills/idea/assets/project-CLAUDE.md` into the project. A change to
+that template reaches existing projects only through `/wcc:upgrade`.
 
 ## Files in a project
 
-The project `CLAUDE.md` lives in the project root, because Claude Code loads
-it from there. All other files live in `docs/wcc/`. The dedicated folder
-keeps the planning documents apart from the rest of the repository docs and
-the project root free for the code.
+The project `CLAUDE.md` lives in the root, where Claude Code loads it.
+Everything else lives in the hidden folder `.project/`, apart from the
+repository docs and the code. Grep and Glob of Claude Code search hidden
+folders; a plain `rg` needs `--hidden`, which the project CLAUDE.md says.
 
 | File | Content | Written by |
 |------|---------|------------|
 | `IDEA.md` | What and why: problem, goals, non-goals, target vision, success criterion | the user in the interview |
-| `SPEC.md` | Stack with versions, accounts and secrets (names only), machine prerequisites (elevated rights too), requirements, acceptance criteria with verification type, end-user and developer documents with path and criteria | Claude |
+| `REQUIREMENTS.md` | One line per requirement with ID, goal and test level, per milestone; "Later", "Out of scope", "Coverage" | Claude |
+| `SPEC.md` | Stack with versions, accounts and secrets (names only), machine prerequisites, documentation `D<n>` | Claude |
 | `ARCHITECTURE.md` | Components, interfaces, extension to the target vision | Claude |
-| `UI-SPEC.md` | Binding rules for the user interface; only for projects with one | Claude |
-| `ROADMAP.md` | Milestones per stage, backlog milestones, rough target vision | Claude |
-| `STATUS.md` | Current state; first line `STATUS: <value>`; options of the runs; open manual checks and open decisions for the user | Claude |
-| `DECISIONS.md` | Every decision and assumption taken without asking, every approval; per entry the cost of a later change | Claude |
-| `BACKLOG.md` | Review findings that are not blockers and need no decision by the user; open items only after each backlog milestone | Claude |
-| `BACKLOG-DONE.md` | Checked backlog items with their notes, moved there at the close of each backlog milestone; read by no skill | Claude |
-| `FEEDBACK.md` | Queue: findings from `/wcc:feedback` reported while a milestone was running; exists only until the run records them | Claude |
-| `feedback/` | Image files for findings a feedback milestone needs | Claude |
+| `UI-SPEC.md` | Binding rules for the user interface, if there is one | Claude |
+| `ROADMAP.md` | Milestones with their phases, requirements and success criteria; finished phases one line each; "Later" | Claude |
+| `ROADMAP-DONE.md` | Full entries of finished phases; read by no skill | Claude |
+| `STATUS.md` | First line `STATUS: <value>`; current state in short lines; open manual checks (one line each); open decisions | Claude |
+| `DECISIONS.md` | Every decision and assumption taken without asking, every approval, with the cost of a later change | Claude |
+| `BACKLOG.md` | Parking lot: open items with severity and consequence | Claude |
+| `BACKLOG-DONE.md` | Items worked off or dropped; read by no skill | Claude |
+| `FEEDBACK.md` | Queue of findings reported while a phase was running | Claude |
+| `research/EXPERIMENTS.md` | What the feasibility check tried, with the commands to repeat it; `valid` or `superseded` | Claude |
+| `research/experiments/` | Scratch folder of the feasibility check; deleted afterwards, in `.gitignore` | Claude |
 | `decisions/` | Results of clarification sessions | Claude |
-| `EXPERIMENTS.md` | What the feasibility check tried: assumption, result, the decisive commands, consequences; each entry `valid` or `superseded` | Claude |
-| `experiments/` | Working folder of the feasibility check; deleted after the check and listed in `.gitignore` | Claude |
-| `plans/` | Detailed plan per milestone with research results and task check marks (`[x]` done, `[!]` cannot be finished), for Claude only | Claude |
-
-Status values: `IDEA`, `IDEA_DONE`, `SPEC_REVIEW`, `READY`, `IN_PROGRESS`,
-`MANUAL_CHECK`, `BLOCKED`, `DONE`.
+| `phases/<id>/CONTEXT.md` | What the user decided at the start of the phase | Claude |
+| `phases/<id>/PLAN.md` | Plans with wave, size, tasks and check marks; findings or items for F and B phases; "Close" | Claude |
+| `phases/<id>/TESTS.md` | Test map | Claude |
+| `phases/<id>/RESEARCH.md` | What the researcher found, with sources | Claude |
+| `phases/<id>/CHECKS.md` | Manual checks with guide and `Result:` | Claude |
+| `phases/<id>/feedback/` | Images for findings of a feedback phase | Claude |
 
 | Status | Meaning | Continue with |
 |--------|---------|---------------|
 | `IDEA` | Interview going on | `/wcc:idea` |
 | `IDEA_DONE` | IDEA.md is finished | `/wcc:spec` |
-| `SPEC_REVIEW` | Summary waits for approval | `/wcc:spec` (shows it again) |
-| `READY` | Approved, or a new stage planned | `/wcc:prepare`, then `/wcc:milestone` |
-| `IN_PROGRESS` | Implementation running, interrupted, or between two milestones | `/wcc:milestone`, best in a new session |
-| `MANUAL_CHECK` | Run waits for a manual check | `/wcc:milestone` (asks for the result) |
-| `BLOCKED` | Run needs a decision | `/wcc:milestone` (asks for it) or `/wcc:change` |
-| `DONE` | Current stage finished | `/wcc:change` for the next one |
+| `SPEC_REVIEW` | Summary waits for approval | `/wcc:spec` |
+| `READY` | Approved, or a new milestone planned | `/wcc:prepare`, then `/wcc:phase` |
+| `IN_PROGRESS` | Between two phases, or a phase interrupted | `/wcc:phase`, best in a new session |
+| `MANUAL_CHECK` | A phase waits for a manual check | `/wcc:feedback`, then `/wcc:phase` |
+| `BLOCKED` | A plan needs a decision or a step of the user | `/wcc:phase` or `/wcc:change` |
+| `DONE` | Current milestone finished | `/wcc:change` for the next one |
 
-## Design decisions and the problems behind them
+## Design principles
 
-Keep these when editing. Each one answers a concrete problem that comes up
-when working with Claude Code without such rules.
+Keep these when editing. Each answers a problem that comes up when Claude
+Code works on a project without such rules.
 
-- **The interview asks only what the user can answer, with options and a
-  recommendation.** Interviews without this limit drift into technical
-  details the user cannot say anything about.
-- **Ask in the interview; assume and record during the implementation.**
-  The difference is whether the user is present. A question in an
-  unattended run stops it for hours.
-- **The completeness of the interview is checked, not felt.** Mandatory
-  sections plus the `idea-gap-checker`, because "Claude thinks it is done"
-  is not a criterion.
-- **Assumptions are presented for confirmation.** Confirming a list is
-  faster than answering twenty questions, and nothing is decided invisibly.
-- **Clarification sessions for questions that need a discussion** (the
-  stack, for example). They run as child sessions in Claude Code Desktop so
-  the long discussion does not fill the context of the interview. The
-  signal for "done" is the result file in `decisions/`, not a message from
-  the child session: a session in which the user writes themselves does not
-  report back to the parent session reliably.
-- **Target vision separate from the first version.** The architecture is
-  designed for the target vision; code is written only for the current
-  milestone. Projects that start small and grow need the right interfaces
-  from the start.
-- **Detailed plans are not shown to the user.** They are too detailed to
-  read and would be approved blindly. The user gets a summary of at most ten
-  lines.
-- **One milestone per run, started by hand (version 0.25.0).** Up to
-  0.24.0 a run chained the milestones of a stage in one session. Every
-  milestone reads the project files afresh anyway, so what the earlier ones
-  left in the context helped nothing, but every later call sent it again:
-  the session grew with each milestone, used up the usage limits faster
-  and worked less precisely once the context was long or compacted. The
-  alternatives were rejected: a child session per milestone works only in
-  Claude Code Desktop, and its reports and chained starts are not reliable
-  there; a subagent per milestone cannot start the `test-writer` and the
-  reviewers, because subagents start no subagents; an external loop around
-  `claude -p` was not wanted. The price: the user starts every milestone,
-  backlog and feedback milestones included, best in a new session or after
-  `/clear`. A milestone itself still runs unattended. The option `Stop
-  after each milestone` and the arguments `--once` and `--all` were
-  removed with it.
-- **The main session stays small.** Whatever reaches it stays in its
-  context for the rest of the run. So build, test and lint output goes to
-  files and only the summary and the failures are read, and every subagent
-  returns a short result in a fixed form, without logs, code or an account
-  of how it worked (section "Keeping the main session small" in
-  `skills/milestone/SKILL.md`, last paragraph of the agents used there).
-- **Implementation runs in an agent of its own (version 0.26.0).** Up to
-  0.24.0 the main session gave tasks to general-purpose subagents and wrote
-  the rules into every prompt. In one night of the same project they used
-  64 % of all subagent tokens: such an agent starts with about 55,000
-  tokens of context, a restricted plugin agent with about 13,000, and an
-  implementation task takes dozens of turns, each sending that context
-  again. `agents/implementer.md` has only the tools it needs and carries
-  the fixed rules (checks, debugging, waiting, result form), so the prompt
-  holds only the task.
-- **No debug access in the product (version 0.26.0).** In the same night
-  an implementer debugging a failing end-to-end test built a debug script
-  into the boot configuration of a VM and a base64 payload into a test.
-  The main session stopped it after a warning of the system. The cause was
-  a protection of the project: the agent could not reach the protected
-  control of the VM and built a service that made its internal state
-  readable for every server. Now the implementer rule and the project
-  `CLAUDE.md` forbid debug access and any way around a protection of the
-  project, a cause that cannot be found otherwise stops the task, the
-  implementer prefers designs the tests can check from outside, and the
-  `code-reviewer` searches every diff for both as blockers.
-- **The implementer runs its end-to-end tests itself, the full run waits
-  for the last review (version 0.26.0).** The run report of the same
-  night named two losses: the main session ran the first end-to-end run
-  of a task itself, waited for it and handed the failures over, about ten
-  minutes per milestone; and it started the 90-minute full run of a
-  backlog milestone before the last review, which then found a blocker in
-  a test, so part of it ran again. Now step 8 has the implementer run the
-  filtered end-to-end tests of its criteria, two such tasks never run at
-  the same time, and step 9 states why the full run starts only after
-  every review, its fixes and the documentation task.
-- **Agents wait for their own commands inside their turn (version
-  0.26.0).** A background subagent that ends its turn while its own
-  command still runs wakes the main session, and again each time it
-  resumes and stops; with `tail -f` or the `Monitor` tool one agent
-  returned its result four times. Each wake-up sends the whole context of
-  the main session. The implementer runs short commands in the foreground
-  with a `timeout` of up to ten minutes and waits for long ones with a
-  foreground loop that ends on its own, which keeps it in its turn; the
-  documentation is silent on a better way. The main session answers such
-  notices without a tool call.
-- **A green end-to-end test is not run twice on the same code (version
-  0.26.0).** The close of a milestone ran an end-to-end selection again
-  for 17 minutes that the last task had run green, with only documentation
-  changed since. A test counts if it ran on a commit after which no file
-  the build or the tests use changed and its log shows it passed. The
-  implementer reports its end-to-end runs with commit and log file for
-  this.
-- **End-to-end tests share across components and wait in parallel
-  (version 0.26.0).** The full end-to-end run of the same project took 90
-  minutes at a backlog milestone. Every component group started and tore
-  down its own environment (about a fifth of the time), six subtests each
-  restarted it to check what survives a restart, and variants per image
-  ran one after another without any parallelism. The `test-writer` (rules
-  4 and 5) now shares one environment for the whole run, one run of an
-  expensive step for all checks that need it, and runs waiting subtests in
-  parallel within the capacity of the environment. One subtest per
-  criterion stays, so the filtered runs keep working. Existing projects
-  are not converted by `/wcc:upgrade`: that is test code, for a backlog or
-  feedback milestone.
-- **Findings about the tests get no tests about the tests (version
-  0.27.0).** A feedback milestone about a 90-minute end-to-end run got
-  twelve new tests before anything was changed: eight for a new memory
-  limiter and the concurrent use of a shared step, and four that read the
-  test sources to enforce the new structure. "Tests first" was meant for
-  the product. For a finding about the tests, the proof is that the
-  existing tests stay green with the same coverage, plus a measurement of
-  run time or flakiness. New logic in the harness is code and gets tests;
-  rules about how tests are written live in the project `CLAUDE.md` and
-  the `test-writer` and are checked by the review, not by tests that fix
-  a structure (section "Findings about the tests" in
-  `skills/milestone/SKILL.md`).
-- **Task worktrees are removed after the merge (version 0.28.0).** The
-  tool removes a subagent's worktree only when nothing changed in it, and
-  a task always commits; after two parallel runs nine merged worktrees
-  with their branches were left in one project. The main session removes
-  each one after its merge with `git worktree remove` and `git branch -d`,
-  which refuse to lose anything, never with force, and at the start of a
-  run the merged ones of earlier runs. The worktree of a blocked task
-  stays.
-- **After a fix only what it can break runs again (version 0.29.0).**
-  The close of a feedback milestone ran the full end-to-end suite for 64
-  minutes; one subtest failed on a race in its own query, the fix changed
-  two test files, and the rule "run the whole selection once more" ran
-  everything again for 62 minutes. Now the whole selection runs again only
-  when a fix changes product code, the shared harness, the build or the
-  configuration; a fix in single tests reruns those and the tests using
-  what changed, a race three times. A failed run whose failures touched
-  only single tests still counts as a measurement of run time.
-- **Large files are read by their parts (version 0.26.0).** Agents read source and test
-  files of up to 35,000 characters in full, some twice; a test-writer's
-  context grew past 300,000 tokens. Files of more than 400 lines are read
-  by listing their functions with Grep first, as the planning documents
-  are read by their headings.
-- **Reviews have a stopping rule.** Only blockers are fixed, the rest goes
-  to BACKLOG.md, one round per task, the architecture is not up for debate.
-  Reviewers without this limit always find something and hold everything
-  up.
-- **Tests come first, from a separate agent, from the spec.** Otherwise
-  tests only confirm what the code does anyway, and "done" has no objective
-  meaning.
-- **Every acceptance criterion names its verification type** (auto,
-  browser, manual). The share of `manual` decides how much can run
-  unattended. It is large for games and small for APIs.
-- **State lives in files, not in the context.** Every milestone reads the
-  project files afresh, so runs can be interrupted and resumed. That is why
-  backlog milestones are a line in the ROADMAP and open manual checks are in
-  STATUS.md.
-- **Questions are asked only when a skill is invoked.** At that moment the
-  user is at the computer. So `/wcc:milestone` resolves `BLOCKED` and
-  `MANUAL_CHECK` at the start and asks nothing afterwards.
-- **Prerequisites are checked while the user is present.** `/wcc:prepare`
-  finds missing tools before an unattended run fails on them, and can be
-  repeated for new machines and fresh checkouts. The skill does not install
-  system software itself.
-- **Tests are committed before the implementation starts.** A worktree
-  contains only what is committed. Uncommitted tests would not reach the
-  parallel subagents.
-- **A task is done when its own tests are green; a milestone when all are
-  green.** The tests are written for the whole milestone, so those of the
-  tasks still open necessarily fail.
-- **Only the main session writes DECISIONS, BACKLOG, STATUS and ROADMAP.**
-  Parallel worktrees changing the same file cause merge conflicts.
-  Subagents report their decisions back.
-- **Research comes before choosing the stack and before planning.** The
-  model's memory of libraries is often one version behind. The `researcher`
-  looks up versions, interfaces and pitfalls in the current documentation
-  before something is chosen or used for the first time.
-- **A task gets three repair attempts.** Without a limit, a run gets stuck
-  on a single task.
-- **Block late.** A task that cannot be finished does not end the run at
-  once. Dependent tasks are skipped, all others finished, and only then
-  `BLOCKED` follows. A stuck task thus costs the user one decision, not the
-  whole night.
-- **Repairing and adding is allowed, changing and replacing stops the run.**
-  If every deviation stops it, the run halts on missing input validation.
-  If none does, an agent rebuilds the architecture. Allowed is what breaks
-  nothing other tasks and the tests build on; when in doubt, the run stops.
-- **Claude never takes consequential decisions alone.** Data schema, save
-  formats, public interfaces and authentication are expensive to change
-  later. They are caught in three places: the spec must settle them for the
-  first version and present them for approval, the planning of every
-  milestone looks for leftovers before anything is built, and in a run an
-  open one is a reason to stop. Stopping is better than guessing here, and
-  should be rare thanks to the first two stages.
-- **The milestone is checked as a whole.** Green tests do not prove that
-  the code is wired in. The `milestone-verifier` looks for stubs and
-  unwired code and believes no report.
-- **Missing credentials are not a bug but a reason to stop.** They are
-  named in the SPEC, `/wcc:prepare` checks them beforehand, and in a run
-  they are never worked around with placeholders.
-- **No agent obtains elevated rights itself.** If the feasibility check
-  needs administrator rights, the `feasibility-checker` prepares the
-  command and `/wcc:spec` has the user run it, who is present at that
-  moment. If the project itself needs them, the SPEC says so,
-  `/wcc:prepare` checks it, and in a run missing rights are a reason to
-  stop. A run with administrator rights gives them to every agent; so the
-  user decides this before the approval, not an agent in the middle of the
-  night.
-- **The feasibility check reports missing programs instead of working
-  around them.** If a tool for an experiment is missing, the agent does not
-  install it, nor does it silently replace the experiment with reading.
-  `/wcc:spec` shows the user the list with install commands and repeats the
-  check afterwards.
-- **The feasibility check may write, but only in `docs/wcc/experiments/`.**
-  An experiment that may not create anything checks nothing. The fixed
-  folder keeps it apart from the project code.
-- **What remains of an experiment is the result, not the code.** `/wcc:spec`
-  summarises the experiments in EXPERIMENTS.md and deletes the folder. Only
-  the insight is reused anyway; leftover code goes stale and gets built or
-  committed by accident. So every entry contains the commands to repeat the
-  check. The planning of every milestone reads the file so nothing is found
-  out twice.
-- **No falling back to similar package names.** A near miss may be a
-  malicious package.
-- **Git rules for parallel agents.** No `git add -A`, no `git stash`, no
-  `git reset --hard`, one agent by default, at most five at the same time.
-- **The user decides the parallelism.** Parallel agents use up the usage
-  limits correspondingly faster, and a run that hits the limit stands
-  still. `/wcc:options` or `/wcc:milestone --parallel <n>` (1 to 5) sets the
-  upper bound. It is stored as `Parallel agents` in STATUS.md and not in the
-  context, so it survives interruptions and holds for all following
-  milestones. The default is 1 (since version 0.11.0, 3 before): a run
-  should not use up the limits faster than the user explicitly chose.
-- **Options live in the project, in STATUS.md.** Section "Options" with
-  `Parallel agents`, `Backlog milestone after` and `Full e2e run`, set
-  with `/wcc:options`. There they survive interruptions like the rest of
-  the state, and `/wcc:milestone` reads them at the start of every run.
-  Arguments of a call hold only for that run. Exception: `--parallel` is
-  written back, as it was before the skill existed.
-  Projects without the section get it with the first `/wcc:options` or
-  `/wcc:upgrade`; until then the defaults apply, plus a `Parallel agents`
-  line under "Current state".
-- **Expensive end-to-end tests do not necessarily run in full at every
-  milestone.** End-to-end tests against the real environment grow with
-  every milestone; in one project they already took almost half an hour per
-  close after M3. With `Full e2e run: backlog and stage end` an ordinary
-  milestone runs them only for its own criteria and changed test files, all
-  of them at every backlog milestone and before the tag of a stage. The
-  price: a regression in an older flow shows up only there. The default
-  stays `every milestone`. End-to-end tests are what the project
-  `CLAUDE.md` starts with a separate command; `/wcc:prepare` separates that
-  command. The cause of the long run time there was a full setup per test;
-  so the `test-writer` requires tests to share an expensive setup when they
-  only use it. Version 0.19.0 closed two gaps that made the option useless
-  in that project: runs knew which tests to select but not how, and ran the
-  plain command, so every close ran all of them; and the shared setup had
-  led to a few large tests whose names bundled the IDs of dozens of
-  criteria, so nearly every milestone selected nearly everything. Now the
-  milestone skill turns the selection into the filter of the test framework
-  and records the command, and the `test-writer` gives every criterion a
-  subtest of its own under a group named after the component.
-- **Documentation is asked for in the interview and written per milestone
-  (version 0.13.0).** Without a rule, end-user and developer documentation
-  is not written at all or only at the end, when it has to describe
-  everything at once. The interview asks who needs which documentation,
-  and the SPEC lists documents (`D<n>`) in its section "Documentation" with
-  a path outside `docs/wcc/` and checkable criteria. The planning documents
-  are not documentation: they hold decisions and check marks for Claude,
-  not explanations for people. The last task of every milestone is
-  `Documentation`; it runs after the merge through the `doc-writer`,
-  because documentation describes the wired-in result and parallel tasks
-  would collide on the same documents. Unlike the `test-writer`, the
-  `doc-writer` reads the code and runs every example. The documentation
-  criteria hold at every close and are checked against what was built, not
-  against the whole spec. The `milestone-verifier` checks "documented" and
-  "true", at the end of a stage for the whole stage.
-- **The project name may come later (version 0.14.0).** Ideas often have no
-  name yet, but the plugin needs a folder. The interview asks for the name
-  at the end and allows a working title (`# IDEA: <name> (working
-  title)`). Renaming happens between `/wcc:idea` and `/wcc:spec`, because
-  nothing depends on the path until `/wcc:prepare`; the skill cannot rename
-  the folder itself, because the session runs inside it. `/wcc:prepare`
-  asks once more before `git init` if the name is open or does not match the
-  folder, and never again afterwards.
-- **One branch per milestone.** The base branch contains only finished
-  milestones, also when a run ends blocked.
-- **The plan carries a check mark per task.** After an interruption it is
-  clear where to continue, without planning again or rewriting tests.
-- **User interfaces are specified up front.** Agents that build views in
-  parallel otherwise each invent their own look.
-- **Manual checks stop the run only if later milestones depend on them.**
-  The milestone then stays open until the user has reported the result. All
-  other manual criteria collect in STATUS.md.
-- **The user reports findings from manual testing with `/wcc:feedback`
-  (version 0.15.0).** Before, only the result of a manual check could be
-  reported, and only when `/wcc:milestone` asked for it; anything else the
-  user found while trying the project had no way in. A skill fits better
-  than a file to fill in: the user says in their own words what they
-  noticed, with a screenshot too, and is there to answer questions at that
-  moment. The skill sorts every finding (check ok, bug, minor, wish) and
-  presents the list as one question for confirmation. Bugs become a
-  feedback milestone `F<n>`, which like every milestone first writes a
-  failing test; minor findings go to BACKLOG.md, wishes straight through
-  `/wcc:change`. The user can pull a minor finding forward when confirming
-  (`minor, soon`); it then goes into the feedback milestone instead of
-  waiting for the next backlog milestone. What no test can show goes back
-  to the user as a manual check afterwards. The run cannot see images from
-  the conversation, so the skill describes every screenshot in words in the
-  plan. If a milestone is running in the same checkout, the skill does not
-  write to the ROADMAP and plans but to the queue FEEDBACK.md; the run
-  records it before the next milestone without asking, because the user has
-  already confirmed.
-- **Every open manual check has a test guide.** A short note in STATUS.md
-  was not enough to test without knowing the code. The run adds start,
-  setup, steps and expected result when it closes the milestone, while it
-  still has the code in front of it. `/wcc:feedback` without arguments shows
-  the checks with their guides and takes the results right away. A separate
-  skill would be one more command; showing and reporting belong together.
-- **`/wcc:upgrade` brings existing projects along (version 0.16.0).**
-  Before, this was done with prompts while developing the plugin, anew for
-  every project and without a fixed procedure. Projects are started all the
-  time, and each one needs an upgrade again after later versions, also
-  projects nobody knows while developing the plugin. So the skill knows no
-  project, only two sources: the catalogue
-  `skills/upgrade/references/migrations.md` with a detection rule per entry,
-  and the comparison with the current templates. The whole catalogue is
-  always checked, not only from the project's version on, because projects
-  may have been brought along by hand or only in part. The version is the
-  line `wcc version:` in the project `CLAUDE.md`; older projects lack it and
-  count as "before 0.16.0". The skill changes the form, never the
-  decisions: what needs an answer from the user (such as the section
-  "Documentation") it does not create, but names the skill that asks for
-  it. It presents one list and asks once, because the user is present when
-  invoking it. It stops while a milestone is running, because it writes the
-  same files. `/wcc:status` and `/wcc:milestone` point out a project that is
-  behind.
-- **Open decisions wait in STATUS.md, not in the backlog (version
-  0.17.0).** Before, findings that would change SPEC.md or ARCHITECTURE.md
-  stayed in BACKLOG.md marked `needs decision`. The user learned of them
-  only from the report of a backlog milestone, which scrolls away in an
-  unattended run, or by calling `/wcc:status`; nothing asked, and the items
-  had no question to answer and often mixed several points. Now the run
-  writes each one as a question with context, options and a recommendation
-  (`Q<n>`) under "Open decisions" in STATUS.md, where the user looks for
-  what waits for them. Writing down a recommendation is not deciding, so
-  the rule "no questions during the run" holds. Reviewers return them as a
-  category of their own. Every report names the new ones, `/wcc:milestone`
-  asks once at the start whether to decide them first, and `/wcc:change`
-  without arguments takes the answers, because an answer changes the
-  documents. The planning blocks tasks that depend on an open entry, so
-  the run never builds on something undecided. `/wcc:change` asks like the
-  interview, with "I don't know" and "I need more details" for every
-  question: open decisions come up in a run, and the user meets them
-  without the context they arose in, so they often need a discussion. That
-  runs in a clarification session as in `/wcc:idea`; the entry gets the
-  line `In clarification` with its result file, which is again the signal
-  for "done".
-- **Checked backlog items move to BACKLOG-DONE.md (version 0.18.0).**
-  Items were checked off with notes but never removed. In one project after
-  four backlog milestones, 180 of 250 items were checked and made up about
-  three quarters of a file of 1800 lines, which every backlog milestone
-  reads in full. Deleting them would lose the notes, some of which hold
-  findings such as the behaviour of a tool version. So a backlog milestone
-  moves every checked item unchanged to BACKLOG-DONE.md under `## B<n>`
-  before it merges; no skill reads that file. It happens there because the
-  backlog milestone is the only step that reads the whole backlog, and the
-  main session writes BACKLOG.md then anyway.
-- **Large planning documents are read by their headings (version
-  0.20.0).** Every milestone read SPEC.md, ARCHITECTURE.md and DECISIONS.md
-  in full, and every task review SPEC.md and ARCHITECTURE.md. In one project
-  after 17 milestones these files had grown to about 400 KB together
-  (DECISIONS.md alone from 89 to 204 KB in a day), and the milestones took
-  longer each time: 25 minutes for M8, two and a half hours for M17. Now a
-  file of more than 300 lines is read by its headings: the sections the
-  milestone covers, the ones that hold for every milestone, and the
-  DECISIONS.md entries whose title concerns it plus every one with
-  `Cost of change: high`. The main session passes the names of the
-  sections to `test-writer`, `code-reviewer` and `milestone-verifier`,
-  which look up more by heading when needed. When in doubt a section is
-  read: overlooking a decision costs more than reading it. Archiving old
-  decisions like BACKLOG-DONE.md was rejected: unlike a checked backlog
-  item, a decision stays in force. Instead entries stay short, with
-  telling titles, because those are what is searched.
-- **Shorter closes and less backlog (version 0.21.0).** In the same
-  project, the close of a milestone took over an hour, almost all of it
-  the end-to-end run, and backlog milestones three hours each. Three
-  changes: the `milestone-verifier` runs while the full test suite runs in
-  the background, because it only reads code; its fixes wait until the
-  suite has ended, so they do not change the code under the running tests.
-  Reviewers return at most five backlog items each, only what is worth a
-  task, nothing that is a matter of taste, and a backlog milestone drops
-  items worth less than their task. ARCHITECTURE.md holds what other
-  components build on; how a component works inside goes into code
-  comments, because the file is read by every milestone and had grown to
-  130 KB of mostly such details.
-- **Narrower checks per task, shared reviews for small tasks (version
-  0.22.0).** A task is checked with its own tests, the other tests and the
-  linter of the packages it changed, and the build; the whole unit suite
-  and the linter over the whole project run once at the close, next to the
-  end-to-end tests. Moving all checks to the end was rejected: a task with
-  failing tests would reach the review and the merge, dependent tasks would
-  build on it, and the repair attempts need the task's own tests as their
-  signal. One review for the whole milestone was rejected too: over a
-  change of eleven tasks the reviewer's context fills and it overlooks
-  more, and a blocker found late has spread into the tasks built on it.
-  Instead the plan groups up to three small tasks of one component, about
-  300 changed lines together, for one review (`Review: with T<n>`); tasks
-  in parallel worktrees and tasks that change an interface others build on
-  are reviewed alone. Backlog milestones, with mostly small items, gain
-  the most. `/wcc:prepare` names the narrower form of the commands; in
-  older projects the run derives it from the tool.
-- **Parallel test-writers (version 0.23.0).** Writing the tests took one
-  `test-writer` over twenty minutes per milestone in the same project.
-  With `Parallel agents` above 1, the criteria are split by component into
-  groups with their own test files, each with a writer of its own, within
-  the same limit as the implementation. The writers share the checkout
-  without worktrees, because the tests are committed only afterwards, so
-  each writes only its own files; a shared helper or the end-to-end harness
-  belongs to one group, the others report what they need there. They run
-  only their fast tests: end-to-end runs at the same time would collide in
-  the real environment, so the main session runs the new end-to-end tests
-  once when all are done. Small milestones keep one writer, since every
-  writer reads its sections first. Since 0.30.0 the split no longer
-  depends on the option; see below.
-- **Smaller agent contexts (version 0.30.0).** A measurement over the
-  subagents of one project after 0.26.0 showed where the tokens go:
-  implementers 52 %, test-writers 25 % from only three runs, verifier
-  10 %, reviewers 6 %, doc-writer 4 %. The cost of an agent is its turns
-  times its context, because every turn sends the context again. Single
-  test-writers took 85 to 109 turns while their context grew from 14,000
-  to 240,000 tokens, about 60 % of their calls reading existing tests of
-  other components; one of them spent 35 edits across ten packages
-  removing a retired configuration field from old tests. One implementer
-  task changed 1,200 lines in 14 files and alone used 29 % of all tokens.
-  Four changes. The criteria are split into one writer per component
-  whatever `Parallel agents` says; the option decides only whether the
-  writers run at once or one after another, so splitting costs no
-  parallelism. The plan names per task the test files and the existing
-  group to follow (`Tests:`), so the writer looks up helpers with Grep
-  instead of reading its way through other tests. Existing tests that
-  only use something a milestone removes or renames are listed by the
-  writer and adjusted by the task that removes it (`Adjusts:`), the one
-  exception to "change a test only if it contradicts SPEC.md". And a task
-  covers one component and about 400 changed lines; a change that does the
-  same thing in several components becomes a shared first task and one
-  task per component. Writing the tests per task, interleaved with the
-  implementation, was rejected: a writer for a later task would work in a
-  checkout that already holds the implementation of the earlier ones,
-  tests of tasks running in parallel worktrees must be committed before
-  any of them starts, and the shared end-to-end setup (rule 4 of the
-  `test-writer`) needs a view over all criteria of a component. The
-  reviewers were left as they are; the verifier reads each file once.
-- **ARCHITECTURE.md is checked against the code (version 0.24.0).** When
-  the same project slimmed down its ARCHITECTURE.md, the cleanup found
-  about 25 places where it said something other than the code: option
-  fields and return values added by tasks, timeouts changed by review
-  fixes, a rule changed by `/wcc:change` in one of two sections that
-  stated it. Nothing compared the document with the code: the
-  `code-reviewer` reports only what breaks an interface, an addition is
-  allowed, and the main session learned of additions only when a subagent
-  mentioned them. Since 0.20.0 test-writers and reviewers rely on the
-  sections they are given, so a stale section turns into wrong tests. Now
-  subagents list every change to what other components use, additions
-  included; the main session and `/wcc:change` search the whole file for
-  what changed; and the `milestone-verifier` compares the sections of the
-  changed components with the code (check 7). Where the code is backed by
-  a decision, the plan or an allowed addition, the main session updates
-  the document at the close, also in a backlog milestone, because catching
-  up is not a change of the architecture; a break without explanation is a
-  blocker, an unclear case an open decision.
+### Asking and deciding
+
+- **The interview asks only what the user can answer**, with two to four
+  options, a recommendation, "I don't know" and "I need more details".
+- **Ask while the user is there; decide and record when not.** The
+  interview, the spec approval, the start of a phase, `/wcc:feedback` and
+  `/wcc:change` may ask. Inside a phase a question would stop it for hours,
+  so it decides, records in DECISIONS.md with the cost of a later change,
+  and blocks only where it must.
+- **Each phase starts with "Discuss"**: Claude reads the requirements and the code, presents
+  how it would build what they leave open as a list of assumptions to
+  confirm, and asks only the open decisions of the phase and real grey
+  areas, in one round, recorded in `CONTEXT.md`. Confirming a list is faster
+  than answering questions, and the user is there anyway because they
+  started the phase.
+- **Questions work without menus.** Where the AskUserQuestion tool is
+  missing or its menus do not show (a remote session), the skills ask in
+  text with numbered options, without a setting.
+- **Completeness is checked, not felt.** Mandatory sections plus the
+  `idea-gap-checker`, which sketches an architecture from IDEA.md alone and
+  lists what it had to guess.
+- **Assumptions are presented as a list to confirm.**
+- **Long discussions run in clarification sessions** (child sessions in
+  Claude Code Desktop). The signal for "done" is the result file in
+  `decisions/`, because a session the user talks to does not report back
+  reliably.
+- **Consequential decisions are never taken alone.** Data schema, formats,
+  public interfaces and authentication are settled in the spec, looked for
+  again at the start of each phase, and a reason to stop inside one.
+- **Open decisions wait in STATUS.md**, one question each with context,
+  options and a recommendation. A bare list of blockers would lose the
+  options and the recommendation, and most open decisions arise while
+  nobody watches and are answered later without their context. The next
+  phase asks those that concern it; `/wcc:change` takes answers any time.
+
+### Planning
+
+- **Requirements are atomic.** One line, one checkable capability, an ID
+  that never changes, a test level. Requirements that bundled a dozen
+  promises in one criterion pulled the same detail into tests, reviews and
+  backlog. REQUIREMENTS.md also holds "Later", "Out of scope" and a
+  coverage table.
+- **Phases have success criteria**: two to five results a user can observe.
+  They guide the planning, the verifier and the manual checks.
+- **Research comes before choosing and planning.** The model's memory of
+  libraries is often a version behind; the `researcher` reads the current
+  documentation.
+- **The riskiest assumptions are tried out before anything is built.** The
+  `feasibility-checker` may write only in `research/experiments/`, installs
+  nothing and gets no elevated rights; what remains is the result and the
+  commands to repeat it, not the code.
+- **Target vision apart from the first milestone.** The architecture is
+  designed for the target vision, code is written only for the current
+  phase.
+- **User interfaces are specified up front** in UI-SPEC.md, or agents
+  building views in parallel each invent their own look.
+- **Documentation is asked for in the interview and written per phase** by
+  the `doc-writer`, which reads the code and runs every example. Its
+  requirements are in category `DOC` and hold at every close.
+- **Missing credentials and rights are reasons to stop, not bugs.** The
+  spec names them, `/wcc:prepare` checks them while the user is there, and
+  no agent obtains elevated rights or works around a missing key.
+- **The project name may come later.** A working title is allowed; the
+  folder is renamed before `/wcc:prepare`.
+
+### Tests
+
+- **Test what the requirements promise, once, at the cheapest level that
+  proves it.** Every requirement has a test level, confirmed by the user
+  with its cost: `unit` (seconds), `e2e` (minutes), `none` (wiring a
+  behaviour test covers), `manual`. Rules that only said "at least one
+  test" let agents test every promise in every layer and every edge case
+  they could think of; tests then outgrew the product two to one.
+- **Tests are planned before they are written.** Each phase writes a test
+  map: one row per promise, its level, its test name. A promise is tested
+  where it arises, behaviour many resources share is one table-driven test,
+  glue code and configuration get no test, and only edge cases the
+  requirement names, that happen in normal operation, or that would destroy
+  data or leak a secret. The map is checked before the tests are written;
+  afterwards a Grep finds every test name, and finding none is a failure.
+- **Tests come first, from a separate agent.** The `test-writer` does not
+  see the implementation and writes exactly the rows. Tests written by the
+  agent that implements would check what it built, not what was asked; a
+  separate writer keeps an objective "done" for a phase that runs without
+  questions.
+- **Only what a change can break runs during development.** A plan runs its
+  fast checks while it repairs and its own end-to-end tests once they are
+  green. A phase's close runs the unit suite and the linter in full and the
+  end-to-end tests of what it covers and changed, by test function. All
+  end-to-end tests run at the end of a milestone, before its tag. A green
+  test is not run again on unchanged code.
+- **End-to-end tests share what is expensive**: one environment per run,
+  one run of an expensive step for all checks that need it, the
+  environment's lifecycle as one sequence, booted machines shared, waiting
+  subtests in parallel, time limits tested with a test clock.
+- **Findings about the tests get no tests about the tests.** The proof is
+  that existing tests stay green, plus a measurement.
+
+### Implementation
+
+- **One phase per run, started by the user.** Every phase reads the project
+  files afresh, so what an earlier one left in the context helps nothing
+  and is sent again with every call.
+- **The main session stays small.** It reads STATUS.md and ROADMAP.md by
+  the parts it needs, the large documents by their headings; output goes
+  to files; every agent returns a short result in a fixed form. STATUS.md
+  lines stay one or two sentences and a finished phase shrinks to one line
+  in ROADMAP.md, its details moving to ROADMAP-DONE.md, so the files every
+  skill reads stay small.
+- **Plans are small**: one component, one to three tasks, no task over five
+  files, about 400 lines, also when a plan bundles backlog items. An agent
+  sends its whole context with every turn, so a large plan costs more than
+  two halves; in the reference project one oversized plan used a fifth of
+  its phase's tokens.
+- **Waves are computed when planning**, from the dependencies and the files
+  of each plan. A plan that depends on another starts only after
+  that one is reviewed.
+- **Two agents at the same time, fixed.** In the
+  reference project two agents finished a phase in 1:25 h instead of 2:09 h
+  with fewer tokens and no conflicts; each agent costs the same alone or in
+  parallel. An option for it was dropped.
+- **Implementation runs in its own agent**, the `implementer`, with only the
+  tools it needs and its fixed rules, so the prompt holds only the plan.
+- **Agents wait for their own commands inside their turn**, with a
+  foreground loop for long ones; a command still running when an agent
+  returns wakes the main session again and again.
+- **No debug access in the product, no way around a protection.** The
+  rules forbid it and the reviewer searches every diff for it.
+- **Repairing and adding is allowed, changing and replacing stops the
+  plan.** When in doubt, it stops.
+- **Three repair attempts, then block late.** Dependent plans are skipped,
+  the rest is finished, then `BLOCKED` follows.
+- **Only the main session writes the shared documents**; subagents report.
+- **Git rules for parallel agents**: stage by name, no stash, no reset, one
+  branch per plan; worktrees are removed after their merge without force.
+- **One branch per phase**, so the base branch holds only finished phases;
+  one tag per milestone.
+- **No falling back to a similar package name**: a near miss may be
+  malicious.
+
+### Reviews and backlog
+
+- **Reviews have a stopping rule**: blockers are fixed, one round per plan,
+  the architecture is not up for debate.
+- **The reviewer removes what cannot be needed**: a guard for a state never reached, a check made elsewhere, an
+  option nothing sets, a generalisation with one use. Only with evidence
+  from the repository. It is the counterweight to agents that harden
+  everything.
+- **The backlog is a parking lot.** An item needs a severity (`security`,
+  `data`, `bug`, `later`, `minor`) and a stated consequence; at most two per
+  review and verifier, usually none. Nothing in it is scheduled by itself:
+  `/wcc:phase` and `/wcc:status` show the count per severity, and the user
+  takes items in with `/wcc:change`, which makes them a backlog phase. With
+  automatic backlog milestones, reviewers filled their quota and those
+  milestones took longer than feature work while writing mostly tests.
+- **The phase is checked as a whole.** The `verifier` works backwards from
+  the success criteria and requirements, checks every row of the test map,
+  the documentation and ARCHITECTURE.md against the code, and believes no
+  report.
+- **ARCHITECTURE.md holds what other components build on**; how a component
+  works inside goes into code comments.
+
+### Manual checks and feedback
+
+- **Manual checks have a guide** in `CHECKS.md`, written at the close while
+  the code is fresh, and stop a phase only if later phases depend on them.
+- **`/wcc:feedback` walks the user through them** one at a time: Claude
+  prepares what it can, says what should happen, and
+  saves each answer at once.
+- **Findings are sorted with the user**: bugs become a feedback phase with a
+  failing test first, minor findings are parked, wishes go to `/wcc:change`.
+  While a phase is running they wait in FEEDBACK.md.
+
+### State
+
+- **State lives in files, not in the context**, so phases can be
+  interrupted and resumed: check marks in the plan, phases as roadmap lines.
+- **`/wcc:upgrade` brings projects along.** It knows no project, only the
+  migration catalogue and the current templates, changes the form of the
+  files, never their decisions, and asks once.
 
 ## Bringing existing projects along
 
-Whoever changes something in the plugin that affects an existing project
-adds it in the same change to `skills/upgrade/references/migrations.md`:
-the version, how to detect that it is missing, what `/wcc:upgrade` changes
-and which skill has to run afterwards. A project is affected when a skill
-or agent newly expects, renames or reads in a different form a section, a
-line or a term in the project files. Rules that live only in
-`skills/idea/assets/project-CLAUDE.md` need no entry; the skill compares the
-project `CLAUDE.md` with the template anyway. An entry must work on every
-project, not only on the ones you know: the detection rule checks the
-content of the files, never project names or assumptions about the
-project's history.
+Whoever changes something that affects existing projects adds an entry to
+`skills/upgrade/references/migrations.md` in the same change: the version,
+how to detect that it is missing, what `/wcc:upgrade` changes, and which
+skill runs afterwards. A project is affected when a skill or agent newly
+expects, renames or reads in another form a section, line, term or path in
+the project files. Rules only in `project-CLAUDE.md` need no entry. The
+detection checks file content, never project names or history.
 
 ## Customising
 
-Typical changes and where to make them:
-
 | Wish | Where |
 |------|-------|
-| Fixed conversation language | Best locally, in your own `~/.claude/CLAUDE.md`. In the plugin: the paragraph starting "Talk to the user in the language they have configured" in every `SKILL.md` and the section "Language" in `skills/idea/assets/project-CLAUDE.md` |
-| Different document language | Language rule in every `SKILL.md` and in `skills/idea/assets/project-CLAUDE.md`, templates in `assets/`, return language in `agents/*.md`, and every term from the templates that skills and agents quote literally |
-| Rules for the implementation (questions, stop conditions) | `skills/idea/assets/project-CLAUDE.md` |
+| Fixed conversation language | Best in your own `~/.claude/CLAUDE.md`. In the plugin: the paragraph starting "Talk to the user in the language they have configured" in every `SKILL.md`, and "Language and documents" in `skills/idea/assets/project-CLAUDE.md` |
+| Different document language | Language rule in every `SKILL.md` and in `project-CLAUDE.md`, templates in `assets/`, return language in `agents/*.md`, and every key term (see "Language") |
+| Rules during a phase (questions, what is allowed, stop conditions) | "During a phase" in `skills/idea/assets/project-CLAUDE.md`; "Plans that cannot be finished" in `skills/phase/SKILL.md` |
+| What the start of a phase asks | "Discuss" in `skills/phase/SKILL.md` |
 | Interview questions and mandatory sections | `skills/idea/SKILL.md`, `skills/idea/assets/IDEA.md` |
-| Another project type | one section each in `skills/idea/references/project-types.md` and `skills/spec/references/project-types.md` |
-| Stricter or looser reviews | Blocker definition in `agents/code-reviewer.md` and `agents/spec-reviewer.md`; the limit of backlog items in `agents/code-reviewer.md` and `agents/milestone-verifier.md` |
-| Your own review agents | replace `agents/code-reviewer.md`; they need the same split into blocker and backlog |
-| Drop the approval after the spec | Step 7 in `skills/spec/SKILL.md` |
-| Criteria for choosing the stack | Step 1 in `skills/spec/SKILL.md` |
-| Different folder for the planning documents | The sentence "All planning documents live in …" in every `SKILL.md`, `skills/idea/assets/project-CLAUDE.md`, the path in `agents/*.md`, README |
-| More machine checks | Step 1 in `skills/prepare/SKILL.md` |
-| What is allowed without stopping, what counts as consequential | Section "During a milestone run" in `skills/idea/assets/project-CLAUDE.md`, explanation in `skills/idea/assets/DECISIONS.md` |
-| Number of repair attempts, reasons to stop | `skills/idea/assets/project-CLAUDE.md` and section "Tasks that cannot be finished" in `skills/milestone/SKILL.md` |
-| Number of parallel agents, backlog rhythm in a project | `/wcc:options` or section "Options" in STATUS.md |
-| Another option | Table in `skills/options/SKILL.md`, section "Options" in `skills/milestone/SKILL.md` and the place that reads it, template `skills/idea/assets/STATUS.md`, README |
-| Default value and limits of an option | `skills/options/SKILL.md`, section "Options" in `skills/milestone/SKILL.md`, template `skills/idea/assets/STATUS.md`, README |
-| Branch and tag names | `skills/milestone/SKILL.md` |
-| Scope of the final check | `agents/milestone-verifier.md` |
-| Kind and scope of the documentation | Interview question in `skills/idea/SKILL.md` and recommendations in `skills/idea/references/project-types.md`, section "Documentation" in `skills/idea/assets/IDEA.md` and `skills/spec/assets/SPEC.md`, rules in `skills/spec/SKILL.md` and `skills/spec/references/project-types.md`, writing rules in `agents/doc-writer.md`, check in `agents/milestone-verifier.md` |
+| Another project type | One section each in `skills/idea/references/project-types.md` and `skills/spec/references/project-types.md` |
+| Form of requirements and test levels | Step 2 of `skills/spec/SKILL.md`, `skills/spec/assets/REQUIREMENTS.md`, `agents/spec-reviewer.md` |
+| Phases and success criteria | Step 4 of `skills/spec/SKILL.md`, `skills/spec/assets/ROADMAP.md` |
+| Plans, tasks, waves, size limits, parallelism | Step 5 and 8 of `skills/phase/SKILL.md` |
+| How tests are planned and how many | Step 6 "Test map" in `skills/phase/SKILL.md`, `agents/test-writer.md`, "Tests" in `project-CLAUDE.md` |
+| End-to-end rules, what runs when | `skills/phase/references/e2e.md`, "Tests" in `project-CLAUDE.md` |
+| Stricter or looser reviews | `agents/code-reviewer.md`, `agents/verifier.md`, `agents/spec-reviewer.md` |
+| What enters the backlog, how it is worked off | `skills/phase/references/backlog.md`, the reviewer and verifier, "Backlog" in `skills/change/SKILL.md`, template `BACKLOG.md` |
+| Manual checks and findings | `skills/feedback/SKILL.md`, `skills/phase/references/feedback.md`, "Manual requirements" in `skills/phase/SKILL.md` |
+| Open decisions | "Open decisions" in `skills/phase/SKILL.md`, the agents' categories, "Open decisions", "Asking" and "Clarification sessions" in `skills/change/SKILL.md`, template `STATUS.md` |
+| Clarification sessions | Step 2 in `skills/idea/SKILL.md` and "Clarification sessions" in `skills/change/SKILL.md`; change both |
+| How plans are implemented | `agents/implementer.md`; its prompt in step 8 of `skills/phase/SKILL.md` |
+| What is read and how | "Reading" in `skills/phase/SKILL.md` and the opening paragraphs of the agents |
+| Folder for the planning documents | "All planning documents live in …" in every `SKILL.md`, `project-CLAUDE.md`, the agents, README |
+| Documentation of projects | Interview question in `skills/idea/SKILL.md`, `project-types.md`, "Documentation" in the IDEA and SPEC templates, `DOC` in `REQUIREMENTS.md`, `agents/doc-writer.md`, `agents/verifier.md` |
+| Approval after the spec, stack criteria | Steps 7 and 1 in `skills/spec/SKILL.md` |
+| Machine checks | Step 1 in `skills/prepare/SKILL.md` |
+| Branch and tag names | `skills/phase/SKILL.md` |
 | Model of an agent | `model` in the header of `agents/*.md` |
-| How tasks are implemented: checks, debugging, waiting, result form | `agents/implementer.md`; the prompt it gets in step 7 of `skills/milestone/SKILL.md` |
-| What an upgrade changes in existing projects | `skills/upgrade/references/migrations.md`; the procedure in `skills/upgrade/SKILL.md` |
-| Handling of findings from manual testing | `skills/feedback/SKILL.md`, sections "Feedback" and "Feedback milestones" in `skills/milestone/SKILL.md`, README |
-| Which parts of the planning documents a milestone and its agents read | Section "Reading the planning documents" in `skills/milestone/SKILL.md`, the opening paragraph of `agents/test-writer.md`, `agents/code-reviewer.md` and `agents/milestone-verifier.md`, step 1 in `skills/feedback/SKILL.md` |
-| Rule for backlog milestones | Section "Backlog milestones" in `skills/milestone/SKILL.md`; the rhythm is the option `Backlog milestone after` |
-| What counts as an open decision, its form, when it is asked | Section "Open decisions" in `skills/milestone/SKILL.md`, the categories in `agents/code-reviewer.md` and `agents/milestone-verifier.md`, sections "Open decisions", "Asking" and "Clarification sessions" in `skills/change/SKILL.md`, template `skills/idea/assets/STATUS.md` |
-| How clarification sessions work | Step 2 in `skills/idea/SKILL.md` and section "Clarification sessions" in `skills/change/SKILL.md`; change both |
 
-Whoever changes a rule that appears in several places changes all of them.
-The rules in `project-CLAUDE.md` and in the agents must agree with each
-other.
+A rule that appears in several places is changed in all of them; the
+project CLAUDE.md and the agents must agree.
 
 ## Testing changes
-
-Start Claude Code with the plugin from this directory:
 
 ```
 claude --plugin-dir .
 ```
 
-Manifest and marketplace file can be checked with `claude plugin validate
-.`. Then try the skills as `/wcc:idea`, `/wcc:spec` and so on in an empty
-test project. After editing a skill or agent, reload the plugins or restart
-the session.
-
-Two test cases cover most of it: a small project with fixed rules (a
-Tetris-like game, for example) and a project that starts small and has a
-large target vision (a re-implementation of an existing API with many
-resource types, for example).
+Check manifest and marketplace with `claude plugin validate .`, then try
+the skills in an empty test project; reload the plugins after editing a
+skill or agent. Two test cases cover most of it: a small project with fixed
+rules (a Tetris-like game) and a project that starts small with a large
+target vision (a re-implementation of an existing API with many resource
+types).
 
 ## Conventions when editing
 
-- The `description` of a skill decides when it is triggered. Keep the
-  trigger phrases. They are English; the skills also trigger on input in
-  other languages, because the description is matched by meaning, not by
-  wording.
-- Explain the reason behind an instruction instead of repeating it with
-  emphasis.
-- Keep every `SKILL.md` short. Material that applies to only one project
-  type belongs in `references/`.
-- Agents that only judge have read access only (`tools: Read, Grep,
-  Glob`). Exception: `code-reviewer` also has `Bash`, to read the changes
-  with git and run the tests. Its prompt forbids any change to files. The
-  `feasibility-checker` does not only judge, it tries things out: it has
-  write access, and its prompt restricts it to `docs/wcc/experiments/`.
-  The `implementer` writes code and has no web access: what it needs to
-  know about libraries comes from the `researcher` through the plan.
-- Raise `version` in `plugin.json` with every change that changes the
-  behaviour. If the change needs something in existing projects, it comes
-  with an entry in `skills/upgrade/references/migrations.md`.
+- The `description` of a skill decides when it triggers; keep the English
+  trigger phrases. They match input in other languages by meaning.
+- State a rule once, with its reason, in the place that uses it. Do not
+  repeat it with emphasis, and do not add an example of an incident to a
+  skill or agent: agents read every sentence as an instruction, and a
+  growing list of special rules makes them do more, not better. Reasons and
+  history belong in this file.
+- Keep every `SKILL.md` short; what applies only sometimes goes into
+  `references/` and is read when it applies.
+- Agents that only judge have read access (`tools: Read, Grep, Glob`); the
+  `code-reviewer` also has `Bash` to read diffs and run tests and must not
+  change files. The `feasibility-checker` writes only in
+  `research/experiments/`. The `implementer` has no web access; what it
+  needs to know comes from the `researcher` through the phase folder.
+- Raise `version` in `plugin.json` with every change of behaviour, with a
+  migration entry if projects need it.
 - Adjust author and owner in `plugin.json` and `marketplace.json` when
   passing the plugin on under your own name.
 
 ## Decisions taken
 
-These points were open and are decided. Entries marked "assumption" were
-taken over from a recommendation because there was no preference of one's
-own. They can be changed without consequences for the rest.
-
-- **The approval after the spec stays.** It is the only fixed stopping
-  point: Claude waits for the OK on the summary before the implementation
-  starts.
-- **Planning documents are English (version 0.10.0).** Up to 0.9.0 they
-  were German, because the user reads them. It was decided otherwise
-  because others may work on a project too, and a repository in two
-  languages shuts them out. The price: the user reads IDEA.md and the other
-  documents in English. For the same reason the plugin no longer sets a
-  conversation language: the conversation, the summary for approval and the
-  reports follow the user's language. Projects with German documents no
-  longer fit the skills, because these search for the English terms;
-  `/wcc:upgrade` translates them.
-- **The plugin repository is English too (version 0.16.0).** Up to 0.15.0
-  this file was German. Like the projects, the plugin is meant to be
-  developed by others as well.
-- **Backlog (assumption):** a backlog milestone runs after every third
-  milestone and at the end of a stage. Since version 0.11.0 the rhythm is
-  the option `Backlog milestone after`. It is entered as a line `B<n>` in
-  the ROADMAP. Governed by `skills/milestone/SKILL.md`.
-- **Storage in `docs/wcc/`.** Comparable tools (Spec Kit, Kiro, GSD,
-  OpenSpec, Agent OS, BMAD, Superpowers) all use their own folder. Visible
-  rather than hidden, because the user reads IDEA.md themselves.
-- **`/wcc:prepare` as a skill of its own.** Machine check and project
-  scaffold sit in one place instead of being spread over idea, spec and
-  milestone.
-- **Clarification sessions in the interview and in `/wcc:change`.**
-  `/wcc:spec` starts none of its own but reads `docs/wcc/decisions/`; the
-  stack discussion belongs in the interview. `/wcc:change` has them since
-  version 0.17.0, for open decisions and for questions a change raises.
-- **Stages.** After `DONE`, `/wcc:change` plans an item of the target vision
-  as the next stage with its own section in the ROADMAP.
-- **Taken over from the comparison with "Get Shit Done" (version 0.4.0):**
-  research, three repair attempts, final check, credentials as a reason to
-  stop, package rule, git rules, task check marks, `/wcc:status`, UI-SPEC,
-  one branch per milestone and one tag per stage.
-- **Protecting `.env` with a deny rule instead of a hook.** `/wcc:prepare`
-  adds `Read(./.env)` to the project's `.claude/settings.json`. A hook
-  would need a script that runs on every operating system, and would
-  disturb every read if it failed.
-- **Cheaper model (assumption):** `spec-reviewer` and `researcher` run with
-  `model: sonnet`, because they work through a fixed list or look things
-  up. All other agents inherit the session's model.
-- **Postponed:** a short path for single tasks and bug fixes after `DONE`,
-  and support for existing projects that were not started with wcc. Both
-  come when they are needed.
-- **Throwaway prototype (assumption):** a separate, optional skill
-  `/wcc:prototype`. The interview recommends it for games whose rules are
-  still unclear.
-- **No `/goal` (version 0.25.0):** a goal such as "STATUS.md says DONE"
-  would chain the milestones in one session again, which this version
-  removed. The tip is gone from the README.
-- **marketplace.json** uses the source `"./"`. That is the form the
-  documentation intends for a plugin published from its own repository.
+- **The approval after the spec stays**: the one fixed stop before
+  anything is built.
+- **Milestone, phase, plan, task, wave, requirement, success criteria** as
+  the words for the levels of work, each with one meaning (see "Words").
+- **Planning documents are English**, so others can work on a project; the
+  conversation follows the user.
+- **`.project/` as a hidden folder**, with a folder per phase.
+- **`/wcc:prepare` is a skill of its own**: machine check and scaffold in
+  one place, repeatable on new machines and checkouts.
+- **`.env` is protected by a deny rule**, not a hook, because a hook needs
+  a script for every operating system.
+- **No options.** Parallelism is fixed at two, end-to-end tests run in full
+  at the end of a milestone, the backlog runs when the user takes items in.
+  Each former option had one sensible value in practice. A model profile
+  per project was considered and left out too; the agents keep their fixed
+  `model:`.
+- **Cheaper model** (assumption): `spec-reviewer` and `researcher` run with
+  `model: sonnet`; all others inherit the session's model.
+- **No migration from versions before this one.** The vocabulary, the
+  folder and the documents changed completely; the only project, the API
+  test project, starts again from scratch. The migration catalogue starts
+  empty, and `/wcc:upgrade` handles changes from here on.
+- **No goal that chains phases** (such as `/goal`): it would bring back long
+  sessions over several phases.
+- **Postponed**: a short path for single fixes after `DONE`, and support for
+  projects not started with wcc.
+- **Optional prototype** (assumption): `/wcc:prototype`, recommended in the
+  interview for games whose rules are unclear.
 
 ## Open points
 
-These points can only be settled in a running Claude Code installation.
-
-1. **Session tools.** The idea and change skills use
-   `mcp__ccd_session__start_session`; the tool exists in Claude Code
-   Desktop. Not tried yet is whether the child session starts at once or
-   first shows the user a card to click. The skill covers both cases.
-   Observed: the report back to the parent session does not always arrive;
-   since version 0.6.1 the skill no longer relies on it.
-2. **Only part of it has run.** In one project, `/wcc:idea`, `/wcc:spec`,
-   `/wcc:prepare` and the first milestone with `/wcc:milestone --once` ran
-   without notable problems. `--parallel <n>` also ran in a run with
-   `--once` and worked. Not yet run: `/wcc:change`, `/wcc:status`,
-   `/wcc:options`, `/wcc:prototype`, a backlog milestone and the close of
-   a stage. A feedback milestone with 0.26.0 ran well: one milestone per
-   run, the fixed result forms, the `implementer` with its waiting loop
-   and its own end-to-end runs; the main session stayed under 200,000
-   tokens, no agent woke it while waiting, and `PowerShell` works in the
-   `tools:` of a plugin agent. Not yet run: the reuse of green end-to-end
-   runs (since version 0.26.0), the removal of task worktrees (since
-   0.28.0) and the reruns after a fix (since 0.29.0). Whether `TaskStop`
-   works in `tools:` is inferred from the documentation, not tried. Also not yet run:
-   the documentation task with the `doc-writer` (since version 0.13.0),
-   `/wcc:feedback` with a feedback milestone (since version 0.15.0) and
-   `/wcc:upgrade` (since version 0.16.0), the open decisions (since
-   version 0.17.0) and the archiving to BACKLOG-DONE.md (since version
-   0.18.0), and the filtered end-to-end run with subtests per criterion
-   (since version 0.19.0), and reading the planning documents by their
-   headings (since version 0.20.0), and the verifier running alongside the
-   test suite (since version 0.21.0), the narrower checks per task and the
-   shared reviews (since version 0.22.0), parallel test-writers (since
-   version 0.23.0), and the check of ARCHITECTURE.md against the code
-   (since version 0.24.0), and the test-writers split per component
-   independent of the option, the `Tests:` and `Adjusts:` lines of the
-   plan and the size limit of tasks (since version 0.30.0). The version
-   0.12.0 given for the
-   option `Full e2e run` in the migration catalogue is inferred, not
-   confirmed. `claude plugin validate .` has not been run since version
-   0.3.0.
+1. **Nothing of this version has run yet.** The plan is to build the API
+   test project again from scratch with it and compare against the previous
+   run: test code against product code, minutes per phase, backlog items
+   per phase, tokens per agent.
+2. **Session tools.** `/wcc:idea` and `/wcc:change` use
+   `mcp__ccd_session__start_session` (Claude Code Desktop). Whether the
+   child session starts at once or shows a card first is untested; the
+   skills cover both.
+3. **Not tried in tools:** whether `TaskStop` works in the `tools:` of a
+   plugin agent. `PowerShell` does.
+4. **Two ideas not built:** a script that lists tests without coverage of
+   their own, and mutation testing as a one-off quality check.

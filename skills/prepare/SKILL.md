@@ -1,16 +1,16 @@
 ---
 name: prepare
-description: Check that the machine has everything a wcc project needs and set the project up so the milestones can run - git repository, stack tools, accounts and secrets, dependencies, project scaffold, working build and test commands. Use this after the spec is approved, on a fresh checkout or a new machine, or whenever the user says "prepare the project", "check my system" or "set up the project".
+description: Check that the machine has everything a wcc project needs and set the project up so the phases can run - git repository, stack tools, accounts and secrets, dependencies, project scaffold, working build and test commands. Use this after the spec is approved, on a fresh checkout or a new machine, or whenever the user says "prepare the project", "check my system" or "set up the project".
 ---
 
 # prepare: check the machine and set up the project
 
-The unattended run must not fail at night because a tool is missing. This
+A phase must not fail halfway because a tool is missing. This
 skill finds that out while the user is present. It is repeatable: whatever
 already exists is only checked, so it also serves a fresh checkout or a newly
 installed machine.
 
-All planning documents live in `docs/wcc/`; file names below are relative to it.
+All planning documents live in `.project/`; file names below are relative to it.
 
 ## Preconditions
 
@@ -31,7 +31,7 @@ documents.
 
 Read the stack from SPEC.md and check that every tool it needs is installed
 and new enough: git, runtime, package manager, and the browser test tool if
-any criterion is marked `browser`. Check by running the tool, not by guessing.
+the stack names one. Check by running the tool, not by guessing.
 
 Read "Machine prerequisites" in SPEC.md and check each entry the
 same way. If it names elevated rights, check whether this session has them
@@ -41,7 +41,7 @@ If something is missing, list it with the install command for the user's
 operating system and stop. Do not install system software yourself: that
 changes the user's machine and is their decision. The same holds for
 elevated rights: do not try to obtain them. Tell the user that the
-milestones need Claude Code started as administrator, what for, and that
+phases need Claude Code started as administrator, what for, and that
 every agent of the run then has those rights; then stop.
 
 ## Step 2: repository
@@ -56,13 +56,13 @@ recommendation, if either holds:
 
 The options are "Rename the folder first" and "Keep it as it is". For a
 rename: if there is no name yet, agree on one, update the headings of the
-planning documents in `docs/wcc/`, and tell the user to close this session,
+planning documents in `.project/`, and tell the user to close this session,
 rename the folder and run `/wcc:prepare` again from a new session there;
 then stop. If the user keeps it, record that in DECISIONS.md and continue.
 Do not ask again when the folder is already a git repository.
 
 Then run `git init`, add a `.gitignore`
-fitting the stack and commit the existing files. Milestones need commits and
+fitting the stack and commit the existing files. Phases need commits and
 worktrees, so this is not optional. `.env` must be in `.gitignore`.
 
 ## Step 3: accounts and secrets
@@ -88,8 +88,8 @@ during a run.
 - No project scaffold yet: create it as SPEC.md and ARCHITECTURE.md describe
   it: package manifest, test framework, linter, build, and one trivial test
   that passes. Use the versions named in SPEC.md. Add no feature code; that
-  belongs to the milestones.
-- Add `docs/wcc/experiments/` to `.gitignore`. It is the scratch folder of
+  belongs to the phases.
+- Add `.project/research/experiments/` to `.gitignore`. It is the scratch folder of
   the feasibility check; `/wcc:spec` deletes it, and if an interrupted run
   left it behind, it must not be committed or built.
 - Scaffold exists: install the dependencies.
@@ -105,12 +105,12 @@ Run build, linter and tests. All three must succeed. Then:
 - write the exact commands into the section "Build and test commands" of the
   project CLAUDE.md. If some tests need the real environment or a browser
   and take long (end-to-end tests), give them a command of their own, separate
-  from the fast tests, and say so in the line; `/wcc:milestone` uses it to
-  choose which end-to-end tests run (option `Full e2e run`). Name in the line
+  from the fast tests, and say so in the line; `/wcc:phase` uses it to
+  choose which end-to-end tests run. Name in the line
   how to append a filter by test name to it (for example `-run <regexp>`).
   For the fast tests and the linter, also name how to run them on one
   package, module or directory (for example `go test ./internal/store/...`):
-  a milestone checks each task that way and runs the full commands only at
+  a phase checks each plan that way and runs the full commands only at
   its close
 - write a section "Prerequisites and setup" into the project README, so
   someone without this plugin can set up their machine too
@@ -119,4 +119,4 @@ Run build, linter and tests. All three must succeed. Then:
 ## Step 6: report
 
 Tell the user in at most five lines what was checked, what was created, and
-that the next step is `/wcc:milestone`.
+that the next step is `/wcc:phase`.

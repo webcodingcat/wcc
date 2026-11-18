@@ -1,6 +1,6 @@
 ---
 name: upgrade
-description: Bring an existing wcc project up to date with the installed version of the wcc plugin - the project CLAUDE.md, the planning documents in docs/wcc/ and their keys - so the skills of the newer version find what they look for. Use this whenever the user says "upgrade the project", "update to the new wcc version", "migrate the project", after updating the plugin, or when /wcc:status reports that the project was written by an older wcc version.
+description: Bring an existing wcc project up to date with the installed version of the wcc plugin - the project CLAUDE.md, the planning documents in .project/ and their keys - so the skills of the newer version find what they look for. Use this whenever the user says "upgrade the project", "update to the new wcc version", "migrate the project", after updating the plugin, or when /wcc:status reports that the project was written by an older wcc version.
 argument-hint: "[--check]"
 ---
 
@@ -8,8 +8,8 @@ argument-hint: "[--check]"
 
 Arguments: $ARGUMENTS
 
-All planning documents live in `docs/wcc/`; file names below are relative to
-it. Only the project CLAUDE.md sits in the project root.
+All planning documents live in `.project/`; file names below are relative
+to it. Only the project CLAUDE.md sits in the project root.
 
 Talk to the user in the language they have configured (the `language`
 setting or their own CLAUDE.md), otherwise in the language they write in;
@@ -31,13 +31,12 @@ With `--check`, only report what would change, and write nothing.
 
 ## 1. Versions
 
-- If `docs/wcc/STATUS.md` does not exist, say that this is not a wcc
+- If `.project/STATUS.md` does not exist, say that this is not a wcc
   project, that `/wcc:idea` starts one, and stop.
 - The installed version is `version` in `.claude-plugin/plugin.json`, two
   folders above this skill folder.
 - The project version is the line `wcc version: <x.y.z>` near the top of
-  the project CLAUDE.md. Projects started before version 0.16.0 have no such
-  line: call their version "before 0.16.0".
+  the project CLAUDE.md.
 - If the project version is newer than the installed one, say that the
   plugin is older than the project, recommend updating the plugin, and stop.
   Writing older rules over newer ones would undo them.
@@ -45,15 +44,15 @@ With `--check`, only report what would change, and write nothing.
 ## 2. Is a run going?
 
 This skill edits STATUS.md, ROADMAP.md and the project CLAUDE.md, which a
-milestone run reads and writes. If the status is `IN_PROGRESS`, ask whether
+phase reads and writes. If the status is `IN_PROGRESS`, ask whether
 a run is going in another session right now. If so, say to run the upgrade
 after it ends, and stop.
 
 If the project is a git repository, check that the files this skill will
 touch have no uncommitted changes. If they have, show them and ask whether
 to commit them first, include them, or stop. Work on the branch that is
-checked out. On a milestone branch `wcc/m<n>` or `wcc/f<n>`, say that the
-upgrade reaches the base branch with the merge of that milestone.
+checked out. On a phase branch `wcc/phase-<id>`, say that the upgrade
+reaches the base branch with the merge of that phase.
 
 ## 3. Collect
 
@@ -79,18 +78,18 @@ describes:
     a deliberate project rule: do not decide; put it in the list for the
     user in step 4.
 - **Planning documents** against the templates in `../idea/assets/` and
-  `../spec/assets/`: compare the section headings and the key terms (the
-  line names in "Options", `Type`, `Cost of change`, `Stops for: manual
-  check` and the like). A heading or key that the template has under a new
+  `../spec/assets/`: compare the section headings and the key terms (`Type`,
+  `Cost of change`, `Stops for: manual check`, `Wave:`, `Size:` and the
+  like). A heading or key that the template has under a new
   name is renamed. A section that is missing and needs no content is added
   with the template's placeholder. A section that is missing and needs
   content, decided by the user or derived from IDEA.md, is not invented: it
   becomes a follow-up for the skill that writes it (`/wcc:change` for IDEA,
-  SPEC, ARCHITECTURE and ROADMAP, `/wcc:prepare` for build and test
+  REQUIREMENTS, SPEC, ARCHITECTURE and ROADMAP, `/wcc:prepare` for build and test
   commands).
 
 Leave alone: the code, the content of entries (requirements, decisions,
-backlog items, experiments), the plans of finished milestones, and
+backlog items, experiments), the folders of finished phases, and
 `decisions/`. Their form may be older, but nothing reads them by key any
 more, and rewriting them would change the history of the project.
 
@@ -99,11 +98,11 @@ more, and rewriting them would change the history of the project.
 Show one list, at most about fifteen lines, grouped:
 
 - **Changes now:** each change in one line, with the version that brought it
-  where known (for example "STATUS.md: add the test guide to 5 open manual
-  checks (0.15.0)").
+  where known (for example "STATUS.md: add the section <name> of the
+  template (<version>)").
 - **Follow-ups:** what needs a skill that asks the user, with the command
-  (for example "SPEC.md has no section Documentation: `/wcc:change` add
-  documentation (0.13.0)").
+  (for example "SPEC.md lacks a section a new skill reads: `/wcc:change`
+  <what to add> (<version>)").
 - **Your call:** the lines from step 3 that could be an old rule or a
   project rule, each with your recommendation.
 

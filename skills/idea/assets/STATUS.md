@@ -4,33 +4,29 @@ STATUS: IDEA
 
 ## Current state
 
+<!-- One or two sentences per line; details belong in the phase folder. -->
+
 - Milestone: -
+- Phase: -
 - Base branch: -
 - Last done: -
 - Next: -
 
-## Options
-
-<!-- Set with /wcc:options. Read by /wcc:milestone at the start of every run. -->
-
-- Parallel agents: 1
-- Backlog milestone after: 3
-- Full e2e run: every milestone
-
 ## Open manual checks
 
-<!-- Criteria verified as "manual" that the user still has to look at, each
-     with a test guide (Start, Setup, Steps, Expected). /wcc:feedback shows
-     them and takes the results. -->
+<!-- Requirements verified as "manual" that the user still has to look at,
+     one line each: "- UI-04 (03): <requirement>". The guide is in
+     phases/<id>/CHECKS.md. /wcc:feedback walks through them. -->
 
 - none
 
 ## Open decisions
 
-<!-- Questions only the user can answer: findings of a run, a review or a
-     backlog milestone that would change SPEC.md or ARCHITECTURE.md, and
-     wishes not yet taken up. One question each, with context, options and
-     a recommendation. /wcc:change without arguments takes the answers. -->
+<!-- Questions only the user can answer: findings that would change
+     REQUIREMENTS.md, SPEC.md or ARCHITECTURE.md, and wishes not yet taken
+     up. One question each, with context, options and a recommendation.
+     /wcc:phase asks those of its phase at its start, /wcc:change takes
+     answers any time. -->
 
 - none
 

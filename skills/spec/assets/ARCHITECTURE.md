@@ -3,7 +3,7 @@
 <!-- What other components build on: components, interfaces and their
      meaning, data schema, formats, flows. How a component works inside
      (timeouts, step orders, retries, workarounds) goes into code comments.
-     Every milestone reads this file. -->
+     Every phase reads this file. -->
 
 ## Overview
 

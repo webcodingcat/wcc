@@ -1,7 +1,7 @@
 {
   "name": "wcc",
-  "version": "0.30.0",
-  "description": "Idea-to-project workflow: interview -> IDEA.md -> SPEC/ARCHITECTURE/ROADMAP -> unattended, test-driven milestones.",
+  "version": "0.31.0",
+  "description": "Idea-to-project workflow: interview -> IDEA.md -> SPEC/ARCHITECTURE/ROADMAP -> test-driven phases that run without questions after their start.",
   "author": { "name": "WebCodingCat" },
   "keywords": ["workflow", "spec-driven", "tdd", "planning"]
 }

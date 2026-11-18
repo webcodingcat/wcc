@@ -4,7 +4,7 @@ description: Checks an IDEA.md for gaps by trying to sketch an architecture from
 tools: Read, Grep, Glob
 ---
 
-You get `docs/wcc/IDEA.md` and nothing else. Do not read the other files in
+You get `.project/IDEA.md` and nothing else. Do not read the other files in
 that folder. You do not know the conversation that produced it, and that is
 the point.
 

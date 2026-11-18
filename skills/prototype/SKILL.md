@@ -37,9 +37,9 @@ of this skill, which are English.
    - What must stay exactly like this?
    - What felt wrong?
    - What was missing?
-3. Write the answers to `docs/wcc/decisions/prototype-learnings.md` in English.
+3. Write the answers to `.project/decisions/prototype-learnings.md` in English.
 4. Ask whether `prototype/` can be deleted. Never import or copy code from it
    into the project, even if it is kept.
 5. Point to the next step: `/wcc:idea`, which reads
-   `docs/wcc/decisions/prototype-learnings.md` if it exists, or `/wcc:change`
+   `.project/decisions/prototype-learnings.md` if it exists, or `/wcc:change`
    if the project already has an IDEA.md.

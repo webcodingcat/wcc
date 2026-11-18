@@ -11,7 +11,7 @@ The idea: $ARGUMENTS
 IDEA.md is the user's document. It holds the what and the why, never the how.
 It is the only source for goals and non-goals; later documents refer to it.
 
-All planning documents live in `docs/wcc/`; file names below are relative to
+All planning documents live in `.project/`; file names below are relative to
 it. Only the project CLAUDE.md sits in the project root, because Claude Code
 loads it from there.
 
@@ -40,9 +40,9 @@ If these files do not exist yet, create them from `assets/` in this skill folder
   `## wcc rules`. Set the line `wcc version:` to `version` from
   `.claude-plugin/plugin.json`, two folders above this skill folder;
   `/wcc:upgrade` compares it with the installed plugin later.
-- `docs/wcc/DECISIONS.md`, `docs/wcc/BACKLOG.md`, `docs/wcc/STATUS.md` from
+- `.project/DECISIONS.md`, `.project/BACKLOG.md`, `.project/STATUS.md` from
   the matching templates.
-- an empty `docs/wcc/decisions/` folder.
+- an empty `.project/decisions/` folder.
 
 Set STATUS.md to `STATUS: IDEA`.
 
@@ -61,7 +61,9 @@ Rules:
    Decide technical details
    yourself later.
 2. Every question must be answerable in seconds: offer 2 to 4 options and mark
-   one as your recommendation. Use the AskUserQuestion tool if it is available.
+   one as your recommendation. Use the AskUserQuestion tool if it is
+   available; otherwise, for example in a remote session where its menus do
+   not show, ask in text with numbered options the user answers by number.
    Bundle questions into rounds of at most three.
 3. Every question also offers "I don't know" and "I need more details for
    this (separate session)". "I don't know" means: take the recommendation
@@ -90,7 +92,7 @@ Mandatory topics, each of which must end up answered or marked as an assumption:
   documentation (README, guide, reference, help inside the program, or none).
   Offer the recommendation for the project type from
   `references/project-types.md`. Ask this also for small projects: the
-  answer decides whether every milestone writes documentation, and
+  answer decides whether every phase writes documentation, and
   documentation added later has to describe everything at once.
 - Project type: read `references/project-types.md` and ask the additional
   mandatory questions for that type.
@@ -123,7 +125,7 @@ child session. When the user answers "I need more details for this":
      pros and cons for this specific project, answer follow-up questions,
      decide nothing without the user.
      Once the user has decided, and not before, write decision, reasons and
-     rejected alternatives in English to `docs/wcc/decisions/<topic>.md`.
+     rejected alternatives in English to `.project/decisions/<topic>.md`.
      Then tell the user in one line that the result is saved and that they
      can return to the interview session.
 4. If the session does not start by itself but shows a card, ask the user to
@@ -194,4 +196,4 @@ because this session runs inside it, so give the user the steps:
 
 Mention that the history of this session and of any clarification session
 stays with the old path in Claude Code; the documents do not need it,
-because `/wcc:spec` reads everything from `docs/wcc/`.
+because `/wcc:spec` reads everything from `.project/`.

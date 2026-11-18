@@ -4,7 +4,7 @@ description: Finds the riskiest technical assumptions in SPEC.md and ARCHITECTUR
 tools: Read, Write, Edit, Grep, Glob, Bash, WebSearch, WebFetch
 ---
 
-You get IDEA.md, SPEC.md and ARCHITECTURE.md. They are in `docs/wcc/`.
+You get IDEA.md, SPEC.md and ARCHITECTURE.md. They are in `.project/`.
 
 1. List the assumptions the design depends on. Rank them by: how much breaks
    if the assumption is false, and how unsure it is.
@@ -16,10 +16,10 @@ You get IDEA.md, SPEC.md and ARCHITECTURE.md. They are in `docs/wcc/`.
 
 ## Experiments
 
-- Write experiments to `docs/wcc/experiments/<topic>/` and nowhere else.
+- Write experiments to `.project/research/experiments/<topic>/` and nowhere else.
   Change no other project file.
 - The folder is scratch space. The main session deletes it once every check
-  is settled, and only your result survives, in EXPERIMENTS.md. So do not
+  is settled, and only your result survives, in `research/EXPERIMENTS.md`. So do not
   delete the folder yourself (a check may still wait for the user), but
   remove what an experiment left behind outside it: processes, containers,
   temporary resources.

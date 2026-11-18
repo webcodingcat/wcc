@@ -50,6 +50,11 @@ is built for now.
 
 <Checkable statement by which the user notices that the first version is done.>
 
+## In clarification
+
+<Questions discussed in a clarification session, each with its result file
+`decisions/<topic>.md`. Empty when the interview is complete.>
+
 ## Open for the SPEC
 
 - <Points Claude decides in the SPEC>

@@ -1,9 +1,12 @@
 # BACKLOG
 
-Review findings that are not blockers, and ideas for later. Worked off in
-batches, not during the current milestone. A finding that would need a change
-to SPEC.md or ARCHITECTURE.md is not work for a backlog milestone: it goes to
-"Open decisions" in STATUS.md, where the user sees it. Checked items move to
-BACKLOG-DONE.md when a backlog milestone closes.
+A parking lot: work worth a plan that no phase asked for. Nothing here
+is scheduled by itself; `/wcc:change` takes chosen items into a backlog
+phase. Every item states what goes wrong for whom and has a severity:
+`security`, `data`, `bug`, `later` (a named later phase needs it) or
+`minor` (a cosmetic finding the user wants to keep). Cleanups, rare cases
+and taste do not go here; a finding that needs a change to REQUIREMENTS.md,
+SPEC.md or ARCHITECTURE.md goes to "Open decisions" in STATUS.md. Checked items move to
+BACKLOG-DONE.md when a backlog phase closes.
 
-- [ ] <finding> (source: <review of milestone n / task>)
+- [ ] <severity>: <component>: <what goes wrong for whom> (source: <phase> <plan> review)

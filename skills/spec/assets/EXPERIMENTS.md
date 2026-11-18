@@ -4,7 +4,7 @@ What the feasibility check tried and what came out of it. The code of the
 experiments is deleted; every entry contains what is needed to understand and
 repeat the result.
 
-The planning of every milestone reads this file, so nothing is found out
+The planning of every phase reads this file, so nothing is found out
 twice.
 
 ## E1 <assumption in one sentence>
@@ -23,4 +23,4 @@ How it was checked:
 Observed: <the decisive output or behaviour, one to three lines>
 
 Consequence: <what this means for architecture or implementation; pitfalls a
-milestone has to know>
+phase has to know>
