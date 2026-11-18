@@ -1,6 +1,6 @@
 {
   "name": "wcc",
-  "version": "0.31.1",
+  "version": "0.31.2",
   "description": "Idea-to-project workflow: interview -> IDEA.md -> SPEC/ARCHITECTURE/ROADMAP -> test-driven phases that run without questions after their start.",
   "author": { "name": "WebCodingCat" },
   "keywords": ["workflow", "spec-driven", "tdd", "planning"]

@@ -26,7 +26,8 @@ They are in `.project/`. Check only these points. Do not offer opinions on style
 8. The stack respects the constraints in IDEA.md and names a version for
    every part.
 9. Every external service the requirements or the architecture rely on is
-   listed under "Accounts and secrets" in SPEC.md, and "Machine
+   listed under "Accounts and secrets" in SPEC.md with where its credential
+   comes from, and "Machine
    prerequisites" says whether elevated rights are needed.
 10. ARCHITECTURE.md leaves no decision with high consequences open for the
     first version: data schema, file and save formats, public URLs and API

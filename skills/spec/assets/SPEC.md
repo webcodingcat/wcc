@@ -6,13 +6,15 @@ Goals and non-goals are in IDEA.md, the requirements in REQUIREMENTS.md.
 
 - <language, framework, tools, each with its version> (reasoning and sources
   in DECISIONS.md)
+- Module or package name: <name>; repository: <URL or "not yet">
 
 ## Accounts and secrets
 
 What the user has to provide before the implementation runs. Values never
 appear here, only names.
 
-- <service or account>: <name of the environment variable>, <what for>
+- <service or account>: <name of the environment variable, or "login of
+  <tool>" with the context it uses>, <what for>
 - none
 
 ## Machine prerequisites

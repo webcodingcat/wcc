@@ -201,7 +201,15 @@ Code works on a project without such rules.
   requirements are in category `DOC` and hold at every close.
 - **Missing credentials and rights are reasons to stop, not bugs.** The
   spec names them, `/wcc:prepare` checks them while the user is there, and
-  no agent obtains elevated rights or works around a missing key.
+  no agent obtains elevated rights or works around a missing key. A
+  credential may come from the login of a tool the user already has (a
+  cloud CLI context); then it is used through that tool and not copied
+  into `.env`, and `.env.example` exists only when there is a variable.
+- **The project folder is the only source.** In the reference project,
+  `/wcc:prepare` searched sibling folders for a module path, found an older
+  copy of the project and took its scaffold over, with decisions nobody had
+  approved for the new one. The spec names the module or package name, and
+  what is missing is asked.
 - **The project name may come later.** A working title is allowed; the
   folder is renamed before `/wcc:prepare`.
 

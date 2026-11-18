@@ -71,9 +71,15 @@ Use `assets/REQUIREMENTS.md` and `assets/SPEC.md`. Rules:
 - Detail the first milestone. What the target vision will need goes under
   "Later" without a level; what is excluded under "Out of scope" with the
   reason.
-- List under "Accounts and secrets" every account, API key and
-  environment variable the project needs, by name. `/wcc:prepare` checks
-  them while the user is present, so a missing key does not stop the run.
+- List under "Accounts and secrets" every account and credential the
+  project needs, each with where it comes from: an environment variable by
+  name, or the existing login of a tool the user already uses (the active
+  or a named context of a cloud CLI, `gh auth`), which needs no second copy
+  of the secret. `/wcc:prepare` checks them while the user is present, so a
+  missing key does not stop the run.
+- Name the project's identifiers in code under "Stack": module or package
+  name, repository URL if known. The scaffold, imports and every phase use
+  them, so a later change touches every file.
 - Derive "Documentation" from IDEA.md and `references/project-types.md`:
   one entry `D<n>` per document with path, audience and content, kept apart
   from `.project/`, which holds planning documents and is no documentation

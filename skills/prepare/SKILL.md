@@ -27,6 +27,10 @@ of this skill, which are English. Everything written to the repository is
 English: code, configuration, README, commit messages and the planning
 documents.
 
+The project folder and SPEC.md are the only sources. Other folders on the
+machine, such as an older copy or a sibling project, hold decisions nobody
+approved for this project; do not search or read them.
+
 ## Step 1: check the system
 
 Read the stack from SPEC.md and check that every tool it needs is installed
@@ -61,19 +65,29 @@ rename the folder and run `/wcc:prepare` again from a new session there;
 then stop. If the user keeps it, record that in DECISIONS.md and continue.
 Do not ask again when the folder is already a git repository.
 
+If SPEC.md does not name the module or package name, ask the user now and
+add it under "Stack".
+
 Then run `git init`, add a `.gitignore`
 fitting the stack and commit the existing files. Phases need commits and
 worktrees, so this is not optional. `.env` must be in `.gitignore`.
 
 ## Step 3: accounts and secrets
 
-Read "Accounts and secrets" in SPEC.md. For every entry:
+Read "Accounts and secrets" in SPEC.md. For an environment variable:
 
-- make sure `.env.example` lists the variable name, without a value
+- make sure `.env.example` lists the variable name, without a value; create
+  `.env.example` only if there is at least one variable
 - check that the variable is set, in `.env` or in the environment. Check only
   that it exists and is not empty. Never print, log or copy its value.
-- where it can be done without side effects, check that the credential works,
-  for example with a read-only call
+
+For the login of a tool, check it with a read-only call through the tool
+itself, in the context SPEC.md names; never read the tool's credential
+file.
+
+Where it can be done without side effects, check that a credential works,
+for example with a read-only call. An optional entry that is missing is
+reported, not a reason to stop.
 
 If something is missing, tell the user exactly what to create and where to
 put it, and stop. The user enters secrets themselves; do not ask for them in
