@@ -189,7 +189,10 @@ From here on the phase asks nothing.
    reviewers; plans of one wave running together each get their own
    worktree. Two plans with end-to-end tests never run at the same time:
    their runs collide in the real environment. Fixes of blockers and of
-   failures at the close go to the `implementer` too.
+   failures at the close go to the `implementer` too. A plan stopped
+   `outside the plan` goes to a new `implementer` with the plan ID, the
+   same worktree and the reported failure as what to fix; the plan is done
+   once its tests pass after that fix.
 9. **Done means green, then reviewed.** A plan is done when its own tests,
    the other tests of the packages it changed, the linter on those and the
    build pass (the narrower commands of the project CLAUDE.md). Its
@@ -198,7 +201,8 @@ From here on the phase asks nothing.
    run is green on the commit it names. Tests of open plans may fail.
 
    Commit, then run the `code-reviewer` once with the plan ID (or the
-   group), the phase folder and the commit. Fix blockers, write
+   group), the phase folder and the commits, fixes of failures outside the
+   plan included. Fix blockers, write
    decisions to "Open decisions", and take backlog items in as
    `references/backlog.md` says: most reviews add none. Then mark the plan
    and its tasks `[x]`. No second review round.

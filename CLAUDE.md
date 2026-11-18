@@ -302,6 +302,14 @@ Code works on a project without such rules.
   plan.** When in doubt, it stops.
 - **Three repair attempts, then block late.** Dependent plans are skipped,
   the rest is finished, then `BLOCKED` follows.
+- **A failure from outside the plan goes to a fresh implementer.** In the
+  reference project's third phase the rebuild plan was written in minutes;
+  its end-to-end run then hit three defects of other components, and the
+  same agent chased them for two hours with a context of up to 250k
+  tokens, more than half of all implementer tokens of the phase.
+  Experiments did not count as repair attempts. Now the implementer stops
+  once its own part passes the fast checks, and a new one fixes the cause
+  from a small context; one review covers the plan and the fix.
 - **Only the main session writes the shared documents**; subagents report.
   The exceptions are the phase's PLAN.md and TESTS.md, which the `planner`
   writes first, and its RESEARCH.md, which the `researcher` writes.

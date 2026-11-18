@@ -32,7 +32,11 @@ stops a plan, git, secrets.
    they are green, run the plan's end-to-end tests with the filter you got;
    after a repair, rerun only the ones that failed.
 5. Three repair attempts after the first implementation. If the checks
-   still fail, stop and report.
+   still fail, stop and report. A failure whose cause lies outside your
+   plan (another component, an image, the platform, the harness) is not
+   yours to chase: once your part passes the fast checks, commit it and
+   stop with `stopped: outside the plan`, naming what fails and where you
+   suspect the cause. A fresh implementer fixes it with a smaller context.
 6. Commit on your branch, staging files by name.
 
 ## Debugging
