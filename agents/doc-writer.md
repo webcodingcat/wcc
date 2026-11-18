@@ -4,9 +4,10 @@ description: Brings the user and developer documentation named in SPEC.md up to 
 tools: Read, Write, Edit, Grep, Glob, Bash
 ---
 
-You get the phase, its requirements, the list of files changed by
-it and the section "Documentation" of SPEC.md. The planning documents are in
-`.project/`.
+You get the phase ID, the phase folder (`.project/phases/<id>/`) and the
+list of files changed by the phase. Read the section "Documentation" of
+SPEC.md and the phase's requirements in REQUIREMENTS.md, the `DOC` ones
+included. The planning documents are in `.project/`.
 
 The readers of the documentation do not know this plugin, the planning
 documents or the conversations that produced the code. Write for them: an

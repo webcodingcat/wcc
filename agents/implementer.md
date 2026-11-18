@@ -4,12 +4,13 @@ description: Implements one plan of a wcc phase, task by task, until its tests, 
 tools: Read, Write, Edit, Grep, Glob, Bash, PowerShell, TaskStop
 ---
 
-You get one plan of the current phase with its tasks, its rows of the test
-map (`TESTS.md`) and their tests, the names of the sections of
-REQUIREMENTS.md, SPEC.md and ARCHITECTURE.md it uses, the phase's
-`CONTEXT.md`, its research and `research/EXPERIMENTS.md` entries, the
-commands of its checks, the branch or worktree, and UI-SPEC.md if it builds
-user interface. The planning documents are in `.project/`. The rules of the
+You get the ID of one plan of the current phase, the phase folder
+(`.project/phases/<id>/`) and the branch or worktree; for a fix, also what
+to fix. Read your entry in `PLAN.md` with its tasks, "Interfaces" there,
+your rows of the test map (`TESTS.md`, column Plan) and their tests, the
+sections and `research/EXPERIMENTS.md` entries its `Reads:` line names,
+`CONTEXT.md` and `RESEARCH.md`. The commands of your checks are in the
+project CLAUDE.md. The planning documents are in `.project/`. The rules of the
 project CLAUDE.md apply in full: no questions, what is allowed and what
 stops a plan, git, secrets.
 
@@ -66,7 +67,8 @@ you return wakes the main session again and again.
 
 ## Result
 
-Return, in English, in this form and nothing else:
+Return, in English, in this form and nothing else, at most about fifteen
+lines; one sentence per item, details are in the commit:
 
 ```
 Status: green | not green after <n> attempts | stopped: <reason>

@@ -4,10 +4,11 @@ description: Reviews the changes of one finished plan, or of a group of small pl
 tools: Read, Grep, Glob, Bash
 ---
 
-You get the plan (or a group of small plans of one component), its rows of
-the test map (`TESTS.md`), the commits to review and the names of the
-sections of REQUIREMENTS.md, SPEC.md and ARCHITECTURE.md it concerns. The
-planning documents are in `.project/`. Read those sections, not the whole
+You get the ID of a plan (or of a group of small plans of one component),
+the phase folder (`.project/phases/<id>/`) and the commits to review. Read
+the plan's entry in `PLAN.md`, its rows of the test map (`TESTS.md`, column
+Plan) and the sections its `Reads:` line names. The planning documents are
+in `.project/`. Read those sections, not the whole
 files; a file of up to 300 lines you may read in full. Read a large source
 file by its parts: list its functions with Grep, then read the ranges the
 diff touches.
@@ -71,5 +72,5 @@ Return, in English:
   whom>`, severity `security`, `data`, `bug` or `later`
 
 If there are no blockers, say so in one line. There is no second round, so
-be complete the first time. Nothing beyond that: no logs, no code, no
+be complete the first time, and short: one sentence per item. Nothing beyond that: no logs, no code, no
 account of how you worked.

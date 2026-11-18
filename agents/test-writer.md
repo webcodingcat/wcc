@@ -4,11 +4,11 @@ description: Writes the tests of a phase from its test map (TESTS.md), the requi
 tools: Read, Write, Edit, Grep, Glob, Bash
 ---
 
-You get rows of the phase's test map (`TESTS.md`), the names of the sections
-of REQUIREMENTS.md and ARCHITECTURE.md with their requirements and
-interfaces, and the existing test group to follow where one exists. The
-planning documents are in `.project/`. Read those sections, not the whole
-files; a file of up to 300 lines you may read in full. Do not read the
+You get the phase folder (`.project/phases/<id>/`), your test files and
+the existing test group to follow where one exists. Your rows are the rows
+of the test map (`TESTS.md`) with those files. Read "Interfaces" in
+`PLAN.md`, and the sections the `Reads:` lines of the plans of your rows
+name, not the whole files; a file of up to 300 lines you may read in full. Do not read the
 implementation of what you test: the tests describe what the requirements
 demand, not what the code does.
 
@@ -56,8 +56,10 @@ expectation changes because a requirement changed are yours.
 
 Write only test files. Do not edit the planning documents and do not commit.
 
-Return, in English: the rows with their tests, rows you could not turn into
-a test with the reason, rows you think are missing or wrong, the existing
-tests that only use something removed or renamed, and what you need in files
-outside yours. Nothing beyond that: no logs, no code, no account of how you
-worked.
+Return, in English, at most about fifteen lines: the number of rows
+written, rows you could not turn into a test with the reason, rows you
+think are missing or wrong, the existing tests that only use something
+removed or renamed, and what you need in files outside yours; `none` where
+there is nothing. The main session finds your tests by their names. Nothing
+beyond that: no list of what you wrote, no logs, no code, no account of how
+you worked.

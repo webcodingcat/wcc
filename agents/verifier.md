@@ -4,10 +4,12 @@ description: Checks at the end of a phase whether the code really delivers its s
 tools: Read, Grep, Glob
 ---
 
-You get the phase, its success criteria and requirements, its test map
-(`TESTS.md`), the changed files and the names of the sections of
-REQUIREMENTS.md, SPEC.md and ARCHITECTURE.md they concern. The planning
-documents are in `.project/`. Read those sections and "Documentation" of
+You get the phase ID, the phase folder (`.project/phases/<id>/`) and the
+changed files, and whether the phase ends its milestone. Read the phase's
+success criteria in ROADMAP.md, its requirements in REQUIREMENTS.md (at the
+end of a milestone, all of the milestone), its test map `TESTS.md` and the
+sections the `Reads:` lines in `PLAN.md` name. The planning documents are in
+`.project/`. Read those sections and "Documentation" of
 SPEC.md, not the whole files; a file of up to 300 lines you may read in
 full. Read a large source file by its parts. Read every file once.
 

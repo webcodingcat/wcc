@@ -56,17 +56,13 @@ make every later phase slower and are not a better result.
 - ROADMAP.md: the section of the current milestone. Finished phases there
   are one line each; their details are in ROADMAP-DONE.md, which no skill
   reads.
-- REQUIREMENTS.md, SPEC.md, ARCHITECTURE.md, DECISIONS.md: a file of up to
-  300 lines in full, a longer one by its headings (list them with Grep):
-  the requirements of the phase and every requirement in category `DOC`;
-  in SPEC.md "Stack", "Accounts and secrets", "Machine prerequisites",
-  "Documentation"; in ARCHITECTURE.md "Overview" and what the phase
-  touches; in DECISIONS.md the entries naming a component or requirement of
-  the phase and every entry with `Cost of change: high`.
-- `research/EXPERIMENTS.md`: the `valid` entries on what the phase uses.
+- `phases/<id>/PLAN.md`: the plan entries and their check marks, when you
+  need them; `TESTS.md` only with Grep for one plan's rows.
 
-When in doubt whether a section matters, read it. Pass the section names to
-the agents; they read those, not the whole files.
+Do not read REQUIREMENTS.md, SPEC.md, ARCHITECTURE.md, DECISIONS.md,
+EXPERIMENTS.md or the code to plan: the `planner` does, and every plan
+names the sections its agents read (`Reads:`). Read a section yourself only
+to write it (an answer worked in, an interface change, the close).
 
 Keep what you write short, because every later phase reads it: a
 DECISIONS.md entry has one sentence for `What` and one for `Why`;
@@ -76,10 +72,12 @@ sentences, details go into the phase folder.
 
 ## Keeping the main session small
 
-Everything that reaches this session is sent again with every later call.
-Build, test and lint output goes to a file; read the summary and the
-failures only. Agents return a short result in a fixed form; ask for
-nothing more. When an agent is "waiting on its own background work", end
+Everything that reaches this session is sent again with every later call,
+for the hours the phase runs. Build, test and lint output goes to a file;
+read the summary and the failures only. Give agents references, not
+copies: the plan ID and the phase folder, not the plan text, the rows or
+the sections. Agents return a short result in a fixed form; ask for nothing
+more. When an agent is "waiting on its own background work", end
 the turn without a tool call. Start your own long runs in the background and
 wait for their notice.
 
@@ -118,26 +116,22 @@ Then act on the status:
 
 ### Discuss
 
-Pick the phase (step 1 below). If `phases/<id>/PLAN.md` exists, it was
-interrupted: skip this and resume.
+Pick the phase (step 1 below). If `phases/<id>/PLAN.md` already holds
+plans, it was interrupted: skip this and resume.
 
-Otherwise read the phase's requirements and success criteria and the code
-they touch, and work out how you would build it where they leave room: a
-behaviour two readings allow, a limit not given, a choice the user will
-notice. Present that as one short list of assumptions, "this is how I would
-do it", one line each, and let the user correct any of it. Only what you
-cannot assume sensibly becomes a question: the open decisions in STATUS.md
-that concern the phase, and a real grey area where the options lead to
-different results. Ask those in the same round, at most five, each with two
-to four options, a recommendation and "I don't know" (take the
-recommendation).
+Otherwise start the `planner` with the phase ID and the open decisions in
+STATUS.md that concern the phase (step 1 of the agent). Present its
+assumptions as one short list, "this is how I would do it", one line each,
+and let the user correct any of it. Ask its questions in the same round,
+each with its options, the recommendation and "I don't know" (take the
+recommendation). Keep its research list for step 4.
 
 Write the confirmed assumptions and the answers to `phases/<id>/CONTEXT.md`,
 one line each. An answer that settles an open decision is worked in as
 `/wcc:change` does (`../change/SKILL.md`, steps 2 to 5): the documents it
 changes, DECISIONS.md with its `Q<n>`, the entry removed. An open decision
-the user wants to think about stays open; plans that depend on it are
-marked `[!]` with ` - waits for Q<n>`. If there is nothing to assume or ask,
+the user wants to think about stays open; note it in CONTEXT.md, and the
+planner marks the plans that depend on it `[!]` with ` - waits for Q<n>`. If there is nothing to assume or ask,
 say so in one line.
 
 From here on the phase asks nothing.
@@ -149,91 +143,27 @@ From here on the phase asks nothing.
 2. **Branch** `wcc/phase-<id in lower case>` from the current branch, noted
    as `Base branch` in STATUS.md. The base branch holds only finished
    phases.
-3. **Resume.** If `phases/<id>/PLAN.md` exists, an earlier run was
+3. **Resume.** If `phases/<id>/PLAN.md` holds plans, an earlier run was
    interrupted: switch to the branch and continue with the first plan not
    marked `[x]`, without planning or writing tests again.
-4. **Research.** List what the phase uses for the first time, and where the
-   plans depend on exact behaviour of a library, API or tool, unless a
-   `valid` entry in `research/EXPERIMENTS.md` covers it. Give the list to
-   the `researcher` agent and write its answer, a few lines with sources,
-   to `phases/<id>/RESEARCH.md`. Skip this if nothing is new.
-5. **Plan** `phases/<id>/PLAN.md`, for you, not for approval:
-
-   ```
-   - [ ] 03-01 <title>
-     - Wave: 1 | Depends on: - | Review: alone
-     - Requirements: AUTH-01, AUTH-02 | Tests: <test files from TESTS.md>
-     - Size: ~250 lines in 4 files
-     - Adjusts: <existing tests that only use something this plan removes>
-     - [ ] <task: what, in which files>
-     - [ ] <task>
-   ```
-
-   - Every `unit` and `e2e` requirement of the phase is in a plan, and the
-     plans together deliver the success criteria.
-   - A plan covers one component, one to three tasks, no task touching more
-     than five files, about 400 changed lines at most. Split a plan that is
-     larger, also one bundling backlog items: an agent sends its whole
-     context with every turn, so a large plan costs more than two halves.
-     Something done the same way in several components is a shared first
-     plan, then one per component.
-   - Waves: a plan's wave is one more than the highest wave of the plans it
-     depends on; plans of one wave touch different files. A plan that
-     depends on another starts only after that one is reviewed.
-   - Up to three small plans of one component in consecutive waves,
-     together about 300 lines, may share one review: `Review: with 03-01`.
-     Plans running at the same time, and plans changing an interface others
-     build on, are reviewed alone.
-   - If SPEC.md has a "Documentation" section that is not "none", the last
-     plan is `Documentation`: it covers the `DOC` requirements and runs at
-     the close.
-   - A decision with high consequences that REQUIREMENTS.md, SPEC.md,
-     ARCHITECTURE.md, DECISIONS.md and CONTEXT.md do not settle is not
-     yours: mark the plans that depend on it `[!]` with the question, two to
-     four options and your recommendation, and treat them as plans that
-     cannot be finished.
-6. **Test map.** Write `phases/<id>/TESTS.md` before any test:
-
-   ```
-   | Requirement | Behaviour | Level | Test | Plan |
-   |-------------|-----------|-------|------|------|
-   | AUTH-03 | a reset link older than one hour is refused | unit | internal/auth/reset_test.go: TestReset/AUTH_03_ExpiredLink | 03-02 |
-   ```
-
-   Test what the requirements promise, once, at the cheapest level that
-   proves it:
-   - One row per promise of the requirement: what it states, including the
-     error cases it names. Another case only if it happens in normal
-     operation (network down, service stopped, file missing, user cancels)
-     or its failure destroys data or leaks a secret.
-   - The level is the one REQUIREMENTS.md gives: `unit` or `e2e`. A `none`
-     or `manual` requirement gets no row.
-   - Test a promise where it arises. Code that only passes it on (an API
-     client, a handler mapping errors, a UI backend) gets at most one row
-     for the whole path.
-   - Behaviour many resources or endpoints share (labels, sorting, paging,
-     not found, body limits, unknown fields) is one table-driven row over all
-     of them, where it is implemented once.
-   - No rows for glue code, registration of routes or middleware, data types
-     and field tags, configuration without logic, and none that read source
-     files or fix how code or tests are structured.
-   - Variants of one promise (per image, per input) are one row with a
-     table of cases; the full matrix only where the result depends on the
-     variant.
-   - An `e2e` row whose logic is involved may get a `unit` row for that
-     logic as well, so the implementer gets feedback in seconds.
-   - The test name carries the requirement ID (`AUTH_03`) and no other, one
-     test or subtest per row, in a group named after the component. Test
-     files are named after the component and live with the code or in the
-     test directory.
-
-   Check the map: every `unit` and `e2e` requirement of the phase, and every
-   `DOC` requirement without a test yet, has a row; levels match
-   REQUIREMENTS.md; every test name carries its ID. Fix it until it holds.
-7. **Tests first.** Give the `test-writer` the rows of `TESTS.md`, the
-   section names of their requirements and interfaces, and the existing
-   test group to follow where one exists (from the file names, with Glob).
-   One writer per component, at most two at the same time, each owning its
+4. **Research.** If the planner listed research, give the list to the
+   `researcher` agent with the file `phases/<id>/RESEARCH.md` to write.
+   Skip this if nothing is new.
+5. **Plan.** Continue the same `planner` (step 2 of the agent) with
+   `CONTEXT.md` and `RESEARCH.md`; if it cannot be continued, start it anew
+   with both and the phase ID. It writes `phases/<id>/PLAN.md` (plans with
+   waves, tasks, sizes and `Reads:`, and the shared "Interfaces") and the
+   test map `phases/<id>/TESTS.md`, and returns the waves. Its result is
+   what you coordinate with. Record its decisions in DECISIONS.md. Plans it
+   marked `[!]` are plans that cannot be finished. For a feedback or
+   backlog phase, also give it the path of `references/feedback.md` or
+   `references/backlog.md` of this skill; it plans by that file.
+6. **Commit** the phase folder on the branch.
+7. **Tests first.** Start a `test-writer` per component the planner named,
+   with the phase folder, its test files and the existing test group to
+   follow where one exists (from the file names, with Glob); it reads its
+   rows in `TESTS.md`, "Interfaces" in `PLAN.md` and the `Reads:` sections
+   of their plans. One writer per component, at most two at the same time, each owning its
    test files (a shared helper or harness belongs to one of them; the
    others report what they need there); a phase with only a few rows gets
    one writer. Writers write exactly the rows: a row they think is missing
@@ -248,9 +178,10 @@ From here on the phase asks nothing.
    or renamed under `Adjusts:`. Commit all tests together: a worktree
    contains only what is committed.
 8. **Implement** wave by wave. Give each plan except `Documentation` to the
-   `implementer` with its plan entry, its rows of `TESTS.md`, the section
-   names, `CONTEXT.md`, its `RESEARCH.md` and `research/EXPERIMENTS.md`
-   entries, the check commands and UI-SPEC.md if it builds user interface.
+   `implementer` with its plan ID, the phase folder and its worktree or
+   branch; it reads its entry in `PLAN.md`, its rows of `TESTS.md`, the
+   `Reads:` sections, `CONTEXT.md` and `RESEARCH.md` itself, and takes the
+   check commands from the project CLAUDE.md.
    At most two agents run at the same time, counting implementers and
    reviewers; plans of one wave running together each get their own
    worktree. Two plans with end-to-end tests never run at the same time:
@@ -263,21 +194,20 @@ From here on the phase asks nothing.
    `implementer`, with the filter of its IDs; check in its result that the
    run is green on the commit it names. Tests of open plans may fail.
 
-   Commit, then run the `code-reviewer` once with the plan, its rows of
-   `TESTS.md`, the commit and the section names. Fix blockers, write
+   Commit, then run the `code-reviewer` once with the plan ID (or the
+   group), the phase folder and the commit. Fix blockers, write
    decisions to "Open decisions", and take backlog items in as
    `references/backlog.md` says: most reviews add none. Then mark the plan
    and its tasks `[x]`. No second review round.
 10. **Close.** Merge the plan worktrees. Run the documentation plan: give
-    the `doc-writer` the phase, its requirements, the changed files and
-    "Documentation" of SPEC.md, and commit what it wrote; it runs first
+    the `doc-writer` the phase ID, the phase folder and the changed files, and commit what it wrote; it runs first
     because the verifier and the `DOC` tests check what it writes. Then
     start the unit suite and the linter over the whole project in the
     background, output to files, with the end-to-end selection of
-    `references/e2e.md`. While it runs, run the `verifier` with the phase,
-    its success criteria and requirements, `TESTS.md`, the changed files and
-    the section names (at the last phase of a milestone, all requirements of
-    the milestone too); it only reads code.
+    `references/e2e.md`. While it runs, run the `verifier` with the phase
+    ID, the phase folder and the changed files (at the last phase of a
+    milestone, say so: it checks all requirements of the milestone too); it
+    only reads code.
 
     Once the suite has ended, fix its failures and the verifier's blockers
     like plans, then rerun as `references/e2e.md` says ("After a fix").
@@ -310,7 +240,9 @@ action needed, report and stop.
 ## Shared files and merges
 
 Only this session writes DECISIONS.md, BACKLOG.md, STATUS.md, ROADMAP.md,
-REQUIREMENTS.md and the phase folder; implementation agents do not edit the
+REQUIREMENTS.md and the phase folder. The `planner` writes `PLAN.md` and
+`TESTS.md` first, the `researcher` writes `RESEARCH.md`; after that you
+keep them (check marks, `Adjusts:`, plans for findings). Implementation agents do not edit the
 documents under "Documentation" in SPEC.md either. Agents return decisions
 and findings and you write them down. When an agent reports an interface
 change, update ARCHITECTURE.md before the next plan starts, searching the

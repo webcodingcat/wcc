@@ -85,7 +85,7 @@ skills/upgrade/                   bring a project up to the installed version;
                                   references/migrations.md = catalogue per version
 skills/prototype/                 optional throwaway prototype
 agents/                           idea-gap-checker, researcher, feasibility-checker,
-                                  spec-reviewer, test-writer, implementer,
+                                  spec-reviewer, planner, test-writer, implementer,
                                   code-reviewer, doc-writer, verifier
 ```
 
@@ -118,7 +118,7 @@ folders; a plain `rg` needs `--hidden`, which the project CLAUDE.md says.
 | `research/experiments/` | Scratch folder of the feasibility check; deleted afterwards, in `.gitignore` | Claude |
 | `decisions/` | Results of clarification sessions | Claude |
 | `phases/<id>/CONTEXT.md` | What the user decided at the start of the phase | Claude |
-| `phases/<id>/PLAN.md` | Plans with wave, size, tasks and check marks; findings or items for F and B phases; "Close" | Claude |
+| `phases/<id>/PLAN.md` | Shared "Interfaces"; plans with wave, size, `Reads:`, tasks and check marks; findings or items for F and B phases; "Close" | Claude |
 | `phases/<id>/TESTS.md` | Test map | Claude |
 | `phases/<id>/RESEARCH.md` | What the researcher found, with sources | Claude |
 | `phases/<id>/CHECKS.md` | Manual checks with guide and `Result:` | Claude |
@@ -251,9 +251,18 @@ Code works on a project without such rules.
 - **One phase per run, started by the user.** Every phase reads the project
   files afresh, so what an earlier one left in the context helps nothing
   and is sent again with every call.
-- **The main session stays small.** It reads STATUS.md and ROADMAP.md by
-  the parts it needs, the large documents by their headings; output goes
-  to files; every agent returns a short result in a fixed form. STATUS.md
+- **The main session stays small.** Everything in its context is sent
+  again with each of its turns, and a phase has about two hundred. In the
+  reference project's first phase under 0.31 the main session read and
+  wrote the whole planning before the first plan started and carried that
+  through every later turn: its context grew from 80k to 430k tokens and it
+  used more than all implementers together. So the `planner` agent reads
+  the planning documents and the code, drafts the assumptions of
+  "Discuss" and writes PLAN.md and TESTS.md; the main session gets the
+  waves. It reads STATUS.md and ROADMAP.md by the parts it needs; output
+  goes to files; agents get the plan ID and the phase folder instead of
+  copied text, read what the plan's `Reads:` line names, and return a short
+  result in a fixed form; the `researcher` writes RESEARCH.md itself. STATUS.md
   lines stay one or two sentences and a finished phase shrinks to one line
   in ROADMAP.md, its details moving to ROADMAP-DONE.md, so the files every
   skill reads stay small.
@@ -269,8 +278,12 @@ Code works on a project without such rules.
   reference project two agents finished a phase in 1:25 h instead of 2:09 h
   with fewer tokens and no conflicts; each agent costs the same alone or in
   parallel. An option for it was dropped.
+- **Plans carry what agents share.** "Interfaces" in PLAN.md holds the
+  signatures new in the phase that tests and several plans build on, so
+  test-writers working per component before any code exists agree with
+  each other and with the implementers.
 - **Implementation runs in its own agent**, the `implementer`, with only the
-  tools it needs and its fixed rules, so the prompt holds only the plan.
+  tools it needs and its fixed rules, so the prompt holds only the plan ID.
 - **Agents wait for their own commands inside their turn**, with a
   foreground loop for long ones; a command still running when an agent
   returns wakes the main session again and again.
@@ -281,6 +294,8 @@ Code works on a project without such rules.
 - **Three repair attempts, then block late.** Dependent plans are skipped,
   the rest is finished, then `BLOCKED` follows.
 - **Only the main session writes the shared documents**; subagents report.
+  The exceptions are the phase's PLAN.md and TESTS.md, which the `planner`
+  writes first, and its RESEARCH.md, which the `researcher` writes.
 - **Git rules for parallel agents**: stage by name, no stash, no reset, one
   branch per plan; worktrees are removed after their merge without force.
 - **One branch per phase**, so the base branch holds only finished phases;
@@ -346,13 +361,14 @@ detection checks file content, never project names or history.
 | Fixed conversation language | Best in your own `~/.claude/CLAUDE.md`. In the plugin: the paragraph starting "Talk to the user in the language they have configured" in every `SKILL.md`, and "Language and documents" in `skills/idea/assets/project-CLAUDE.md` |
 | Different document language | Language rule in every `SKILL.md` and in `project-CLAUDE.md`, templates in `assets/`, return language in `agents/*.md`, and every key term (see "Language") |
 | Rules during a phase (questions, what is allowed, stop conditions) | "During a phase" in `skills/idea/assets/project-CLAUDE.md`; "Plans that cannot be finished" in `skills/phase/SKILL.md` |
-| What the start of a phase asks | "Discuss" in `skills/phase/SKILL.md` |
+| What the start of a phase asks | "Discuss" in `skills/phase/SKILL.md`, step 1 of `agents/planner.md` |
 | Interview questions and mandatory sections | `skills/idea/SKILL.md`, `skills/idea/assets/IDEA.md` |
 | Another project type | One section each in `skills/idea/references/project-types.md` and `skills/spec/references/project-types.md` |
 | Form of requirements and test levels | Step 2 of `skills/spec/SKILL.md`, `skills/spec/assets/REQUIREMENTS.md`, `agents/spec-reviewer.md` |
 | Phases and success criteria | Step 4 of `skills/spec/SKILL.md`, `skills/spec/assets/ROADMAP.md` |
-| Plans, tasks, waves, size limits, parallelism | Step 5 and 8 of `skills/phase/SKILL.md` |
-| How tests are planned and how many | Step 6 "Test map" in `skills/phase/SKILL.md`, `agents/test-writer.md`, "Tests" in `project-CLAUDE.md` |
+| Plans, tasks, waves, size limits | Step 2 of `agents/planner.md` |
+| Parallelism, order of the run | Steps 7 to 9 of `skills/phase/SKILL.md` |
+| How tests are planned and how many | Step 2 of `agents/planner.md` (test map), `agents/test-writer.md`, "Tests" in `project-CLAUDE.md` |
 | End-to-end rules, what runs when | `skills/phase/references/e2e.md`, "Tests" in `project-CLAUDE.md` |
 | Stricter or looser reviews | `agents/code-reviewer.md`, `agents/verifier.md`, `agents/spec-reviewer.md` |
 | What enters the backlog, how it is worked off | `skills/phase/references/backlog.md`, the reviewer and verifier, "Backlog" in `skills/change/SKILL.md`, template `BACKLOG.md` |
@@ -360,7 +376,7 @@ detection checks file content, never project names or history.
 | Open decisions | "Open decisions" in `skills/phase/SKILL.md`, the agents' categories, "Open decisions", "Asking" and "Clarification sessions" in `skills/change/SKILL.md`, template `STATUS.md` |
 | Clarification sessions | Step 2 in `skills/idea/SKILL.md` and "Clarification sessions" in `skills/change/SKILL.md`; change both |
 | How plans are implemented | `agents/implementer.md`; its prompt in step 8 of `skills/phase/SKILL.md` |
-| What is read and how | "Reading" in `skills/phase/SKILL.md` and the opening paragraphs of the agents |
+| What is read and how | "Reading" in `skills/phase/SKILL.md` and `agents/planner.md`, the opening paragraphs of the other agents |
 | Folder for the planning documents | "All planning documents live in …" in every `SKILL.md`, `project-CLAUDE.md`, the agents, README |
 | Documentation of projects | Interview question in `skills/idea/SKILL.md`, `project-types.md`, "Documentation" in the IDEA and SPEC templates, `DOC` in `REQUIREMENTS.md`, `agents/doc-writer.md`, `agents/verifier.md` |
 | Approval after the spec, stack criteria | Steps 7 and 1 in `skills/spec/SKILL.md` |
