@@ -299,7 +299,13 @@ Code works on a project without such rules.
 - **No debug access in the product, no way around a protection.** The
   rules forbid it and the reviewer searches every diff for it.
 - **Repairing and adding is allowed, changing and replacing stops the
-  plan.** When in doubt, it stops.
+  plan.** When in doubt, it stops. The rule protects what others build on;
+  what a plan's own change leaves without any caller may go, also from an
+  internal interface, while a public one (API, file format, command line,
+  configuration) keeps it. In the reference project's first backlog phase
+  a plan replaced the per-server metrics call with one for all servers,
+  the old method stayed in the platform interface with no caller, and the
+  phase asked the user whether to remove it.
 - **Three repair attempts, then block late.** Dependent plans are skipped,
   the rest is finished, then `BLOCKED` follows.
 - **A failure from outside the plan goes to a fresh implementer.** In the

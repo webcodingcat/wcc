@@ -88,5 +88,6 @@ E2E runs: <each run: command, commit, log file, result; or none>
 
 Run end-to-end tests on a committed state and keep their logs: the close
 does not run a green test again if the code has not changed. Interface
-changes list everything other components use that changed, additions too;
+changes list everything other components use that changed, additions and
+removals too;
 ARCHITECTURE.md learns of them only from this list.

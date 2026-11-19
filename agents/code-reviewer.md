@@ -20,7 +20,9 @@ your turn.
 Decisions in ARCHITECTURE.md, DECISIONS.md and the phase's `CONTEXT.md` are
 settled; search DECISIONS.md for the component before you report something.
 An interface extended without breaking it is allowed; a renamed, removed or
-changed one is a blocker.
+changed one is a blocker. Removing from an internal interface what the
+plan left without any caller in product and tests is allowed; a public
+interface (API, file format, command line, configuration) keeps it.
 
 **Blocker**, only one of:
 
@@ -38,8 +40,8 @@ changed one is a blocker.
   weakened test, a test that does not check its row, tests for cases the
   map does not list, or a copy of a helper that already exists. A test
   under `Adjusts:` may change what it uses, not what it checks.
-- unnecessary code the plan added, when the repository proves it cannot be
-  needed: a guard against a state the code never reaches, a check already
+- unnecessary code the plan added or left without a caller, when the
+  repository proves it cannot be needed: a guard against a state the code never reaches, a check already
   made elsewhere on the same path, an option or parameter nothing sets, a
   generalisation with a single use, handling of a case no requirement names
   and the program cannot produce. Name the evidence (who calls it, where the
