@@ -120,14 +120,18 @@ Pick the phase (step 1 below). If `phases/<id>/PLAN.md` already holds
 plans, it was interrupted: skip this and resume.
 
 Otherwise start the `planner` with the phase ID and the open decisions in
-STATUS.md that concern the phase (step 1 of the agent). Present its
+STATUS.md that concern the phase (step 1 of the agent). If it lists
+research, start the `researcher` at once in the background with that list
+and the file `phases/<id>/RESEARCH.md` to write. Present the planner's
 assumptions as one short list, "this is how I would do it", one line each,
-and let the user correct any of it. Then ask its questions, after the list
-and apart from it: each on its own with AskUserQuestion, its options, the
-recommendation and "I don't know" (take the recommendation); without menus,
-numbered, saying that each needs an answer. A reply to the list answers
-none of them; ask again for those still open. Keep its research list for
-step 4.
+and let the user correct any of it while the research runs. When it is
+done, continue the planner with `RESEARCH.md` and the user's corrections;
+show the assumptions it changed, one line each. Then ask its questions,
+after the list and apart from it: each on its own with AskUserQuestion,
+its options, the recommendation and "I don't know" (take the
+recommendation); without menus, numbered, saying that each needs an
+answer. A reply to the list answers none of them; ask again for those still
+open.
 
 Write the confirmed assumptions and the answers to `phases/<id>/CONTEXT.md`,
 one line each. An answer that settles an open decision is worked in as
@@ -149,9 +153,8 @@ From here on the phase asks nothing.
 3. **Resume.** If `phases/<id>/PLAN.md` holds plans, an earlier run was
    interrupted: switch to the branch and continue with the first plan not
    marked `[x]`, without planning or writing tests again.
-4. **Research.** If the planner listed research, give the list to the
-   `researcher` agent with the file `phases/<id>/RESEARCH.md` to write.
-   Skip this if nothing is new.
+4. **Research** ran during "Discuss". If an answer there raised something
+   new to look up, give it to the `researcher` to add to `RESEARCH.md`.
 5. **Plan.** Continue the same `planner` (step 2 of the agent) with
    `CONTEXT.md` and `RESEARCH.md`; if it cannot be continued, start it anew
    with both and the phase ID. It writes `phases/<id>/PLAN.md` (plans with

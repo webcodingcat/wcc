@@ -157,7 +157,13 @@ Code works on a project without such rules.
   the phase. The questions come after the list, each on its own: in the
   reference project they stood in the same message as the assumptions, the
   user answered the list with "fits" and three questions were taken as
-  answered with their recommendation.
+  answered with their recommendation. Research runs while the user reads
+  the list, and the questions come after it: the planner has no web
+  access, and in the reference project's fifth phase it asked how a guest
+  takes over network changes, with options from memory, although the
+  answer was a fact about the original cloud that research would have
+  found. What depends on facts outside the project is looked up, not
+  asked; the questions wait about as long as the research takes.
 - **Questions work without menus.** Where the AskUserQuestion tool is
   missing or its menus do not show (a remote session), the skills ask in
   text with numbered options, without a setting.

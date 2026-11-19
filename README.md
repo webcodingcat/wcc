@@ -146,8 +146,9 @@ Each phase runs the same loop:
 
 1. **Discuss.** While you are there, Claude reads the requirements and the
    code and shows how it would build what they leave open, as a short list
-   you confirm or correct. Only real open questions are asked, with a
-   recommendation each.
+   you confirm or correct. While you read it, anything that depends on
+   how a library, tool or outside service behaves is looked up; only the
+   open questions that remain are asked, with a recommendation each.
 2. **Plan** the phase in plans with one to three tasks each, sorted into
    waves, after looking up anything used for the first time.
 3. **Plan the tests** in a test map, one row per promise of its

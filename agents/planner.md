@@ -33,7 +33,9 @@ Work out how you would build the phase where its requirements leave room: a
 behaviour two readings allow, a limit not given, a choice the user will
 notice. Only what cannot be assumed sensibly becomes a question: the open
 decisions you got, and a real grey area where the options lead to
-different results.
+different results. What depends on facts about a system, library, API or
+tool outside the project (how it behaves, what it offers) is not a question
+for the user: put it under Research and assume meanwhile what you would do.
 
 Return, in English, in this form and nothing else:
 
@@ -47,6 +49,11 @@ Research:
   behaviour of a library, API or tool, not covered by a valid EXPERIMENTS.md
   entry; one line each; or none>
 ```
+
+If research ran, you are continued with `phases/<id>/RESEARCH.md` and the
+user's corrections before step 2. Settle by them what you can, and return
+the same form with only the assumptions that changed and the questions
+that remain.
 
 ## Step 2: plans and test map
 
