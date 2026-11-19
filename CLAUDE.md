@@ -258,6 +258,13 @@ Code works on a project without such rules.
   one run of an expensive step for all checks that need it, the
   environment's lifecycle as one sequence, booted machines shared, waiting
   subtests in parallel, time limits tested with a test clock.
+- **Parallel tests take a shared limit in one step, and a run shows its
+  progress.** In the reference project's fifth phase the close's full
+  end-to-end run hung for over an hour: rows that need two servers took
+  their slots one after another, and three of them each held one slot
+  while waiting for another. The run had a limit of three hours and logged
+  nothing until the end, so the hang showed only as time passing; after
+  the fix it took 22 minutes.
 - **Findings about the tests get no tests about the tests.** The proof is
   that existing tests stay green, plus a measurement.
 

@@ -25,7 +25,14 @@ checks the tests against them.
   (login, hostname, metadata, reachability) use one instance per variant.
 - Independent subtests that mostly wait run in parallel (`t.Parallel()` in
   Go), within the capacity of the environment. Tests that change the shared
-  environment never run in parallel with others.
+  environment never run in parallel with others. A test takes everything it
+  needs from a shared limit (server slots, machines) in one step, never one
+  part while it holds another; a shared setup that keeps a slot for later
+  tests counts against the limit.
+- The run shows its progress: each test is logged as it starts and ends
+  (`-v` in Go), and the command's time limit is about twice its last full
+  run, not hours. When a full run at a close ends far below the limit,
+  lower the limit in the command to about twice that run.
 - One subtest per row of `TESTS.md`, carrying its requirement ID and no
   other, under a group named after the component.
 - No fixed waits: wait for a condition with a deadline. Time limits are

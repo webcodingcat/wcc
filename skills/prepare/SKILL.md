@@ -119,7 +119,8 @@ Run build, linter and tests. All three must succeed. Then:
 - write the exact commands into the section "Build and test commands" of the
   project CLAUDE.md. If some tests need the real environment or a browser
   and take long (end-to-end tests), give them a command of their own, separate
-  from the fast tests, and say so in the line; `/wcc:phase` uses it to
+  from the fast tests, logging each test as it starts and ends, with a time
+  limit of about twice the expected run, and say so in the line; `/wcc:phase` uses it to
   choose which end-to-end tests run. Name in the line
   how to append a filter by test name to it (for example `-run <regexp>`).
   For the fast tests and the linter, also name how to run them on one
