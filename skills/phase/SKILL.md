@@ -118,6 +118,12 @@ Then act on the status:
 
 ### Discuss
 
+First check the working tree with `git status`. Changes to the planning
+documents in `.project/` left by another skill (FEEDBACK.md aside) belong
+to the base branch: commit them there now, before the phase branches
+off. Name any other uncommitted change to the user and ask whether to
+commit it or leave it; never stash or discard it.
+
 Pick the phase (step 1 below). If `phases/<id>/PLAN.md` already holds
 plans, it was interrupted: skip this and resume.
 

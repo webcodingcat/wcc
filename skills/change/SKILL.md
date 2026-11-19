@@ -158,6 +158,8 @@ ask for the decision here.
 6. Update STATUS.md: if it was `BLOCKED` because of this point, or `DONE` and
    the roadmap now has open phases again, set it to `READY`. Leave earlier
    values (`IDEA` to `SPEC_REVIEW`) as they are.
-7. Summarize in at most five lines what changed and what happens next. If the
+7. If the project is a git repository, commit the documents this change
+   touched, staged by name, on the current branch.
+8. Summarize in at most five lines what changed and what happens next. If the
    change needs new tools on the machine, the next step is `/wcc:prepare`,
    otherwise `/wcc:phase`.

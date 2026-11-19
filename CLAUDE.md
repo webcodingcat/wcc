@@ -375,7 +375,12 @@ Code works on a project without such rules.
   it was rewritten with LF); `git add` of the named files clears it, where
   `--force` would also discard real changes.
 - **One branch per phase**, so the base branch holds only finished phases;
-  one tag per milestone.
+  one tag per milestone. Skills that change planning documents between
+  phases commit them, and a phase commits what another skill left in
+  `.project/` on the base branch before it branches: in the reference
+  project `/wcc:change` settled an open decision without committing it,
+  and the next phase took the changed files along on its own branch, so
+  the base branch lacked the decision until that phase was merged.
 - **No falling back to a similar package name**: a near miss may be
   malicious.
 
