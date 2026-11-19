@@ -241,7 +241,15 @@ Code works on a project without such rules.
   refused the doc-writer's writes through it while the main session was
   allowed the same commands; `/wcc:prepare` therefore adds an allow rule
   for exactly that tool and context, and the doc-writer calls the tool
-  literally so the rule matches.
+  literally so the rule matches. In the eighth phase the classifier refused
+  the doc-writer's literal calls despite the rule: a project's allow rules
+  apply only after the folder is trusted, and the classifier reads trusted
+  infrastructure (`autoMode.environment`) only from the user's own or
+  managed settings, so a repository cannot grant itself access.
+  `/wcc:prepare` therefore hands the user a ready entry for their own
+  settings, and the main session runs once itself what the doc-writer was
+  refused: in the seventh phase it was allowed the same commands, with
+  the user's conversation in view.
 - **The project folder is the only source.** In the reference project,
   `/wcc:prepare` searched sibling folders for a module path, found an older
   copy of the project and took its scaffold over, with decisions nobody had

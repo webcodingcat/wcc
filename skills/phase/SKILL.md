@@ -214,8 +214,12 @@ From here on the phase asks nothing.
    `references/backlog.md` says: most reviews add none. Then mark the plan
    and its tasks `[x]`. No second review round.
 10. **Close.** Merge the plan worktrees. Run the documentation plan: give
-    the `doc-writer` the phase ID, the phase folder and the changed files, and commit what it wrote; it runs first
-    because the verifier and the `DOC` tests check what it writes. Then
+    the `doc-writer` the phase ID, the phase folder and the changed files; it
+    runs first because the verifier and the `DOC` tests check what it
+    writes. Run once yourself each example it reports as refused by a
+    permission check, with the access SPEC.md names, correct the document by
+    the real output, and name in the report what is refused again. Commit
+    the documents. Then
     start the unit suite and the linter over the whole project in the
     background, output to files, with the end-to-end selection of
     `references/e2e.md`. While it runs, run the `verifier` with the phase

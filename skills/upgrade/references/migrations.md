@@ -22,6 +22,15 @@ Format:
 
 Newest entries first.
 
+## 0.32.10 Auto mode entry for agent access
+
+- Detect: "Accounts and secrets" in `.project/SPEC.md` names access agents
+  use against a running instance through a tool's login, and
+  `claude auto-mode config` lists no environment entry for that context.
+- Do: show the user the `autoMode.environment` entry as step 3 of
+  `skills/prepare/SKILL.md` describes it, for their own
+  `~/.claude/settings.json`; do not write that file.
+
 ## 0.32.9 Permission rule for agent access
 
 - Detect: "Accounts and secrets" in `.project/SPEC.md` names access agents

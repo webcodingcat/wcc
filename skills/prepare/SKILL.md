@@ -102,6 +102,15 @@ login, add an allow rule for exactly that tool and context to
 `permissions.allow` there (for example `Bash(hcloud --context <name> *)`).
 Without it the permission check of an unattended run may refuse writes
 against what looks like an unknown service. Never allow the tool as a whole.
+In auto mode the classifier can still refuse such writes, and it reads
+trusted infrastructure only from the user's own settings, never from the
+project. So give the user a ready entry for `autoMode.environment` in
+`~/.claude/settings.json`, one sentence naming the context, the service
+and that it is a local development instance (for example "The hcloud
+context `<name>` points at a local development cloud on this machine;
+creating and deleting resources there is routine test work."). The user
+adds it; do not write that file. `claude auto-mode config` shows whether
+it is in effect.
 
 ## Step 4: project
 

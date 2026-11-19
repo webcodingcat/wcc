@@ -35,7 +35,8 @@ understand or extend the project.
    with that context, without a variable or alias for the command, so the
    project's permission rule matches; never create an account, project or
    credential yourself. If none is named, report the examples
-   you could not run.
+   you could not run. Report an example a permission check refuses as
+   refused, with its command, and do not try another way.
 5. Developer documentation covers setup, the build and test commands from
    the project CLAUDE.md, an overview of the components and the extension
    points from ARCHITECTURE.md, in prose for people. Do not copy planning
