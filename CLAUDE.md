@@ -223,6 +223,12 @@ Code works on a project without such rules.
   credential may come from the login of a tool the user already has (a
   cloud CLI context); then it is used through that tool and not copied
   into `.env`, and `.env.example` exists only when there is a variable.
+  The access agents need against a running instance of the project counts
+  too: in the reference project's fifth and sixth phases the `doc-writer`
+  tried to create a project and a token in the local cloud to run the
+  README examples, was refused by the permission classifier, and the
+  examples stayed unrun. Agents never create credentials; the spec names
+  that access, optional until the phase that builds it.
 - **The project folder is the only source.** In the reference project,
   `/wcc:prepare` searched sibling folders for a module path, found an older
   copy of the project and took its scaffold over, with decisions nobody had
@@ -343,6 +349,10 @@ Code works on a project without such rules.
   writes first, and its RESEARCH.md, which the `researcher` writes.
 - **Git rules for parallel agents**: stage by name, no stash, no reset, one
   branch per plan; worktrees are removed after their merge without force.
+  A worktree git calls modified with an empty `git diff` has a stale index
+  entry (in the reference project the size of a file's CRLF version after
+  it was rewritten with LF); `git add` of the named files clears it, where
+  `--force` would also discard real changes.
 - **One branch per phase**, so the base branch holds only finished phases;
   one tag per milestone.
 - **No falling back to a similar package name**: a near miss may be

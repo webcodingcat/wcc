@@ -263,8 +263,10 @@ Resolve a merge conflict yourself when it is mechanical; otherwise drop the
 later plan's branch and redo it on the merged state. A conflict is never a
 reason for `BLOCKED`. After a plan's merge, remove its worktree and branch
 with `git worktree remove <path>` and `git branch -d <branch>`, never with
-`--force` or `-D`; when they refuse, leave them and name them in the
-report. Keep the worktree of a plan marked `[!]`. At the start, remove the
+`--force` or `-D`. If the worktree is refused as modified although `git
+diff` there shows nothing (a stale index entry after a line-ending
+change), stage the files it names with `git add` there and try again;
+when they still refuse, leave them and name them in the report. Keep the worktree of a plan marked `[!]`. At the start, remove the
 same way the worktrees of earlier runs whose branches are merged.
 
 ## Manual requirements

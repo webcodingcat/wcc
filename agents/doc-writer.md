@@ -30,7 +30,10 @@ understand or extend the project.
 4. Run what you document: every command, every example, every call. Copy
    output from a real run, never write it from memory. If something does not
    behave as its requirement says, do not document either version: report
-   it.
+   it. For a running instance use the access named under "Accounts and
+   secrets" in SPEC.md, without printing it; never create an account,
+   project or credential yourself. If none is named, report the examples
+   you could not run.
 5. Developer documentation covers setup, the build and test commands from
    the project CLAUDE.md, an overview of the components and the extension
    points from ARCHITECTURE.md, in prose for people. Do not copy planning

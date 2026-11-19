@@ -81,7 +81,11 @@ Use `assets/REQUIREMENTS.md` and `assets/SPEC.md`. Rules:
   name, or the existing login of a tool the user already uses (the active
   or a named context of a cloud CLI, `gh auth`), which needs no second copy
   of the secret. `/wcc:prepare` checks them while the user is present, so a
-  missing key does not stop the run.
+  missing key does not stop the run. This includes the access agents need
+  to run examples or checks against a running instance of the project (a
+  token for a local development service): agents never create accounts or
+  credentials themselves. If the project itself issues that access, mark
+  the entry optional until the phase that builds it.
 - Name the project's identifiers in code under "Stack": module or package
   name, repository URL if known. The scaffold, imports and every phase use
   them, so a later change touches every file.
