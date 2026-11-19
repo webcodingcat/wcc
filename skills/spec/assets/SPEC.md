@@ -8,6 +8,16 @@ Goals and non-goals are in IDEA.md, the requirements in REQUIREMENTS.md.
   in DECISIONS.md)
 - Module or package name: <name>; repository: <URL or "not yet">
 
+## References
+
+External descriptions the project must match, such as an API it
+re-implements, a file format or a protocol. Agents read the part a phase
+touches here instead of relying on memory.
+
+- <name>: <path of the copy in the repository or on the machine, or URL>,
+  <version or pin>, <what it settles>
+- none
+
 ## Accounts and secrets
 
 What the user has to provide before the implementation runs. Values never

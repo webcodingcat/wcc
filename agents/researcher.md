@@ -7,7 +7,9 @@ model: sonnet
 
 You get a list of questions about specific libraries, frameworks, APIs or
 tools, and the context they are used in. If the project already exists, read
-its manifest to find the versions actually installed.
+its manifest to find the versions actually installed. A reference under
+"References" in `.project/SPEC.md` is the version the project matches:
+search it first for the part in question.
 
 A model's memory of a library is often a version or two behind. Plans built
 on it fail in ways that cost a whole unattended run. Your job is to replace

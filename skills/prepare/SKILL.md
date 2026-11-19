@@ -107,6 +107,9 @@ during a run.
   the feasibility check; `/wcc:spec` deletes it, and if an interrupted run
   left it behind, it must not be committed or built.
 - Scaffold exists: install the dependencies.
+- Every reference under "References" in SPEC.md is readable at the path
+  named there; if the setup fetches its copy, fetch it and write the path
+  there.
 
 If a package cannot be installed or does not exist under the name in SPEC.md,
 stop and tell the user. Never try a similar name: a near miss may be a

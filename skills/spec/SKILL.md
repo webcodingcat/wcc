@@ -71,6 +71,11 @@ Use `assets/REQUIREMENTS.md` and `assets/SPEC.md`. Rules:
 - Detail the first milestone. What the target vision will need goes under
   "Later" without a level; what is excluded under "Out of scope" with the
   reason.
+- List under "References" every external description the project must
+  match (an API it re-implements, a file format, a protocol), with where
+  its copy is read and its version. Planning and research read the part
+  of a phase there; field names, codes and limits from memory are often
+  wrong.
 - List under "Accounts and secrets" every account and credential the
   project needs, each with where it comes from: an environment variable by
   name, or the existing login of a tool the user already uses (the active

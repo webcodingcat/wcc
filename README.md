@@ -119,8 +119,8 @@ Claude chooses the stack with current versions and writes:
   - `e2e`: checked against the real environment or a browser, in minutes
   - `none`: wiring or configuration that the tests around it cover
   - `manual`: by you, because no test can judge it
-- `SPEC.md`: stack, accounts and secrets (by name), machine prerequisites,
-  documentation
+- `SPEC.md`: stack, references the project must match, accounts and
+  secrets (by name), machine prerequisites, documentation
 - `ARCHITECTURE.md`, and `UI-SPEC.md` for projects with a user interface
 - `ROADMAP.md`: the first milestone in phases, each with its requirements
   and success criteria; the rest of your target vision under "Later"

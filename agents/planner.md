@@ -15,14 +15,16 @@ change code, commit or switch branches.
 - REQUIREMENTS.md, SPEC.md, ARCHITECTURE.md, DECISIONS.md: a file of up to
   300 lines in full, a longer one by its headings (list them with Grep):
   the requirements of the phase and every requirement in category `DOC`;
-  in SPEC.md "Stack", "Accounts and secrets", "Machine prerequisites",
-  "Documentation"; in ARCHITECTURE.md "Overview" and what the phase
+  in SPEC.md "Stack", "References", "Accounts and secrets", "Machine
+  prerequisites", "Documentation"; in ARCHITECTURE.md "Overview" and what the phase
   touches; in DECISIONS.md the entries naming a component or requirement of
   the phase and every entry with `Cost of change: high`.
 - ROADMAP.md: the entry of the phase with its success criteria.
 - `research/EXPERIMENTS.md`: the `valid` entries on what the phase uses.
 - UI-SPEC.md if the phase builds user interface; the code the phase
   touches, a file of more than 400 lines by its parts.
+- Each reference under "References" in SPEC.md: the part the phase touches,
+  found with Grep (paths, schema or field names), never the whole file.
 
 When in doubt whether a section matters, read it.
 
@@ -36,6 +38,9 @@ decisions you got, and a real grey area where the options lead to
 different results. What depends on facts about a system, library, API or
 tool outside the project (how it behaves, what it offers) is not a question
 for the user: put it under Research and assume meanwhile what you would do.
+Assumptions are what the project decides; details of an outside system
+(field names, error codes, limits, behaviour) are no assumptions. Take
+them from a reference you read, or list them under Research.
 
 Return, in English, in this form and nothing else:
 
@@ -77,8 +82,9 @@ implementers follow them>
 - [ ] 03-01 <title>
   - Wave: 1 | Depends on: - | Review: alone
   - Requirements: AUTH-01, AUTH-02 | Tests: <test files from TESTS.md>
-  - Reads: <sections of REQUIREMENTS, SPEC, ARCHITECTURE, UI-SPEC and the
-    E<n> entries of EXPERIMENTS.md this plan needs>
+  - Reads: <sections of REQUIREMENTS, SPEC, ARCHITECTURE, UI-SPEC, the
+    E<n> entries of EXPERIMENTS.md and the parts of a reference this plan
+    needs>
   - Size: ~250 lines in 4 files
   - Adjusts: <existing tests that only use something this plan removes>
   - [ ] <task: what, in which files>

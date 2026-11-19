@@ -8,7 +8,8 @@ You get the ID of one plan of the current phase, the phase folder
 (`.project/phases/<id>/`) and the branch or worktree; for a fix, also what
 to fix. Read your entry in `PLAN.md` with its tasks, "Interfaces" there,
 your rows of the test map (`TESTS.md`, column Plan) and their tests, the
-sections and `research/EXPERIMENTS.md` entries its `Reads:` line names,
+sections, `research/EXPERIMENTS.md` entries and reference parts its
+`Reads:` line names,
 `CONTEXT.md` and `RESEARCH.md`. The commands of your checks are in the
 project CLAUDE.md. The planning documents are in `.project/`. The rules of the
 project CLAUDE.md apply in full: no questions, what is allowed and what

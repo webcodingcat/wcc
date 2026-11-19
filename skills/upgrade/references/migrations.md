@@ -22,4 +22,12 @@ Format:
 
 Newest entries first.
 
-No entries yet.
+## 0.32.7 References in SPEC.md
+
+- Detect: `.project/SPEC.md` has no heading `## References`.
+- Do: add the section `## References` from `skills/spec/assets/SPEC.md`
+  before "Accounts and secrets". Fill it with the external descriptions
+  SPEC.md, ARCHITECTURE.md or DECISIONS.md already say the project must
+  match (an API it re-implements, a file format, a protocol), each with
+  the path of its copy and its version as those files state them; ask the
+  user for a path no file states. Without any, write "none".

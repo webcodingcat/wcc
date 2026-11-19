@@ -44,7 +44,7 @@ The words wcc uses:
   `Q<n>`, `waits for Q<n>`, `In clarification`,
   `Context`/`Options`/`Recommendation`/`Affects`, "Open manual checks",
   "Open decisions", `Start`/`Setup`/`Steps`/`Expected`, `Cost of change`,
-  `Type`, `(working title)`, "Documentation", `D<n>`, the backlog
+  `Type`, `(working title)`, "Documentation", `D<n>`, "References", the backlog
   severities `security`/`data`/`bug`/`later`/`minor`, `wcc version:`.
   Whoever renames one changes it everywhere.
 - Talk to the person working on this repository in their language.
@@ -104,7 +104,7 @@ folders; a plain `rg` needs `--hidden`, which the project CLAUDE.md says.
 |------|---------|------------|
 | `IDEA.md` | What and why: problem, goals, non-goals, target vision, success criterion | the user in the interview |
 | `REQUIREMENTS.md` | One line per requirement with ID, goal and test level, per milestone; "Later", "Out of scope", "Coverage" | Claude |
-| `SPEC.md` | Stack with versions, accounts and secrets (names only), machine prerequisites, documentation `D<n>` | Claude |
+| `SPEC.md` | Stack with versions, references the project must match (path of the copy), accounts and secrets (names only), machine prerequisites, documentation `D<n>` | Claude |
 | `ARCHITECTURE.md` | Components, interfaces, extension to the target vision | Claude |
 | `UI-SPEC.md` | Binding rules for the user interface, if there is one | Claude |
 | `ROADMAP.md` | Milestones with their phases, requirements and success criteria; finished phases one line each; "Later" | Claude |
@@ -164,6 +164,15 @@ Code works on a project without such rules.
   answer was a fact about the original cloud that research would have
   found. What depends on facts outside the project is looked up, not
   asked; the questions wait about as long as the research takes.
+- **Assumptions are decisions, facts come from a reference.** In the
+  reference project's sixth phase the planner's list named request fields
+  and error codes of the original API from memory, some wrong, although
+  the project kept a frozen copy of the API description; the user checked
+  facts that were not theirs to confirm. So SPEC.md names under
+  "References" what the project must match and where its copy lies, the
+  planner reads the part of the phase there, and details of an outside
+  system are no assumptions: they come from the reference or go to
+  research.
 - **Questions work without menus.** Where the AskUserQuestion tool is
   missing or its menus do not show (a remote session), the skills ask in
   text with numbered options, without a setting.
