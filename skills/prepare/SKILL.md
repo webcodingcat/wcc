@@ -108,7 +108,9 @@ project. So give the user a ready entry for `autoMode.environment` in
 `~/.claude/settings.json`, one sentence naming the context, the service
 and that it is a local development instance (for example "The hcloud
 context `<name>` points at a local development cloud on this machine;
-creating and deleting resources there is routine test work."). The user
+creating and deleting resources there is routine test work."), and one
+more for the command that starts and stops that instance, if the project
+has one, with its path and its subcommands. The user
 adds it; do not write that file. `claude auto-mode config` shows whether
 it is in effect.
 

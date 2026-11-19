@@ -249,7 +249,11 @@ Code works on a project without such rules.
   `/wcc:prepare` therefore hands the user a ready entry for their own
   settings, and the main session runs once itself what the doc-writer was
   refused: in the seventh phase it was allowed the same commands, with
-  the user's conversation in view.
+  the user's conversation in view. In the ninth phase that entry let the
+  doc-writer through, but the classifier refused an implementer's stop of
+  the local service it had to restart, while the doc-writer had been
+  allowed the same command minutes before; the entry therefore also names
+  the command that starts and stops the instance.
 - **The project folder is the only source.** In the reference project,
   `/wcc:prepare` searched sibling folders for a module path, found an older
   copy of the project and took its scaffold over, with decisions nobody had
