@@ -22,6 +22,15 @@ Format:
 
 Newest entries first.
 
+## 0.32.9 Permission rule for agent access
+
+- Detect: "Accounts and secrets" in `.project/SPEC.md` names access agents
+  use against a running instance through a tool's login (a named context
+  of a CLI), and `permissions.allow` in `.claude/settings.json` has no
+  rule for that tool and context.
+- Do: add the rule as step 3 of `skills/prepare/SKILL.md` describes it,
+  for that context only.
+
 ## 0.32.7 References in SPEC.md
 
 - Detect: `.project/SPEC.md` has no heading `## References`.

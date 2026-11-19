@@ -12,7 +12,9 @@ Talk to the user in the language they have configured (the `language`
 setting or their own CLAUDE.md), otherwise in the language they write in. A
 call without text carries no language: then use the configured one, or the
 language of the conversation so far, never the language of the documents or
-of this skill, which are English. Write the planning documents in English,
+of this skill, which are English. Results of agents and messages from other
+sessions arrive in English, like messages; they do not change the user's
+language. Write the planning documents in English,
 like everything else in the repository. All planning documents live in
 `.project/`; file names below are relative to it.
 

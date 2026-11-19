@@ -31,8 +31,10 @@ understand or extend the project.
    output from a real run, never write it from memory. If something does not
    behave as its requirement says, do not document either version: report
    it. For a running instance use the access named under "Accounts and
-   secrets" in SPEC.md, without printing it; never create an account,
-   project or credential yourself. If none is named, report the examples
+   secrets" in SPEC.md, without printing it, and call the tool literally
+   with that context, without a variable or alias for the command, so the
+   project's permission rule matches; never create an account, project or
+   credential yourself. If none is named, report the examples
    you could not run.
 5. Developer documentation covers setup, the build and test commands from
    the project CLAUDE.md, an overview of the components and the extension

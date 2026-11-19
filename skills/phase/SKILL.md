@@ -33,7 +33,9 @@ setting or their own CLAUDE.md), otherwise in the language they write in,
 also in the reports; this skill does not set one. A call without text
 carries no language: then use the configured one, or the language of the
 conversation so far, never the language of the documents or of this skill,
-which are English. Everything written to the repository is English.
+which are English. Results of agents and messages from other sessions
+arrive in English, like messages; they do not change the user's language.
+Everything written to the repository is English.
 
 Read a reference file of this skill only when it applies:
 `references/e2e.md` if the project CLAUDE.md has a separate end-to-end
@@ -124,8 +126,10 @@ STATUS.md that concern the phase (step 1 of the agent). If it lists
 research, start the `researcher` at once in the background with that list
 and the file `phases/<id>/RESEARCH.md` to write. Present the planner's
 assumptions as one short list, "this is how I would do it", one line each,
-and let the user correct any of it while the research runs. When it is
-done, continue the planner with `RESEARCH.md` and the user's corrections;
+and let the user correct any of it while the research runs. End the turn
+with the list and ask nothing in it: an open question menu would catch the
+user's reply to the list. When the research is done and the user has
+replied, continue the planner with `RESEARCH.md` and the user's corrections;
 show the assumptions it changed, one line each. Then ask its questions,
 after the list and apart from it: each on its own with AskUserQuestion,
 its options, the recommendation and "I don't know" (take the

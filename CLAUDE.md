@@ -30,7 +30,12 @@ The words wcc uses:
   would force one on everyone who clones it. Because a skill called without
   text carries no language and the English skill text would pull the answer
   into English, every skill says to use the configured language first, and
-  quoted answer options are offered in the user's language.
+  quoted answer options are offered in the user's language. Results of
+  agents and messages from other sessions arrive as messages in English;
+  in the reference project's seventh phase the main session took them for
+  the user's language and reported in English from the first test-writer
+  on, despite a configured language. The skills that start agents or
+  sessions say that these do not change the user's language.
 - Everything that ends up in a project's repository is English, the
   planning documents included, so others can work on the project.
 - Terms in the templates are keys the skills and agents search for:
@@ -163,7 +168,10 @@ Code works on a project without such rules.
   takes over network changes, with options from memory, although the
   answer was a fact about the original cloud that research would have
   found. What depends on facts outside the project is looked up, not
-  asked; the questions wait about as long as the research takes.
+  asked; the questions wait about as long as the research takes. The
+  turn ends with the list: in the reference project's seventh phase the
+  question menu followed the list in the same turn, before the research
+  was done, and the user's reply to the list had to break into the menu.
 - **Assumptions are decisions, facts come from a reference.** In the
   reference project's sixth phase the planner's list named request fields
   and error codes of the original API from memory, some wrong, although
@@ -228,7 +236,12 @@ Code works on a project without such rules.
   tried to create a project and a token in the local cloud to run the
   README examples, was refused by the permission classifier, and the
   examples stayed unrun. Agents never create credentials; the spec names
-  that access, optional until the phase that builds it.
+  that access, optional until the phase that builds it. In the seventh
+  phase the named access existed, and the permission classifier still
+  refused the doc-writer's writes through it while the main session was
+  allowed the same commands; `/wcc:prepare` therefore adds an allow rule
+  for exactly that tool and context, and the doc-writer calls the tool
+  literally so the rule matches.
 - **The project folder is the only source.** In the reference project,
   `/wcc:prepare` searched sibling folders for a module path, found an older
   copy of the project and took its scaffold over, with decisions nobody had

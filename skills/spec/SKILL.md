@@ -28,7 +28,9 @@ setting or their own CLAUDE.md), otherwise in the language they write in,
 also for the summary in step 7; this skill does not set one. A call without
 text carries no language: then use the configured one, or the language of
 the conversation so far, never the language of the documents or of this
-skill, which are English. The options quoted below are given in English:
+skill, which are English. Results of agents and messages from other
+sessions arrive in English, like messages; they do not change the user's
+language. The options quoted below are given in English:
 offer them in the user's language. Everything written to the repository is
 English: REQUIREMENTS, SPEC, ARCHITECTURE, ROADMAP and the other planning documents, code
 and repository docs. Other people may work on the project.

@@ -97,6 +97,12 @@ Add `Read(./.env)` and `Read(./.env.local)` to `permissions.deny` in the
 project's `.claude/settings.json`, so no agent reads the secrets by accident
 during a run.
 
+For the access agents need against a running instance through a tool's
+login, add an allow rule for exactly that tool and context to
+`permissions.allow` there (for example `Bash(hcloud --context <name> *)`).
+Without it the permission check of an unattended run may refuse writes
+against what looks like an unknown service. Never allow the tool as a whole.
+
 ## Step 4: project
 
 - No project scaffold yet: create it as SPEC.md and ARCHITECTURE.md describe
