@@ -106,12 +106,13 @@ Then act on the status:
   architecture (point to `/wcc:change` and stop), or leave it blocked
   (stop). After the first four, set `IN_PROGRESS`, turn the `[!]` plans
   back to `[ ]` and continue.
-- `MANUAL_CHECK`: first fix the findings under "Findings from manual
+- `MANUAL_CHECK`: first build the findings under "Findings from manual
   testing" in the waiting phase's `PLAN.md`, as plans of that phase on its
   branch. Then run its checks with `Result: open` or `does not fit, see
   plan` as the guided mode of `/wcc:report` does (`../report/SKILL.md`).
   A check that does not fit and deviates from the requirements is fixed the
-  same way and asked again; a wish beyond them goes to `/wcc:change` (stop).
+  same way and asked again; a wish beyond them is worked in and recorded as
+  step 5 of `/wcc:report` does, then built the same way.
   When none is open, close the waiting phase (step 10) and stop as "After
   the phase" describes. If no phase waits (a milestone ended with open
   checks), only run the checks, then set `DONE`.

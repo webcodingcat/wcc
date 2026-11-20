@@ -1,6 +1,6 @@
 ---
 name: change
-description: Apply a change request to a wcc project consistently across IDEA.md, REQUIREMENTS.md, SPEC.md, ARCHITECTURE.md and ROADMAP.md, plan the next milestone from the target vision once a milestone is done, or take the user's answers to the open decisions a phase collected, or take backlog items into work. Use this whenever the user wants to change the stack, add or drop a feature, add a tool, extend the target vision, start the next milestone, decide the open decisions or work off backlog items of a project that already has an IDEA.md, instead of editing a single file by hand.
+description: Apply a change request to a wcc project consistently across IDEA.md, REQUIREMENTS.md, SPEC.md, ARCHITECTURE.md and ROADMAP.md, plan the next milestone from the target vision once a milestone is done, or take the user's answers to the open decisions a phase collected, or take backlog items into work. Use this whenever the user wants to change the stack, add or drop a feature, add a tool, extend the target vision, start the next milestone, decide the open decisions or work off backlog items of a project that already has an IDEA.md, instead of editing a single file by hand. What the user noticed in what is built (a bug, something that should look or work differently) goes to /wcc:report.
 argument-hint: "[what should change]"
 ---
 
@@ -149,7 +149,11 @@ ask for the decision here.
    DECISIONS-DONE.md, as the header of DECISIONS.md says (create it from
    `../idea/assets/DECISIONS-DONE.md` if missing).
 4. State the cost honestly before applying it if code already exists:
-   - additions are cheap and are scheduled as a new phase or plan
+   - additions are cheap and are scheduled as a new phase or plan; a
+     change to what a phase waiting in `MANUAL_CHECK` built goes into that
+     phase, as an entry `change` under "Findings from manual testing" in
+     its `PLAN.md` (the form is in step 5 of `../report/SKILL.md`), built
+     before its checks are asked again
    - a stack change means rewriting existing code; name the affected
      phases and schedule the rebuild as its own phase
    - a target vision item the architecture cannot absorb needs a rebuild phase

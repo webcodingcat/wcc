@@ -62,8 +62,9 @@ The words wcc uses:
 /wcc:spec       derive, check, summarise           -> REQUIREMENTS, SPEC, ARCHITECTURE, ROADMAP
 /wcc:prepare    check the machine, set up project  -> git, scaffold, working build and test commands
 /wcc:phase      discuss, plan, test, build         -> one phase
-/wcc:report     guided manual checks, findings     -> F phase, BACKLOG.md or /wcc:change
-/wcc:change     change request, next milestone,    -> all documents updated consistently
+/wcc:report     guided manual checks, bugs and     -> waiting phase, F phase or BACKLOG.md
+                wishes about what is built
+/wcc:change     new ideas, next milestone,         -> all documents updated consistently
                 open decisions, backlog items
 /wcc:status     state and next command             -> read only
 /wcc:upgrade    after a plugin update              -> project files on the new version
@@ -428,8 +429,18 @@ Code works on a project without such rules.
   prepares what it can, says what should happen, and
   saves each answer at once.
 - **Findings are sorted with the user**: bugs become a feedback phase with a
-  failing test first, minor findings are parked, wishes go to `/wcc:change`.
+  failing test first, minor findings are parked, and a wish is worked into
+  the documents by the steps of `/wcc:change` and then built like a bug.
+  Whatever concerns a phase waiting in `MANUAL_CHECK` goes into that phase.
   While a phase is running they wait in FEEDBACK.md.
+- **Report is for what is built, change for what is new.** The line ran
+  first between recording (`/wcc:report`) and changing the documents
+  (`/wcc:change`); in the reference project's fourteenth phase the user's
+  findings were mostly wishes about the console just built, each went from
+  report to change, the user wanted all of them in the waiting phase, which
+  no skill offered, and found the difference between the two skills hard to
+  explain to others. Users think in "I noticed" and "I want something new",
+  so the skills split that way.
 
 ### State
 

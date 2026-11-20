@@ -1,6 +1,6 @@
 ---
 name: report
-description: Walk the user through the open manual checks of a wcc project one at a time, preparing what can be prepared, and take what the user noticed while trying a wcc project by hand - a bug, something that looks wrong, the result of a manual check, a wish - with or without a screenshot, sort it with the user and record it where the next phase picks it up. Use this whenever the user reports a finding from manual testing, says "I noticed", "this does not work", "this looks wrong", "AUTH-03 fits" or "here is a screenshot" in a wcc project. Without arguments, also use it when the user asks "what do I have to test", "show the manual checks" or "how do I test this".
+description: Walk the user through the open manual checks of a wcc project one at a time, preparing what can be prepared, and take what the user noticed in what is built - a bug, something that looks wrong or should work or look differently, the result of a manual check - with or without a screenshot, sort it with the user, work a wish into the planning documents and record it where the next phase picks it up. Use this whenever the user reports a finding from manual testing, says "I noticed", "this does not work", "this looks wrong", "this should be like", "AUTH-03 fits" or "here is a screenshot" in a wcc project. New features and how the project goes on belong to /wcc:change. Without arguments, also use it when the user asks "what do I have to test", "show the manual checks" or "how do I test this".
 argument-hint: "[what you noticed]"
 ---
 
@@ -92,26 +92,36 @@ missing points in one question.
 - **bug**: the project does not do what REQUIREMENTS.md or UI-SPEC.md says, or is
   plainly broken (a crash, lost data, an error the user cannot get past).
 - **minor**: within the requirements, cosmetic or nice to have.
-- **wish**: something the requirements do not say or say differently.
+- **wish**: something about what is built that the requirements or
+  UI-SPEC.md do not say or say differently. A new feature that does not
+  concern what is built is no finding: it belongs to `/wcc:change`; offer
+  to run it.
 
 Present all findings as one question, one line each with class, reason and
-destination, and let the user correct them. A minor finding is parked in
-the backlog; offer once, for all of them, to fix chosen ones **soon** in the
-feedback phase instead.
+destination, and let the user correct them. A finding about what a phase
+waiting in `MANUAL_CHECK` built goes into that phase, whatever its class;
+offer the feedback phase or the backlog for its minor findings as
+alternatives. Otherwise a minor finding is parked in the backlog; offer
+once, for all of them, to fix chosen ones **soon** in the feedback phase
+instead.
 
 ## 5. Record
 
 If a run is going, write the confirmed findings to FEEDBACK.md (step 6) and
 touch nothing else; the next `/wcc:phase` records them. A wish then waits
-there too; tell the user to run `/wcc:change` once the run has stopped.
+there too; the next `/wcc:phase` puts it under "Open decisions", where
+`/wcc:change` takes the answer.
 Otherwise record directly:
 
 - **check ok**: `Result: fits` in its `CHECKS.md`, and remove its line from
   "Open manual checks".
-- **bug of a phase waiting in `MANUAL_CHECK`**: add it to
-  `phases/<id>/PLAN.md` under "Findings from manual testing", and set
-  `Result: does not fit, see plan` in `CHECKS.md`. The next `/wcc:phase`
-  fixes it on that branch and asks again.
+- **finding about what a phase waiting in `MANUAL_CHECK` built**: add it
+  to `phases/<id>/PLAN.md` under "Findings from manual testing" as
+  `- <bug|minor|change> (<date>, /wcc:report): <the finding>`, with the
+  details named for an `F` phase below; a wish is worked into the documents
+  first (below) and entered as `change`, naming the sections it changed. If
+  it concerns a check, set `Result: does not fit, see plan` in `CHECKS.md`.
+  The next `/wcc:phase` builds it on that branch and asks again.
 - **other bugs, and minor findings wanted soon**: an `F` entry in
   ROADMAP.md. Add to an unchecked `F` phase whose `PLAN.md` has no plans yet;
   otherwise insert `- [ ] F<n> Feedback fixes` before the first entry of the
@@ -125,9 +135,12 @@ Otherwise record directly:
 - **other minor findings**: BACKLOG.md, `- [ ] minor: <component>: <what
   is wrong> (source: feedback)`. The backlog is a parking lot the user
   empties with `/wcc:change`.
-- **wish**: offer to run `/wcc:change` now with the wish. If the user
-  declines, add it to "Open decisions" in STATUS.md in the form the
-  phase skill gives, with source `feedback`.
+- **wish**: work it into the documents as `/wcc:change` does
+  (`../change/SKILL.md`, steps 2 to 5), asking what the user has to decide,
+  then record where it is built: in the waiting phase as above, otherwise
+  as step 4 there schedules it. If the user wants to decide later, add it
+  to "Open decisions" in STATUS.md in the form the phase skill gives, with
+  source `feedback`.
 
 ## 6. The queue
 

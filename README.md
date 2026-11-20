@@ -226,12 +226,20 @@ sorted each finding before recording it:
   a failing test first, then the fix
 - a **small thing** is parked in the backlog; if you want it fixed now, say
   so and it goes into the feedback phase instead
-- a **wish** beyond the requirements goes through `/wcc:change`
+- a **wish**, something that should work or look differently than the
+  requirements say, is worked into the documents right away and then built
+  like a bug
+
+Anything about a phase that waits for your manual check goes into that
+phase, whatever it is, so it is finished before the phase is merged.
 
 You can report findings while a phase is running; they wait in
 `.project/FEEDBACK.md` until it has finished.
 
 ## Changing plans and growing the project
+
+`/wcc:report` is for what you notice in what is built; `/wcc:change` is for
+new ideas and for how the project goes on.
 
 `/wcc:change <what you want>` works a change into all documents
 consistently: a new requirement, a dropped one, a different library, a
@@ -255,8 +263,8 @@ what it would change and asks once; `/wcc:upgrade --check` only shows it.
 | `/wcc:spec` | after the interview | Stack, feasibility check, requirements, spec, architecture, roadmap, summary for approval |
 | `/wcc:prepare` | after the approval, on a new machine or checkout | Machine, accounts and secrets checked, git repository, scaffold, working build and test commands |
 | `/wcc:phase` | to build | The next phase: discuss, plan, test, build, then it stops; start each one in a new session |
-| `/wcc:report [what you noticed]` | any time | Without text: the open manual checks, one at a time. With text: a finding, sorted with you and recorded |
-| `/wcc:change [change]` | any time | A change worked into all documents, the next milestone planned, open decisions answered, backlog items taken in |
+| `/wcc:report [what you noticed]` | any time | Without text: the open manual checks, one at a time. With text: a bug or a wish about what is built, sorted with you and recorded where it is built |
+| `/wcc:change [change]` | any time | A new idea worked into all documents, the next milestone planned, open decisions answered, backlog items taken in |
 | `/wcc:status` | any time | Where the project stands and which command comes next |
 | `/wcc:upgrade [--check]` | after a plugin update | Project files brought up to the installed plugin version |
 | `/wcc:prototype <what to try>` | optional, before the interview | Throwaway prototype to find out what you want |
