@@ -61,7 +61,7 @@ The words wcc uses:
 /wcc:spec       derive, check, summarise           -> REQUIREMENTS, SPEC, ARCHITECTURE, ROADMAP
 /wcc:prepare    check the machine, set up project  -> git, scaffold, working build and test commands
 /wcc:phase      discuss, plan, test, build         -> one phase
-/wcc:feedback   guided manual checks, findings     -> F phase, BACKLOG.md or /wcc:change
+/wcc:report     guided manual checks, findings     -> F phase, BACKLOG.md or /wcc:change
 /wcc:change     change request, next milestone,    -> all documents updated consistently
                 open decisions, backlog items
 /wcc:status     state and next command             -> read only
@@ -85,7 +85,7 @@ skills/phase/                     one phase; references/ = e2e, backlog, feedbac
                                   read only when they apply
 skills/change/                    changes, next milestone, open decisions, backlog
 skills/status/                    state and next command, read only
-skills/feedback/                  guided manual checks and findings
+skills/report/                    guided manual checks and findings
 skills/upgrade/                   bring a project up to the installed version;
                                   references/migrations.md = catalogue per version
 skills/prototype/                 optional throwaway prototype
@@ -136,7 +136,7 @@ folders; a plain `rg` needs `--hidden`, which the project CLAUDE.md says.
 | `SPEC_REVIEW` | Summary waits for approval | `/wcc:spec` |
 | `READY` | Approved, or a new milestone planned | `/wcc:prepare`, then `/wcc:phase` |
 | `IN_PROGRESS` | Between two phases, or a phase interrupted | `/wcc:phase`, best in a new session |
-| `MANUAL_CHECK` | A phase waits for a manual check | `/wcc:feedback`, then `/wcc:phase` |
+| `MANUAL_CHECK` | A phase waits for a manual check | `/wcc:report`, then `/wcc:phase` |
 | `BLOCKED` | A plan needs a decision or a step of the user | `/wcc:phase` or `/wcc:change` |
 | `DONE` | Current milestone finished | `/wcc:change` for the next one |
 
@@ -150,7 +150,7 @@ Code works on a project without such rules.
 - **The interview asks only what the user can answer**, with two to four
   options, a recommendation, "I don't know" and "I need more details".
 - **Ask while the user is there; decide and record when not.** The
-  interview, the spec approval, the start of a phase, `/wcc:feedback` and
+  interview, the spec approval, the start of a phase, `/wcc:report` and
   `/wcc:change` may ask. Inside a phase a question would stop it for hours,
   so it decides, records in DECISIONS.md with the cost of a later change,
   and blocks only where it must.
@@ -414,7 +414,7 @@ Code works on a project without such rules.
 
 - **Manual checks have a guide** in `CHECKS.md`, written at the close while
   the code is fresh, and stop a phase only if later phases depend on them.
-- **`/wcc:feedback` walks the user through them** one at a time: Claude
+- **`/wcc:report` walks the user through them** one at a time: Claude
   prepares what it can, says what should happen, and
   saves each answer at once.
 - **Findings are sorted with the user**: bugs become a feedback phase with a
@@ -457,7 +457,7 @@ detection checks file content, never project names or history.
 | End-to-end rules, what runs when | `skills/phase/references/e2e.md`, "Tests" in `project-CLAUDE.md` |
 | Stricter or looser reviews | `agents/code-reviewer.md`, `agents/verifier.md`, `agents/spec-reviewer.md` |
 | What enters the backlog, how it is worked off | `skills/phase/references/backlog.md`, the reviewer and verifier, "Backlog" in `skills/change/SKILL.md`, template `BACKLOG.md` |
-| Manual checks and findings | `skills/feedback/SKILL.md`, `skills/phase/references/feedback.md`, "Manual requirements" in `skills/phase/SKILL.md` |
+| Manual checks and findings | `skills/report/SKILL.md`, `skills/phase/references/feedback.md`, "Manual requirements" in `skills/phase/SKILL.md` |
 | Open decisions | "Open decisions" in `skills/phase/SKILL.md`, the agents' categories, "Open decisions", "Asking" and "Clarification sessions" in `skills/change/SKILL.md`, template `STATUS.md` |
 | Clarification sessions | Step 2 in `skills/idea/SKILL.md` and "Clarification sessions" in `skills/change/SKILL.md`; change both |
 | How plans are implemented | `agents/implementer.md`; its prompt in step 8 of `skills/phase/SKILL.md` |
@@ -536,6 +536,11 @@ types).
   projects not started with wcc.
 - **Optional prototype** (assumption): `/wcc:prototype`, recommended in the
   interview for games whose rules are unclear.
+- **The skill for manual checks and findings is `/wcc:report`**, not
+  `/wcc:feedback`: the slash menu of Claude Code Desktop hides a plugin
+  skill named exactly `feedback` (probes named `feedback-probe` and one
+  with the same description were shown), although it runs when typed.
+  The files and the feedback phases keep their names.
 
 ## Open points
 

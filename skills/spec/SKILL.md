@@ -67,7 +67,7 @@ Use `assets/REQUIREMENTS.md` and `assets/SPEC.md`. Rules:
   - `none`: wiring, registration, configuration or data types that the
     tests of the behaviour around them cover. No test of its own.
   - `manual`: only what no test can judge (a look, a feel); the user checks
-    it, guided by `/wcc:feedback`.
+    it, guided by `/wcc:report`.
   Choose the cheapest level that proves the promise; the user confirms the
   levels with the summary (step 7).
 - Detail the first milestone. What the target vision will need goes under

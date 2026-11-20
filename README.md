@@ -19,7 +19,7 @@ with one command and can leave it alone until it is finished.
   /wcc:prepare           ──►  checks your machine, sets up the repo  ──►  build and tests run
   /wcc:phase             ──►  asks what is unclear, then plans,      ──►  one phase per call
                               tests, builds, reviews on its own
-  try it, /wcc:feedback  ──►  walks you through the checks           ──►  fixes in the next phase
+  try it, /wcc:report    ──►  walks you through the checks           ──►  fixes in the next phase
 ```
 
 Your attention goes into the interview, the approval of the spec and the
@@ -201,12 +201,12 @@ permission prompts do not stop it. A phase ends with one of these in
 |--------|---------|-------------|
 | `IN_PROGRESS` | The phase is finished, more are open in this milestone | Start the next one with `/wcc:phase`, best in a new session |
 | `DONE` | The milestone is finished | Try it; plan the next milestone with `/wcc:change` |
-| `MANUAL_CHECK` | A later phase depends on something only you can check | `/wcc:feedback` walks you through it; then `/wcc:phase` continues |
+| `MANUAL_CHECK` | A later phase depends on something only you can check | `/wcc:report` walks you through it; then `/wcc:phase` continues |
 | `BLOCKED` | A plan needs a decision, an approval, a credential or a step only you can take | `/wcc:phase` shows the question and continues after your answer |
 
 ## Trying it and reporting what you find
 
-`/wcc:feedback` without text walks you through the open manual checks one
+`/wcc:report` without text walks you through the open manual checks one
 at a time. Claude prepares what it can (starts the program, creates the
 test data, opens the page), tells you what should happen and asks whether it
 does. Answer "fits", describe what is different, or say "skip" or "not
@@ -216,7 +216,7 @@ Anything else you notice goes the same way, in your own words and with a
 screenshot if it helps:
 
 ```
-/wcc:feedback the score does not reset after game over
+/wcc:report the score does not reset after game over
 ```
 
 Claude looks into it, asks if something is unclear, and shows you how it
@@ -255,7 +255,7 @@ what it would change and asks once; `/wcc:upgrade --check` only shows it.
 | `/wcc:spec` | after the interview | Stack, feasibility check, requirements, spec, architecture, roadmap, summary for approval |
 | `/wcc:prepare` | after the approval, on a new machine or checkout | Machine, accounts and secrets checked, git repository, scaffold, working build and test commands |
 | `/wcc:phase` | to build | The next phase: discuss, plan, test, build, then it stops; start each one in a new session |
-| `/wcc:feedback [what you noticed]` | any time | Without text: the open manual checks, one at a time. With text: a finding, sorted with you and recorded |
+| `/wcc:report [what you noticed]` | any time | Without text: the open manual checks, one at a time. With text: a finding, sorted with you and recorded |
 | `/wcc:change [change]` | any time | A change worked into all documents, the next milestone planned, open decisions answered, backlog items taken in |
 | `/wcc:status` | any time | Where the project stands and which command comes next |
 | `/wcc:upgrade [--check]` | after a plugin update | Project files brought up to the installed plugin version |

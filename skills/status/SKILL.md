@@ -23,7 +23,7 @@ ROADMAP.md the section of the current milestone. Then report in at most ten line
 - progress: phases done and open in the current milestone, and plans done
   and open in the current phase
 - what waits for the user: open manual checks (results go to
-  `/wcc:feedback`), the reason for `BLOCKED`, plans marked `[!]` in the
+  `/wcc:report`), the reason for `BLOCKED`, plans marked `[!]` in the
   plan, entries under "Open decisions" in STATUS.md (answered with
   `/wcc:change`; name those `In clarification` and whether their result
   file in `decisions/` exists already)
@@ -43,7 +43,7 @@ ROADMAP.md the section of the current milestone. Then report in at most ten line
 | `IDEA_DONE`, `SPEC_REVIEW` | `/wcc:spec` |
 | `READY` | `/wcc:prepare`, then `/wcc:phase` |
 | `IN_PROGRESS`, `BLOCKED` | `/wcc:phase` |
-| `MANUAL_CHECK` | `/wcc:feedback`, then `/wcc:phase` |
+| `MANUAL_CHECK` | `/wcc:report`, then `/wcc:phase` |
 | `DONE` | `/wcc:change` for the next milestone |
 
 Every `/wcc:phase` builds one phase and stops. For `IN_PROGRESS`

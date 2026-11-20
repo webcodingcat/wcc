@@ -1,6 +1,6 @@
 # Feedback
 
-The user reports what they notice by hand with `/wcc:feedback`, which sorts
+The user reports what they notice by hand with `/wcc:report`, which sorts
 it with them and records it. While a phase is running, it writes to
 FEEDBACK.md instead, so it does not edit files under the run's feet.
 
@@ -8,7 +8,7 @@ FEEDBACK.md instead, so it does not edit files under the run's feet.
 
 Before picking the phase, record its findings without questions, the user
 has already confirmed them: exactly as step 5 "Record" of
-`../../feedback/SKILL.md` says for each class, except that a wish goes to
+`../../report/SKILL.md` says for each class, except that a wish goes to
 "Open decisions" in STATUS.md with source `feedback`.
 
 Commit the changed planning documents and delete FEEDBACK.md. If the run

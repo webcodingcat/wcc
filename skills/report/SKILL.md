@@ -1,10 +1,10 @@
 ---
-name: feedback
+name: report
 description: Walk the user through the open manual checks of a wcc project one at a time, preparing what can be prepared, and take what the user noticed while trying a wcc project by hand - a bug, something that looks wrong, the result of a manual check, a wish - with or without a screenshot, sort it with the user and record it where the next phase picks it up. Use this whenever the user reports a finding from manual testing, says "I noticed", "this does not work", "this looks wrong", "AUTH-03 fits" or "here is a screenshot" in a wcc project. Without arguments, also use it when the user asks "what do I have to test", "show the manual checks" or "how do I test this".
 argument-hint: "[what you noticed]"
 ---
 
-# feedback: manual checks and findings from the user
+# report: manual checks and findings from the user
 
 What the user noticed: $ARGUMENTS
 
@@ -41,7 +41,7 @@ going right now; the answer decides where findings go (step 5).
 Walk through the open manual checks one at a time: those of a phase
 waiting in `MANUAL_CHECK` first, then the others under "Open manual checks"
 in STATUS.md, each with its guide from `phases/<id>/CHECKS.md`. If no
-check is open, say so and that findings can be reported with `/wcc:feedback
+check is open, say so and that findings can be reported with `/wcc:report
 <what you noticed>`.
 
 For each check:
@@ -137,7 +137,7 @@ Create it if it is missing:
 ```
 # FEEDBACK
 
-Findings from manual testing, already sorted with the user by /wcc:feedback
+Findings from manual testing, already sorted with the user by /wcc:report
 while a phase was running. The next /wcc:phase records them at
 its start and then deletes this file.
 

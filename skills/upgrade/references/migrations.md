@@ -22,6 +22,14 @@ Format:
 
 Newest entries first.
 
+## 0.32.13 `/wcc:feedback` is now `/wcc:report`
+
+- Detect: a file in `.project/` or the project `CLAUDE.md` names
+  `/wcc:feedback`.
+- Do: replace `/wcc:feedback` with `/wcc:report` in those files. Leave
+  every other "feedback" as it is (FEEDBACK.md, feedback phases, the
+  `feedback/` image folders, `source: feedback`).
+
 ## 0.32.10 Auto mode entry for agent access
 
 - Detect: "Accounts and secrets" in `.project/SPEC.md` names access agents

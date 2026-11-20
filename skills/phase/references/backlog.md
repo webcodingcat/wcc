@@ -7,7 +7,7 @@ takes items into work with `/wcc:change`.
 
 ## Taking items in
 
-Reviewers, the verifier, agents and `/wcc:feedback` report candidates. Write
+Reviewers, the verifier, agents and `/wcc:report` report candidates. Write
 one to BACKLOG.md only if it states what goes wrong for whom and has one of
 these severities:
 
@@ -17,7 +17,7 @@ these severities:
   plan
 - `later`: something a named later phase will need
 - `minor`: a cosmetic finding the user reported and wants to keep (only
-  from `/wcc:feedback`)
+  from `/wcc:report`)
 
 Drop the rest without writing it down: cases that need conditions the
 software never creates, internal cleanups, matters of taste, and missing

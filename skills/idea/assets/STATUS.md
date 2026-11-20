@@ -16,7 +16,7 @@ STATUS: IDEA
 
 <!-- Requirements verified as "manual" that the user still has to look at,
      one line each: "- UI-04 (03): <requirement>". The guide is in
-     phases/<id>/CHECKS.md. /wcc:feedback walks through them. -->
+     phases/<id>/CHECKS.md. /wcc:report walks through them. -->
 
 - none
 

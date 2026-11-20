@@ -106,7 +106,7 @@ Then act on the status:
 - `MANUAL_CHECK`: first fix the findings under "Findings from manual
   testing" in the waiting phase's `PLAN.md`, as plans of that phase on its
   branch. Then run its checks with `Result: open` or `does not fit, see
-  plan` as the guided mode of `/wcc:feedback` does (`../feedback/SKILL.md`).
+  plan` as the guided mode of `/wcc:report` does (`../report/SKILL.md`).
   A check that does not fit and deviates from the requirements is fixed the
   same way and asked again; a wish beyond them goes to `/wcc:change` (stop).
   When none is open, close the waiting phase (step 10) and stop as "After
@@ -247,7 +247,7 @@ From here on the phase asks nothing.
     03 <title> (<requirement IDs>) → phases/03/`. Mark its requirements
     done in "Coverage" of REQUIREMENTS.md. Update STATUS.md.
 11. **Report**, at most ten lines: what runs now, decisions taken (titles),
-    the manual checks waiting, with the hint that `/wcc:feedback` walks the
+    the manual checks waiting, with the hint that `/wcc:report` walks the
     user through them, the new open decisions (ID and question) and how many
     are open with `/wcc:change` taking the answers, the backlog hint, and
     the next command.
@@ -342,6 +342,6 @@ is a feedback phase it just inserted. The next starts with the user's next
 - the phase waits for a manual check: `MANUAL_CHECK`.
 
 End the report with the next command: `/wcc:phase` in a new session for
-`IN_PROGRESS` and `BLOCKED`, `/wcc:feedback` and then `/wcc:phase` for
+`IN_PROGRESS` and `BLOCKED`, `/wcc:report` and then `/wcc:phase` for
 `MANUAL_CHECK`, `/wcc:change` for `DONE`. Never start an item of "Later" on
 your own.
