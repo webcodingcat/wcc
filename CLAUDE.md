@@ -307,6 +307,14 @@ Code works on a project without such rules.
   while waiting for another. The run had a limit of three hours and logged
   nothing until the end, so the hang showed only as time passing; after
   the fix it took 22 minutes.
+- **Every waiting step has its own deadline.** In the reference project's
+  eleventh phase a browser test read a form control before the form had
+  rendered; the framework's click then waited for an element that never
+  came, without a limit of its own, until the test's limit of 40 minutes,
+  and printed nothing meanwhile. The rule against fixed waits was there,
+  but the test-writer did not take the framework's built-in waits for
+  waits. With a deadline per action the next run named the control after
+  76 seconds.
 - **Findings about the tests get no tests about the tests.** The proof is
   that existing tests stay green, plus a measurement.
 

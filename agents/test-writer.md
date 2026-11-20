@@ -42,8 +42,11 @@ Use the test framework and commands the project CLAUDE.md names. Rules:
    case.
 4. Put tests into the test files the row names, next to the code or in the
    test directory, named after the component.
-5. No fixed waits: wait for a condition with a deadline. Time limits are
-   tested with short values or a test clock, never in their real length.
+5. No fixed waits: wait for a condition with a deadline. Every waiting
+   step has a deadline of its own, well below the test's limit, including a
+   framework's built-in wait for an element or a response (an action
+   timeout). Time limits are tested with short values or a test clock,
+   never in their real length.
 6. Run your tests. They must fail for the right reason: the feature is
    missing, not a syntax error or a broken setup.
 7. Requirements in category `DOC` are tested against what the program

@@ -35,9 +35,12 @@ checks the tests against them.
   lower the limit in the command to about twice that run.
 - One subtest per row of `TESTS.md`, carrying its requirement ID and no
   other, under a group named after the component.
-- No fixed waits: wait for a condition with a deadline. Time limits are
-  checked in unit tests with short values or a test clock; an end-to-end
-  test checks the real length at most once.
+- No fixed waits: wait for a condition with a deadline. Every waiting
+  step has a deadline of its own, well below the test's limit, including a
+  framework's built-in wait for an element or a response (an action
+  timeout), so a hang fails at the step that hangs and names it. Time
+  limits are checked in unit tests with short values or a test clock; an
+  end-to-end test checks the real length at most once.
 
 ## What runs when
 
