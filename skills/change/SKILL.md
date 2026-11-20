@@ -145,7 +145,9 @@ ask for the decision here.
    ARCHITECTURE.md, not how a component does its work inside (see "Reading"
    in `../phase/SKILL.md`).
 3. Record the change in DECISIONS.md with `Type: change`, `What` and `Why`
-   in one sentence each.
+   in one sentence each. Entries the change revokes or changes move to
+   DECISIONS-DONE.md, as the header of DECISIONS.md says (create it from
+   `../idea/assets/DECISIONS-DONE.md` if missing).
 4. State the cost honestly before applying it if code already exists:
    - additions are cheap and are scheduled as a new phase or plan
    - a stack change means rewriting existing code; name the affected

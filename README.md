@@ -270,7 +270,8 @@ what it would change and asks once; `/wcc:upgrade --check` only shows it.
   `UI-SPEC.md` describe the plan; `STATUS.md`, `DECISIONS.md` and
   `BACKLOG.md` track the state, the open decisions, every decision taken
   without you, and the parked findings. `ROADMAP-DONE.md` and
-  `BACKLOG-DONE.md` keep the details of finished work. `research/` holds what
+  `BACKLOG-DONE.md` keep the details of finished work, `DECISIONS-DONE.md`
+  the decisions that were revoked or changed later. `research/` holds what
   the feasibility check found, `decisions/` the results of clarification
   sessions, and `phases/<id>/` everything of one phase: what you said at its
   start, its plans, its test map, its research and its manual checks. You

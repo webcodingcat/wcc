@@ -22,6 +22,17 @@ Format:
 
 Newest entries first.
 
+## 0.32.14 Revoked decisions move to DECISIONS-DONE.md
+
+- Detect: the header of `.project/DECISIONS.md` has no `Replaces:` line in
+  its format.
+- Do: take the format and the paragraph on replaced entries from the header
+  of `skills/idea/assets/DECISIONS.md` into the header of DECISIONS.md.
+  Create `.project/DECISIONS-DONE.md` from the template. Move every entry
+  that a later entry plainly revokes or changes there unchanged, and add
+  `Replaces:` to that later entry; where it is not plain whether an entry
+  still holds, leave it.
+
 ## 0.32.13 `/wcc:feedback` is now `/wcc:report`
 
 - Detect: a file in `.project/` or the project `CLAUDE.md` names

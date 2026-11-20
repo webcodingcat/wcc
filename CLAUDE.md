@@ -50,7 +50,8 @@ The words wcc uses:
   `Context`/`Options`/`Recommendation`/`Affects`, "Open manual checks",
   "Open decisions", `Start`/`Setup`/`Steps`/`Expected`, `Cost of change`,
   `Type`, `(working title)`, "Documentation", `D<n>`, "References", the backlog
-  severities `security`/`data`/`bug`/`later`/`minor`, `wcc version:`.
+  severities `security`/`data`/`bug`/`later`/`minor`, `wcc version:`,
+  `Replaces:`.
   Whoever renames one changes it everywhere.
 - Talk to the person working on this repository in their language.
 
@@ -115,7 +116,8 @@ folders; a plain `rg` needs `--hidden`, which the project CLAUDE.md says.
 | `ROADMAP.md` | Milestones with their phases, requirements and success criteria; finished phases one line each; "Later" | Claude |
 | `ROADMAP-DONE.md` | Full entries of finished phases; read by no skill | Claude |
 | `STATUS.md` | First line `STATUS: <value>`; current state in short lines; open manual checks (one line each); open decisions | Claude |
-| `DECISIONS.md` | Every decision and assumption taken without asking, every approval, with the cost of a later change | Claude |
+| `DECISIONS.md` | Every decision and assumption taken without asking, every approval, with the cost of a later change, as long as it holds | Claude |
+| `DECISIONS-DONE.md` | Entries a later entry revoked or changed; read by no skill | Claude |
 | `BACKLOG.md` | Parking lot: open items with severity and consequence | Claude |
 | `BACKLOG-DONE.md` | Items worked off or dropped; read by no skill | Claude |
 | `FEEDBACK.md` | Queue of findings reported while a phase was running | Claude |
@@ -425,6 +427,14 @@ Code works on a project without such rules.
 
 - **State lives in files, not in the context**, so phases can be
   interrupted and resumed: check marks in the plan, phases as roadmap lines.
+- **DECISIONS.md holds only what is valid.** Agents find entries by
+  searching for a component, so a revoked entry next to the one that
+  replaced it shows two answers, and only the dates tell them apart. In
+  the reference project the file had grown to 343 entries by the tenth
+  phase; no agent had yet taken a revoked entry for valid, the rule
+  came before that. An entry that revokes or changes one names it under
+  `Replaces:`, and the old one moves to DECISIONS-DONE.md, as finished
+  phases and backlog items do.
 - **`/wcc:upgrade` brings projects along.** It knows no project, only the
   migration catalogue and the current templates, changes the form of the
   files, never their decisions, and asks once.

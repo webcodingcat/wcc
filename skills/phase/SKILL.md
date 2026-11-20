@@ -67,7 +67,10 @@ names the sections its agents read (`Reads:`). Read a section yourself only
 to write it (an answer worked in, an interface change, the close).
 
 Keep what you write short, because every later phase reads it: a
-DECISIONS.md entry has one sentence for `What` and one for `Why`;
+DECISIONS.md entry has one sentence for `What` and one for `Why`, and an
+entry that revokes or changes an earlier one moves that one to
+DECISIONS-DONE.md as the header of DECISIONS.md says (create it from
+`../idea/assets/DECISIONS-DONE.md` if missing);
 ARCHITECTURE.md holds what other components build on, not how a component
 works inside (that goes into a code comment); STATUS.md lines are one or two
 sentences, details go into the phase folder.
