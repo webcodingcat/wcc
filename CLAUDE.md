@@ -257,6 +257,15 @@ Code works on a project without such rules.
   the local service it had to restart, while the doc-writer had been
   allowed the same command minutes before; the entry therefore also names
   the command that starts and stops the instance.
+- **Tools a phase uses first are checked at its start.** `/wcc:prepare`
+  checks the machine once, against the stack in SPEC.md. In the reference
+  project's twelfth phase, the first to build the installer, the WiX
+  extensions it needed were named nowhere; a plan found them missing, the
+  main session's attempt to add them was refused by the permission
+  classifier, and two plans blocked until the user installed them. So the
+  planner lists in "Discuss" each tool, extension or plugin the phase
+  uses first that the package manager does not install, the main session
+  runs its check, and the user installs what is missing while there.
 - **The project folder is the only source.** In the reference project,
   `/wcc:prepare` searched sibling folders for a module path, found an older
   copy of the project and took its scaffold over, with decisions nobody had

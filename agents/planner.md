@@ -53,6 +53,10 @@ Research:
 - <what the phase uses for the first time, or where plans depend on exact
   behaviour of a library, API or tool, not covered by a valid EXPERIMENTS.md
   entry; one line each; or none>
+Tools:
+- <each tool, extension or plugin the phase uses for the first time that
+  the project's package manager does not install: the command that shows
+  it is there, and the command that installs it; or none>
 ```
 
 If research ran, you are continued with `phases/<id>/RESEARCH.md` and the

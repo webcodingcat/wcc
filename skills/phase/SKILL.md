@@ -134,9 +134,12 @@ plans, it was interrupted: skip this and resume.
 Otherwise start the `planner` with the phase ID and the open decisions in
 STATUS.md that concern the phase (step 1 of the agent). If it lists
 research, start the `researcher` at once in the background with that list
-and the file `phases/<id>/RESEARCH.md` to write. Present the planner's
+and the file `phases/<id>/RESEARCH.md` to write. Run the check command of
+each tool it lists. Present the planner's
 assumptions as one short list, "this is how I would do it", one line each,
-and let the user correct any of it while the research runs. End the turn
+and let the user correct any of it while the research runs. Below the
+list, name each tool missing with its install command, for the user to
+run now; install nothing yourself. End the turn
 with the list and ask nothing in it: an open question menu would catch the
 user's reply to the list. When the research is done and the user has
 replied, continue the planner with `RESEARCH.md` and the user's corrections;
