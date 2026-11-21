@@ -134,7 +134,11 @@ ask for the decision here.
    itself (a new audience, a new document, a project that had none) goes
    into "Documentation" in IDEA.md and SPEC.md; if it has to cover what is
    already built, schedule a phase for it. If the change brings a new library, API or
-   tool, let the `researcher` agent check it first, as in the spec. If the
+   tool, let the `researcher` agent check it first, as in the spec. If it
+   adds a component or phases, run the `feasibility-checker` with the new
+   requirement IDs and the sections the change added, as in step 5 of
+   `../spec/SKILL.md`, then the `spec-reviewer` with the new and changed
+   requirement IDs and phases, and fix what it finds before step 7. If the
    change replaces something an entry in `research/EXPERIMENTS.md` was checked with,
    set that entry to `superseded` with the reason; do not delete it. Never
    leave two documents contradicting each other, nor two places in one:

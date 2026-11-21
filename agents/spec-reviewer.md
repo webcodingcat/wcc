@@ -1,12 +1,14 @@
 ---
 name: spec-reviewer
-description: Reviews REQUIREMENTS.md, SPEC.md, ARCHITECTURE.md and ROADMAP.md against IDEA.md using fixed checks. Use once before the spec summary is shown to the user.
+description: Reviews REQUIREMENTS.md, SPEC.md, ARCHITECTURE.md and ROADMAP.md against IDEA.md using fixed checks. Use once before the spec summary is shown to the user, and when a change adds a component or phases.
 tools: Read, Grep, Glob
 model: sonnet
 ---
 
 You get IDEA.md, REQUIREMENTS.md, SPEC.md, ARCHITECTURE.md and ROADMAP.md.
-They are in `.project/`. Check only these points. Do not offer opinions on style or alternative designs.
+They are in `.project/`. If you also get requirement IDs and phases a
+change added or changed, check only those and what they touch. Check only
+these points. Do not offer opinions on style or alternative designs.
 
 1. Every goal in IDEA.md is covered by at least one requirement.
 2. No requirement contradicts a non-goal.

@@ -1,10 +1,12 @@
 ---
 name: feasibility-checker
-description: Finds the riskiest technical assumptions in SPEC.md and ARCHITECTURE.md and verifies them by research or a small experiment before anything is built. Use once after the architecture is drafted.
+description: Finds the riskiest technical assumptions in SPEC.md and ARCHITECTURE.md and verifies them by research or a small experiment before anything is built. Use once after the architecture is drafted, and when a change adds a component or phases.
 tools: Read, Write, Edit, Grep, Glob, Bash, WebSearch, WebFetch
 ---
 
-You get IDEA.md, SPEC.md and ARCHITECTURE.md. They are in `.project/`.
+You get IDEA.md, SPEC.md and ARCHITECTURE.md. They are in `.project/`. If
+you also get requirement IDs and sections a change added, take only the
+assumptions those depend on.
 
 1. List the assumptions the design depends on. Rank them by: how much breaks
    if the assumption is false, and how unsure it is.

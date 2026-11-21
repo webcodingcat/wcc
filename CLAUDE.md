@@ -220,6 +220,16 @@ Code works on a project without such rules.
   `feasibility-checker` may write only in `research/experiments/`, installs
   nothing and gets no elevated rights; what remains is the result and the
   commands to repeat it, not the code.
+- **A change that adds a component is checked like the spec.** In the
+  reference project `/wcc:change` took Storage Boxes into the first
+  milestone: a second VM with btrfs quotas, snapshots and six file
+  protocols for chrooted subaccounts, three new phases. Only the
+  `researcher` ran, for the new API. Nothing tried the storage VM, and
+  three requirements bundled a dozen promises each (CRUD and eight
+  actions; five protocols; snapshots, plan, limits and rollback), which
+  the spec-reviewer's atomicity check exists to catch. So a change that
+  adds a component or phases runs the `feasibility-checker` on what it
+  added and the `spec-reviewer` on the new and changed requirements.
 - **Target vision apart from the first milestone.** The architecture is
   designed for the target vision, code is written only for the current
   phase.
