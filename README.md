@@ -1,7 +1,26 @@
+<div align="center">
+
 # wcc
 
-A Claude Code plugin that takes a project from a raw idea to working,
-tested code, with as little of your time as possible once the idea is clear.
+**From a raw idea to tested code, phase by phase.**
+
+A [Claude Code](https://claude.com/claude-code) plugin that interviews you,
+writes the spec and builds your project test-first, without asking you
+anything while it works.
+
+[![Version](https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fraw.githubusercontent.com%2Fwebcodingcat%2Fwcc%2Fmain%2F.claude-plugin%2Fplugin.json&query=%24.version&label=version&color=blue)](.claude-plugin/plugin.json)
+[![License: MIT](https://img.shields.io/badge/license-MIT-green)](LICENSE)
+[![Claude Code plugin](https://img.shields.io/badge/Claude%20Code-plugin-D97757)](https://claude.com/claude-code)
+
+[How it works](#how-it-works) ·
+[Install](#install) ·
+[Quick start](#quick-start) ·
+[Commands](#commands) ·
+[Steps in detail](#the-steps-in-detail)
+
+</div>
+
+---
 
 You describe what you want. Claude interviews you until the idea is
 complete, picks and checks the technology, writes the requirements, a spec
@@ -66,12 +85,15 @@ Three ideas carry the workflow:
 
 ## Install
 
-From a git repository that hosts the plugin:
+In Claude Code:
 
 ```
-/plugin marketplace add <owner>/<repo>
+/plugin marketplace add webcodingcat/wcc
 /plugin install wcc@webcodingcat
 ```
+
+Update later with `/plugin marketplace update webcodingcat`, then run
+`/wcc:upgrade` in your projects.
 
 Or try it from a local copy:
 
@@ -301,3 +323,7 @@ can work on the project.
 Work in progress. `CLAUDE.md` in this repository is for developing the
 plugin: it explains the design behind the workflow, where to change what,
 and the open points.
+
+## License
+
+[MIT](LICENSE)
