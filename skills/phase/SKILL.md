@@ -182,14 +182,14 @@ From here on the phase asks nothing.
    backlog phase, also give it the path of `references/feedback.md` or
    `references/backlog.md` of this skill; it plans by that file.
 6. **Commit** the phase folder on the branch.
-7. **Tests first.** Start a `test-writer` per component the planner named,
+7. **Tests first.** Start a `test-writer` per writer the planner named,
    with the phase folder, its test files and the existing test group to
    follow where one exists (from the file names, with Glob); it reads its
    rows in `TESTS.md`, "Interfaces" in `PLAN.md` and the `Reads:` sections
-   of their plans. One writer per component, at most two at the same time, each owning its
+   of their plans. At most two run at the same time, each owning its
    test files (a shared helper or harness belongs to one of them; the
-   others report what they need there); a phase with only a few rows gets
-   one writer. Writers write exactly the rows: a row they think is missing
+   others report what they need there); parts of one component run one
+   after another in the planner's order. Writers write exactly the rows: a row they think is missing
    or wrong they report, and you decide. They run only their fast tests and
    compile the end-to-end tests.
 

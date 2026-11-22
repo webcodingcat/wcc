@@ -161,13 +161,20 @@ phase, and every `DOC` requirement without a test yet, has a row; levels
 match REQUIREMENTS.md; every test name carries its ID. Fix it until it
 holds.
 
+Then divide the rows among writers: one per component, owning its test
+files; a phase with only a few rows gets one writer. A writer whose rows come to more than about 800 lines of tests is
+split by test files into parts that run one after another, the part owning
+a shared helper or harness first; a writer, like an implementer, sends its
+whole context with every turn.
+
 Return, in English, in this form and nothing else:
 
 ```
 Plans: <number>; waves: <number>
 - <plan ID> | wave <n> | depends on <IDs or -> | review <alone or with ID> | e2e: yes/no
 Blocked: <plan IDs marked [!] with their question in one line; or none>
-Test rows: <number>; writers: <component: test files, one line each>
+Test rows: <number>; writers: <component or part: test files, ~lines,
+  one line each, in the order they run>
 Decisions: <one line each: what you decided without asking, why, cost of
   change; or none>
 ```

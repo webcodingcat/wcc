@@ -310,6 +310,13 @@ Code works on a project without such rules.
   agent that implements would check what it built, not what was asked; a
   separate writer keeps an objective "done" for a phase that runs without
   questions.
+- **A writer's share is limited like a plan.** In the reference project's
+  thirteenth phase, the client matrix, two writers wrote about 3,000 lines
+  of end-to-end tests each; their context grew to 232k tokens and they used
+  36M tokens, nearly as much as all nineteen implementers. Plans had a size
+  limit, writers had none. So the planner splits a writer whose rows come
+  to more than about 800 lines of tests into parts by test file, run one
+  after another, the part with the shared harness first.
 - **Only what a change can break runs during development.** A plan runs its
   fast checks while it repairs and its own end-to-end tests once they are
   green. A phase's close runs the unit suite and the linter in full and the
