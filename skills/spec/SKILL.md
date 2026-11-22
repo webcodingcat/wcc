@@ -82,7 +82,10 @@ Use `assets/REQUIREMENTS.md` and `assets/SPEC.md`. Rules:
   project needs, each with where it comes from: an environment variable by
   name, or the existing login of a tool the user already uses (the active
   or a named context of a cloud CLI, `gh auth`), which needs no second copy
-  of the secret. `/wcc:prepare` checks them while the user is present, so a
+  of the secret. Such a credential is used by letting the tool make the
+  call, also to another endpoint of the same provider (`hcloud --endpoint
+  <url> api <path>`, `gh api`); it is read out of the tool only for a
+  program that cannot use the tool, and only inside that one command. `/wcc:prepare` checks them while the user is present, so a
   missing key does not stop the run. This includes the access agents need
   to run examples or checks against a running instance of the project (a
   token for a local development service): agents never create accounts or

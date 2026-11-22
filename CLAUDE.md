@@ -175,6 +175,11 @@ Code works on a project without such rules.
   turn ends with the list: in the reference project's seventh phase the
   question menu followed the list in the same turn, before the research
   was done, and the user's reply to the list had to break into the menu.
+  In the eighteenth phase the research finished before the user replied,
+  and the main session summarised it itself, with the unproven error
+  codes as "here I would use" in prose: decisions the user would have
+  passed over. What the research changes comes from the planner, after
+  the reply, as changed assumptions and questions.
 - **Assumptions are decisions, facts come from a reference.** In the
   reference project's sixth phase the planner's list named request fields
   and error codes of the original API from memory, some wrong, although
@@ -266,7 +271,16 @@ Code works on a project without such rules.
   doc-writer through, but the classifier refused an implementer's stop of
   the local service it had to restart, while the doc-writer had been
   allowed the same command minutes before; the entry therefore also names
-  the command that starts and stops the instance.
+  the command that starts and stops the instance. In the eighteenth phase
+  the classifier refused an implementer's change that made a script read
+  the token out of the cloud CLI's login for a second endpoint, as SPEC.md
+  prescribed; the CLI could make that call itself with `--endpoint`, and
+  did after the change. So the spec lets the tool make the call and reads
+  a credential out of it only for a program that cannot use the tool. At
+  the same close the main session declined to run the doc-writer's
+  refused example "not past the refusal", although the skill told it to;
+  run on the user's word, it was allowed. The skill now says why that is
+  no way around the refusal.
 - **Tools a phase uses first are checked at its start.** `/wcc:prepare`
   checks the machine once, against the stack in SPEC.md. In the reference
   project's twelfth phase, the first to build the installer, the WiX

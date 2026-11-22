@@ -141,8 +141,9 @@ and let the user correct any of it while the research runs. Below the
 list, name each tool missing with its install command, for the user to
 run now; install nothing yourself. End the turn
 with the list and ask nothing in it: an open question menu would catch the
-user's reply to the list. When the research is done and the user has
-replied, continue the planner with `RESEARCH.md` and the user's corrections;
+user's reply to the list. If the research is done before the user has
+replied, say only that it is done; what it changes comes from the planner.
+When the research is done and the user has replied, continue the planner with `RESEARCH.md` and the user's corrections;
 show the assumptions it changed, one line each. Then ask its questions,
 after the list and apart from it: each on its own with AskUserQuestion,
 its options, the recommendation and "I don't know" (take the
@@ -231,7 +232,9 @@ From here on the phase asks nothing.
     runs first because the verifier and the `DOC` tests check what it
     writes. Run once yourself each example it reports as refused by a
     permission check, with the access SPEC.md names, correct the document by
-    the real output, and name in the report what is refused again. Commit
+    the real output, and name in the report what is refused again. This is
+    no way around the refusal: the check decides anew for your call, in
+    the user's view. Commit
     the documents. Then
     start the unit suite and the linter over the whole project in the
     background, output to files, with the end-to-end selection of
