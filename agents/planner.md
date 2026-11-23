@@ -50,6 +50,7 @@ Assumptions:
 Questions:
 - <at most five; each with two to four options and a recommendation; or none>
 Research:
+<group>:
 - <what the phase uses for the first time, or where plans depend on exact
   behaviour of a library, API or tool, not covered by a valid EXPERIMENTS.md
   entry; one line each; or none>
@@ -58,6 +59,12 @@ Tools:
   the project's package manager does not install: the command that shows
   it is there, and the command that installs it; or none>
 ```
+
+Group the research by the sources it needs: one group per system, library
+or tool, or per few documented together, each under a short name. Each
+group goes to a researcher of its own, so a long run through unrelated
+documentation does not carry everything it read into every later turn.
+In step 2, name a part of `RESEARCH.md` in `Reads:` by its group.
 
 If research ran, you are continued with `phases/<id>/RESEARCH.md` and the
 user's corrections before step 2. Settle by them what you can, and return

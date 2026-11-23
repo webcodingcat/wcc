@@ -133,8 +133,11 @@ plans, it was interrupted: skip this and resume.
 
 Otherwise start the `planner` with the phase ID and the open decisions in
 STATUS.md that concern the phase (step 1 of the agent). If it lists
-research, start the `researcher` at once in the background with that list
-and the file `phases/<id>/RESEARCH.md` to write. Run the check command of
+research, start one `researcher` per group in the background right away,
+two at a time, each with its group and the file to write: with one group
+`phases/<id>/RESEARCH.md`, with several `phases/<id>/research-<n>.md`.
+When all are done, join the parts into `RESEARCH.md` with one shell
+command, without reading them, and delete them. Run the check command of
 each tool it lists. Present the planner's
 assumptions as one short list, "this is how I would do it", one line each,
 and let the user correct any of it while the research runs. Below the

@@ -34,8 +34,9 @@ Do not recommend a different stack unless a question asks for alternatives or
 something chosen turns out to be unusable. Write no file except the one
 you are given.
 
-If you are given a file, write the report there, in English: per question
-the answer in a few lines, with the link to the source. Return only the
+If you are given a file, write the report there, in English, under a
+heading `## <group>` when you got a group: per question the answer in a
+few lines, with the link to the source. Return only the
 file and one line per question: confirmed or unclear, and what is unclear.
 Without a file, return the report itself.
 

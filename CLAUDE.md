@@ -220,7 +220,14 @@ Code works on a project without such rules.
   They guide the planning, the verifier and the manual checks.
 - **Research comes before choosing and planning.** The model's memory of
   libraries is often a version behind; the `researcher` reads the current
-  documentation.
+  documentation. In the reference project's twentieth phase one researcher
+  looked up Samba, Apache, vsftpd, PAM, btrfs snapshots and the provider's
+  snapshot API in one run: 228 turns, a context up to 200k tokens and
+  24M tokens, the most of any agent of the phase. Every turn sends the
+  whole context again, so the planner groups the research by the sources
+  it needs and each group gets a researcher of its own, two at a time;
+  the parts are joined into one `RESEARCH.md` by a shell command, so the
+  main session does not read them.
 - **The riskiest assumptions are tried out before anything is built.** The
   `feasibility-checker` may write only in `research/experiments/`, installs
   nothing and gets no elevated rights; what remains is the result and the
