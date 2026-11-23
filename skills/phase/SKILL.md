@@ -137,7 +137,11 @@ research, start one `researcher` per group in the background right away,
 two at a time, each with its group and the file to write: with one group
 `phases/<id>/RESEARCH.md`, with several `phases/<id>/research-<n>.md`.
 When all are done, join the parts into `RESEARCH.md` with one shell
-command, without reading them, and delete them. Run the check command of
+command, without reading them, and delete them. A group marked
+`(experiment)` goes to the `feasibility-checker` instead, with the phase
+ID and its group, in the same two slots; write its result into
+`research/EXPERIMENTS.md` as `/wcc:spec` does (`../spec/SKILL.md`, step 5)
+and delete `research/experiments/`. Run the check command of
 each tool it lists. Present the planner's
 assumptions as one short list, "this is how I would do it", one line each,
 and its technical choices below them as a block the user may skip; let
@@ -147,7 +151,9 @@ run now; install nothing yourself. End the turn
 with the list and ask nothing in it: an open question menu would catch the
 user's reply to the list. If the research is done before the user has
 replied, say only that it is done; what it changes comes from the planner.
-When the research is done and the user has replied, continue the planner with `RESEARCH.md` and the user's corrections;
+When the research is done and the user has replied, continue the planner
+with `RESEARCH.md`, the new `EXPERIMENTS.md` entries and the user's
+corrections;
 show the assumptions it changed, one line each. Then ask its questions,
 after the list and apart from it: each on its own with AskUserQuestion,
 its options, the recommendation and "I don't know" (take the

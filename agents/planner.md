@@ -66,8 +66,10 @@ Tools:
 ```
 
 Group the research by the sources it needs: one group per system, library
-or tool, or per few documented together, each under a short name. Each
-group goes to a researcher of its own, so a long run through unrelated
+or tool, or per few documented together, each under a short name. Mark a
+group `(experiment)` when its answer has to be tried on this machine or
+the running instance rather than read. Each group goes to an agent of its
+own, so a long run through unrelated
 documentation does not carry everything it read into every later turn.
 In step 2, name a part of `RESEARCH.md` in `Reads:` by its group.
 

@@ -238,7 +238,12 @@ Code works on a project without such rules.
   whole context again, so the planner groups the research by the sources
   it needs and each group gets a researcher of its own, two at a time;
   the parts are joined into one `RESEARCH.md` by a shell command, so the
-  main session does not read them.
+  main session does not read them. In the twenty-second phase one question
+  had to be tried against the running cloud, not read; the main session
+  gave it to a general-purpose agent with every right and none of the
+  rules. The planner now marks such a group `(experiment)`, and it goes to
+  the `feasibility-checker`, which writes only in `research/experiments/`
+  and leaves an entry in `EXPERIMENTS.md` that later phases read.
 - **The riskiest assumptions are tried out before anything is built.** The
   `feasibility-checker` may write only in `research/experiments/`, installs
   nothing and gets no elevated rights; what remains is the result and the
