@@ -46,9 +46,14 @@ Return, in English, in this form and nothing else:
 
 ```
 Assumptions:
-- <one line each: how you would do it>
+- <one line each, in plain words: what happens or what is chosen, and what
+  the user will notice>
+Technical:
+- <one line each: choices only a developer would weigh (internal
+  structure, interfaces between components, storage layout); or none>
 Questions:
-- <at most five; each with two to four options and a recommendation; or none>
+- <at most five; each with two to four options in plain words and a
+  recommendation; or none>
 Research:
 <group>:
 - <what the phase uses for the first time, or where plans depend on exact

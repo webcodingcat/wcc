@@ -140,7 +140,8 @@ When all are done, join the parts into `RESEARCH.md` with one shell
 command, without reading them, and delete them. Run the check command of
 each tool it lists. Present the planner's
 assumptions as one short list, "this is how I would do it", one line each,
-and let the user correct any of it while the research runs. Below the
+and its technical choices below them as a block the user may skip; let
+the user correct any of it while the research runs. Below the
 list, name each tool missing with its install command, for the user to
 run now; install nothing yourself. End the turn
 with the list and ask nothing in it: an open question menu would catch the
@@ -154,7 +155,8 @@ recommendation); without menus, numbered, saying that each needs an
 answer. A reply to the list answers none of them; ask again for those still
 open.
 
-Write the confirmed assumptions and the answers to `phases/<id>/CONTEXT.md`,
+Write the confirmed assumptions, the technical choices and the answers to
+`phases/<id>/CONTEXT.md`,
 one line each. An answer that settles an open decision is worked in as
 `/wcc:change` does (`../change/SKILL.md`, steps 2 to 5): the documents it
 changes, DECISIONS.md with its `Q<n>`, the entry removed. An open decision

@@ -189,6 +189,17 @@ Code works on a project without such rules.
   planner reads the part of the phase there, and details of an outside
   system are no assumptions: they come from the reference or go to
   research.
+- **Lists for the user speak the user's terms.** Users who are no
+  developers found the lists to confirm hard to read: the planner wrote
+  each assumption as "how I would do it", and in the reference project
+  that read "the access type gets the field `ReachableExternally`" or
+  "`mkfs.btrfs -K`", which a non-developer can neither judge nor
+  confirm. So what the user confirms says in plain words what happens and
+  what they will notice; developer choices follow in a block of their own
+  that may be skipped. Developers lose nothing (in the reference project
+  the user confirmed the shared router on purpose), and no setting is
+  needed. The rule stands in the project CLAUDE.md, so it holds for every
+  list in every skill.
 - **Questions work without menus.** Where the AskUserQuestion tool is
   missing or its menus do not show (a remote session), the skills ask in
   text with numbered options, without a setting.
