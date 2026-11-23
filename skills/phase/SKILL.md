@@ -262,11 +262,14 @@ From here on the phase asks nothing.
     ARCHITECTURE.md now; where nothing does and the code breaks a documented
     interface or rule, fix it like a blocker; where it is unclear, write an
     open decision. Handle the `manual` requirements (see below). Merge the
-    branch into the base branch and delete it. In ROADMAP.md, move the
-    phase's full entry unchanged to ROADMAP-DONE.md (create it from
+    branch into the base branch and delete it. Read ROADMAP.md and
+    STATUS.md again before you change them: `/wcc:change` may have changed
+    them while the phase ran. In ROADMAP.md, move the phase's full entry,
+    up to the next line starting with `- [`, unchanged to ROADMAP-DONE.md (create it from
     `../idea/assets/ROADMAP-DONE.md` if missing) and leave one line: `- [x]
     03 <title> (<requirement IDs>) → phases/03/`. Mark its requirements
-    done in "Coverage" of REQUIREMENTS.md. Update STATUS.md.
+    done in "Coverage" of REQUIREMENTS.md. Update STATUS.md; the next
+    phase is the first open one in ROADMAP.md as it reads now.
 11. **Report**, at most ten lines: what runs now, decisions taken (titles),
     the manual checks waiting, with the hint that `/wcc:report` walks the
     user through them, the new open decisions (ID and question) and how many

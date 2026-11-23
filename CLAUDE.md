@@ -446,6 +446,12 @@ Code works on a project without such rules.
 - **Only the main session writes the shared documents**; subagents report.
   The exceptions are the phase's PLAN.md and TESTS.md, which the `planner`
   writes first, and its RESEARCH.md, which the `researcher` writes.
+  `/wcc:change` may run in another session while a phase runs. In the
+  reference project's twenty-first phase it inserted phase 23 before the
+  last phase; the close then cut its own roadmap entry by a script "up to
+  phase 16", from the roadmap it had read at its start, moved phase 23
+  along to ROADMAP-DONE.md, and named phase 16 as next in STATUS.md. So
+  the close reads both files again and cuts only up to the next entry.
 - **Git rules for parallel agents**: stage by name, no stash, no reset, one
   branch per plan; worktrees are removed after their merge without force.
   A worktree git calls modified with an empty `git diff` has a stale index
