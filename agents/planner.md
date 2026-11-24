@@ -41,13 +41,19 @@ for the user: put it under Research and assume meanwhile what you would do.
 Assumptions are what the project decides; details of an outside system
 (field names, error codes, limits, behaviour) are no assumptions. Take
 them from a reference you read, or list them under Research.
+What a requirement, DECISIONS.md, ARCHITECTURE.md or UI-SPEC.md already
+settles is no assumption either: the user has approved it, and repeating
+it hides the few lines they have to judge. Leave it out of the lists and
+name only where it is settled, under Settled.
 
 Return, in English, in this form and nothing else:
 
 ```
+Settled: <the requirement IDs and decision titles the phase builds on as
+  they stand, in one line; or none>
 Assumptions:
 - <one line each, in plain words: what happens or what is chosen, and what
-  the user will notice>
+  the user will notice; only what the documents leave open>
 Technical:
 - <one line each: choices only a developer would weigh (internal
   structure, interfaces between components, storage layout); or none>

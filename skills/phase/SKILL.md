@@ -144,7 +144,7 @@ ID and its group, in the same two slots; write its result into
 and delete `research/experiments/`. Run the check command of
 each tool it lists. Present the planner's
 assumptions as one short list, "this is how I would do it", one line each,
-and its technical choices below them as a block the user may skip; let
+after its Settled line as one sentence, and its technical choices below them as a block the user may skip; let
 the user correct any of it while the research runs. Below the
 list, name each tool missing with its install command, for the user to
 run now; install nothing yourself. End the turn

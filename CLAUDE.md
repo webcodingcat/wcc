@@ -200,6 +200,13 @@ Code works on a project without such rules.
   the user confirmed the shared router on purpose), and no setting is
   needed. The rule stands in the project CLAUDE.md, so it holds for every
   list in every skill.
+- **Lists hold only what is open.** In the reference project's
+  twenty-fifth phase about half of the list repeated what a requirement,
+  a decision of the day before and ARCHITECTURE.md already settled (the
+  rate-limit headers on every response, the place of the middleware),
+  and the few real assumptions were lost among them. So the planner names
+  what the phase builds on in one line of IDs and lists only what the
+  documents leave open.
 - **Questions work without menus.** Where the AskUserQuestion tool is
   missing or its menus do not show (a remote session), the skills ask in
   text with numbered options, without a setting.
