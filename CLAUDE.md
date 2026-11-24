@@ -488,6 +488,14 @@ Code works on a project without such rules.
   option nothing sets, a generalisation with one use. Only with evidence
   from the repository. It is the counterweight to agents that harden
   everything.
+- **A reviewer's bug follows the path through the code.** In the
+  reference project's twenty-eighth phase a reviewer reported that an API
+  error fault on reads breaks the tray's fault pages, as a blocker and a
+  backlog item. The tray reaches the API only through a proxy the fault
+  layer never touches, as a requirement promises; the reviewer had assumed
+  otherwise and run no test. A fix and a false backlog item followed. So a
+  bug that depends on another component names where the code shows that
+  behaviour.
 - **The backlog is a parking lot.** An item needs a severity (`security`,
   `data`, `bug`, `later`, `minor`) and a stated consequence; at most two per
   review and verifier, usually none. Nothing in it is scheduled by itself:

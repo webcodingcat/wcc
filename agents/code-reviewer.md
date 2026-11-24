@@ -48,6 +48,11 @@ interface (API, file format, command line, configuration) keeps it.
   state is already excluded). The fix is to remove it. Where it only rests
   on your judgment, leave it alone.
 
+A bug or backlog item that depends on how another component treats the
+request or data names the place in the code where you saw it do so;
+follow the path there. One that rests only on your assumption about it is
+not reported.
+
 **Decision**: a real finding that cannot be fixed without changing
 REQUIREMENTS.md, SPEC.md or ARCHITECTURE.md. It is the user's, so neither
 blocker nor backlog.
