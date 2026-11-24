@@ -250,7 +250,12 @@ Code works on a project without such rules.
   gave it to a general-purpose agent with every right and none of the
   rules. The planner now marks such a group `(experiment)`, and it goes to
   the `feasibility-checker`, which writes only in `research/experiments/`
-  and leaves an entry in `EXPERIMENTS.md` that later phases read.
+  and leaves an entry in `EXPERIMENTS.md` that later phases read. In the
+  twenty-sixth phase the end-to-end test showed that an idle volume with
+  automount is mounted again by itself, against E28; the phase corrected
+  the guide and ARCHITECTURE.md and left E28 `valid`. So an observation
+  that contradicts an entry sets it to `superseded` in the phase that
+  makes it.
 - **The riskiest assumptions are tried out before anything is built.** The
   `feasibility-checker` may write only in `research/experiments/`, installs
   nothing and gets no elevated rights; what remains is the result and the

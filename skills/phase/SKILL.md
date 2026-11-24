@@ -294,7 +294,10 @@ keep them (check marks, `Adjusts:`, plans for findings). Implementation agents d
 documents under "Documentation" in SPEC.md either. Agents return decisions
 and findings and you write them down. When an agent reports an interface
 change, update ARCHITECTURE.md before the next plan starts, searching the
-whole file for the name. The git rules for agents are in the project
+whole file for the name. When an agent reports behaviour that contradicts
+a `valid` entry of `research/EXPERIMENTS.md`, set that entry to
+`superseded` with what was observed instead, so no later phase plans with
+it. The git rules for agents are in the project
 CLAUDE.md.
 
 Resolve a merge conflict yourself when it is mechanical; otherwise drop the
