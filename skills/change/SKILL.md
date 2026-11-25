@@ -114,12 +114,20 @@ ask for the decision here.
      first.
    - **Requirements, spec or architecture** (requirement, stack,
      component): IDEA.md stays as it is.
-   - **Next milestone** (a target vision item should be built now): move or
+   - **Next milestone** (a target vision item should be built now): if
+     `Base branch` in STATUS.md names a milestone branch, check that it is
+     merged into `main` (or the default branch), which `/wcc:release`
+     does; if not, say so and stop.
+     Create `wcc/milestone-<n>` from `main`, check it out and write it as
+     `Base branch` into STATUS.md, so this change and every phase of the
+     milestone land there. Then move or
      write its requirements in REQUIREMENTS.md under `## Milestone <n>`, as
      in step 2 of `../spec/SKILL.md`, add a section `## Milestone <n>:
      <title>` with phases and their success criteria to ROADMAP.md before
      "Later", remove the item from "Later", and fill "Coverage". Phase
      numbers continue.
+   - **Release** (how the project is published): change "Release" in
+     SPEC.md; what has to be built for it becomes a phase.
    - **Tooling for Claude** (for example an MCP server): besides the
      documents, it must be configured in the project so Claude Code can use it.
      Add one sentence to the project CLAUDE.md on what it is for.

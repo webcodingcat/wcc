@@ -33,6 +33,23 @@ appear here, only names.
   operation, and why they cannot be avoided>
 - <further prerequisites, e.g. virtualization enabled, free ports>
 
+## Release
+
+How a finished milestone is published; `/wcc:release` follows these lines
+after it merged the milestone into `main`. `none` if the project publishes
+nothing.
+
+- Version tag: <format, e.g. `vX.Y.Z`>; next version: <rule, e.g. minor
+  per milestone, the user confirms>
+- Remote: <name and URL>
+- Tools: <e.g. `gh` logged in with the scopes repo and workflow>
+- Before the tag: <check on the pushed commit, e.g. CI green, with the
+  command that shows it>
+- The tag starts: <e.g. the workflow `release.yml`, which builds and
+  uploads the artifacts>
+- Done when: <check, e.g. `gh release view <tag>` lists the artifacts>
+- none
+
 ## Documentation
 
 The documents the project delivers, from "Documentation" in IDEA.md. Every

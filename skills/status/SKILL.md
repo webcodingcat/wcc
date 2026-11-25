@@ -44,7 +44,7 @@ ROADMAP.md the section of the current milestone. Then report in at most ten line
 | `READY` | `/wcc:prepare`, then `/wcc:phase` |
 | `IN_PROGRESS`, `BLOCKED` | `/wcc:phase` |
 | `MANUAL_CHECK` | `/wcc:report`, then `/wcc:phase` |
-| `DONE` | `/wcc:cleanup` while `phases/` holds folders of a finished milestone, then `/wcc:change` for the next milestone |
+| `DONE` | `/wcc:release` while `phases/` holds folders of a finished milestone or its milestone branch is not merged into `main`, then `/wcc:change` for the next milestone |
 
 Every `/wcc:phase` builds one phase and stops. For `IN_PROGRESS`
 between two phases, recommend starting it in a new session or after

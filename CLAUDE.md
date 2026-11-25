@@ -12,7 +12,7 @@ The words wcc uses:
 
 | Word | Meaning |
 |------|---------|
-| Milestone | A version of the project (`## Milestone <n>` in ROADMAP.md). Ends with all end-to-end tests and the tag `wcc-milestone-<n>`. |
+| Milestone | A version of the project (`## Milestone <n>` in ROADMAP.md), built on the branch `wcc/milestone-<n>`. Ends with all end-to-end tests and the tag `wcc-milestone-<n>`; `/wcc:release` merges it into `main`. |
 | Phase | A slice of a milestone that runs and can be checked; `/wcc:phase` builds one. IDs `01`, `02`, …, `F<n>` for feedback, `B<n>` for backlog phases. Folder `phases/<id>/`, branch `wcc/phase-<id>`. |
 | Plan | One run of the `implementer` for one component inside a phase (`03-02`), one to three tasks, a wave, a size. |
 | Task | A step inside a plan. |
@@ -49,7 +49,7 @@ The words wcc uses:
   `Q<n>`, `waits for Q<n>`, `In clarification`,
   `Context`/`Options`/`Recommendation`/`Affects`, "Open manual checks",
   "Open decisions", `Start`/`Setup`/`Steps`/`Expected`, `Cost of change`,
-  `Type`, `(working title)`, "Documentation", `D<n>`, "References", the backlog
+  `Type`, `(working title)`, "Documentation", `D<n>`, "References", "Release", the backlog
   severities `security`/`data`/`bug`/`later`/`minor`, `wcc version:`,
   `Replaces:`.
   Whoever renames one changes it everywhere.
@@ -67,8 +67,8 @@ The words wcc uses:
 /wcc:change     new ideas, next milestone,         -> all documents updated consistently
                 open decisions, backlog items
 /wcc:status     state and next command             -> read only
-/wcc:cleanup    after a milestone                  -> phase folders removed (kept by the tag),
-                                                      merged branches and worktrees gone
+/wcc:release    after a milestone                  -> phase folders removed (kept by the tag),
+                                                      milestone in main, version published
 /wcc:upgrade    after a plugin update              -> project files on the new version
 /wcc:prototype  throwaway prototype (optional)     -> decisions/prototype-learnings.md
 ```
@@ -89,7 +89,7 @@ skills/phase/                     one phase; references/ = e2e, backlog, feedbac
                                   read only when they apply
 skills/change/                    changes, next milestone, open decisions, backlog
 skills/status/                    state and next command, read only
-skills/cleanup/                   tidy the repository after a milestone
+skills/release/                   milestone into main, tidy up, publish
 skills/report/                    guided manual checks and findings
 skills/upgrade/                   bring a project up to the installed version;
                                   references/migrations.md = catalogue per version
@@ -144,7 +144,7 @@ folders; a plain `rg` needs `--hidden`, which the project CLAUDE.md says.
 | `IN_PROGRESS` | Between two phases, or a phase interrupted | `/wcc:phase`, best in a new session |
 | `MANUAL_CHECK` | A phase waits for a manual check | `/wcc:report`, then `/wcc:phase` |
 | `BLOCKED` | A plan needs a decision or a step of the user | `/wcc:phase` or `/wcc:change` |
-| `DONE` | Current milestone finished | `/wcc:cleanup`, then `/wcc:change` for the next one |
+| `DONE` | Current milestone finished | `/wcc:release`, then `/wcc:change` for the next one |
 
 ## Design principles
 
@@ -474,10 +474,10 @@ Code works on a project without such rules.
   it was rewritten with LF); `git add` of the named files clears it, where
   `--force` would also discard real changes.
 - **One branch per phase**, so the base branch holds only finished phases;
-  one tag per milestone. Skills that change planning documents between
-  phases commit them, and a phase commits what another skill left in
-  `.project/` on the base branch before it branches: in the reference
-  project `/wcc:change` settled an open decision without committing it,
+  one branch and one tag per milestone. Skills that change planning
+  documents between phases commit them, and a phase commits what another
+  skill left in `.project/` on the base branch before it branches: in the
+  reference project `/wcc:change` settled an open decision without committing it,
   and the next phase took the changed files along on its own branch, so
   the base branch lacked the decision until that phase was merged.
 - **No falling back to a similar package name**: a near miss may be
@@ -549,13 +549,23 @@ Code works on a project without such rules.
 - **A finished milestone leaves no phase folders behind.** At the end of
   the reference project's first milestone `.project/phases/` held 33
   folders that no skill reads, with plans and assumptions long out of
-  date, next to five references from DECISIONS.md into them. The
-  milestone tag keeps them, so `/wcc:cleanup` removes them and points the
-  references at the tag, together with merged phase branches, leftover
-  worktrees and stray files (an experiment had left a file `NUL` in the
-  root). It is a skill of its own, run between the tag and the next
-  milestone, because it deletes and asks first; it needs no migration,
-  since no file changes its form.
+  date, next to five references from DECISIONS.md into them, and an
+  experiment had left a file `NUL` in the root. Before the first
+  publication the user did not want plans in what `main` shows, but wanted
+  to keep branches and real merges for later fixes; a squash would have
+  lost the history, a second repository for the phase folders would have
+  meant two places to commit. So each milestone has its own branch, the
+  base branch of its phases, and its tag keeps the folders. `/wcc:release`
+  removes them there, points the references at the tag, tidies branches,
+  worktrees and stray files, and merges the milestone into `main`; the
+  history keeps the folders, which the user accepted. Publishing belongs
+  to the same step, because it starts from what `main` holds then, so the
+  skill also pushes and tags the version when "Release" in SPEC.md
+  describes how; the phase that builds CI and the release workflow does
+  not publish. It is a skill of its own, run between the milestone's tag
+  and the next milestone, because it deletes and publishes and asks once
+  first. It needs no migration: a project without the section publishes
+  nothing.
 - **`/wcc:upgrade` brings projects along.** It knows no project, only the
   migration catalogue and the current templates, changes the form of the
   files, never their decisions, and asks once.

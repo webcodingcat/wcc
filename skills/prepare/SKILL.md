@@ -72,6 +72,13 @@ Then run `git init`, add a `.gitignore`
 fitting the stack and commit the existing files. Phases need commits and
 worktrees, so this is not optional. `.env` must be in `.gitignore`.
 
+A milestone is built on a branch of its own, so `main` gets only finished
+milestones, without their phase folders. If the status is `READY` and
+STATUS.md names no base branch (`Base branch: -`), create
+`wcc/milestone-<n>` for the current milestone from `main` (or the default
+branch), check it out, and write it as `Base branch` into STATUS.md. Later
+commits of this skill go to that branch.
+
 ## Step 3: accounts and secrets
 
 Read "Accounts and secrets" in SPEC.md. For an environment variable:
@@ -83,7 +90,8 @@ Read "Accounts and secrets" in SPEC.md. For an environment variable:
 
 For the login of a tool, check it with a read-only call through the tool
 itself, in the context SPEC.md names; never read the tool's credential
-file.
+file. The tools under "Release" in SPEC.md count too, but only as a
+report: they are needed by `/wcc:release`, not by the phases.
 
 Where it can be done without side effects, check that a credential works,
 for example with a read-only call. An optional entry that is missing is

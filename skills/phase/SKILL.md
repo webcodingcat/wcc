@@ -116,7 +116,7 @@ Then act on the status:
   When none is open, close the waiting phase (step 10) and stop as "After
   the phase" describes. If no phase waits (a milestone ended with open
   checks), only run the checks, then set `DONE`.
-- `DONE`: say so; `/wcc:cleanup` tidies the repository, and the next
+- `DONE`: say so; `/wcc:release` brings the milestone into `main`, and the next
   milestone is planned with `/wcc:change`, which also takes the open
   decisions (name how many). Stop.
 - anything earlier: point to `/wcc:spec` and stop.
@@ -177,9 +177,10 @@ From here on the phase asks nothing.
 
 1. **Pick** the first unchecked phase of the current milestone in
    ROADMAP.md (never "Later"). Set `IN_PROGRESS`.
-2. **Branch** `wcc/phase-<id in lower case>` from the current branch, noted
-   as `Base branch` in STATUS.md. The base branch holds only finished
-   phases.
+2. **Branch** `wcc/phase-<id in lower case>` from `Base branch` in
+   STATUS.md, the milestone branch `wcc/milestone-<n>`; if it names none,
+   from the current branch, and note that one there. The base branch holds
+   only finished phases.
 3. **Resume.** If `phases/<id>/PLAN.md` holds plans, an earlier run was
    interrupted: switch to the branch and continue with the first plan not
    marked `[x]`, without planning or writing tests again.
@@ -363,7 +364,9 @@ is a feedback phase it just inserted. The next starts with the user's next
   "Next".
 - the milestone is complete: run all end-to-end tests if they did not run
   at this close (`references/e2e.md`), tag the base branch
-  `wcc-milestone-<n>` unless the tag exists, and set `DONE`, or
+  `wcc-milestone-<n>` unless the tag exists (the tag keeps the phase
+  folders, which `/wcc:release` removes before it merges the milestone
+  into `main`), and set `DONE`, or
   `MANUAL_CHECK` if manual checks are open; with open decisions, name
   `/wcc:change` under "Next".
 - a plan could not be finished: `BLOCKED`.
@@ -371,5 +374,5 @@ is a feedback phase it just inserted. The next starts with the user's next
 
 End the report with the next command: `/wcc:phase` in a new session for
 `IN_PROGRESS` and `BLOCKED`, `/wcc:report` and then `/wcc:phase` for
-`MANUAL_CHECK`, `/wcc:cleanup` and then `/wcc:change` for `DONE`. Never
+`MANUAL_CHECK`, `/wcc:release` and then `/wcc:change` for `DONE`. Never
 start an item of "Later" on your own.

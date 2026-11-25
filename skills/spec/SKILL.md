@@ -94,6 +94,10 @@ Use `assets/REQUIREMENTS.md` and `assets/SPEC.md`. Rules:
 - Name the project's identifiers in code under "Stack": module or package
   name, repository URL if known. The scaffold, imports and every phase use
   them, so a later change touches every file.
+- Fill "Release" when IDEA.md or the stack says how the project is
+  published (a package registry, release artifacts, a deployment);
+  otherwise write `none`. Building what it needs (a CI workflow, a
+  release workflow) is a phase like any other.
 - Derive "Documentation" from IDEA.md and `references/project-types.md`:
   one entry `D<n>` per document with path, audience and content, kept apart
   from `.project/`, which holds planning documents and is no documentation

@@ -184,10 +184,14 @@ Each phase runs the same loop:
 7. **Check** the phase as a whole against its success criteria: tests green,
    nothing stubbed, everything wired in, the documentation true.
 
-Each phase is built on its own branch and merged into yours only when it is
-finished. During development only the tests a change can break run; all
+Each milestone is built on its own branch `wcc/milestone-<n>`, and each
+phase on a branch of its own, merged into the milestone branch only when it
+is finished. During development only the tests a change can break run; all
 end-to-end tests run at the end of a milestone, before its tag
-`wcc-milestone-<n>`.
+`wcc-milestone-<n>`. `/wcc:release` then removes the phase folders,
+merges the milestone into `main`, so `main` never holds plans, and, if
+SPEC.md describes a release, pushes `main` and publishes the version, after
+asking you once.
 
 Then the phase stops and names the next command. **Each phase is started by
 hand**, best in a new session or after `/clear`: every phase reads the
@@ -222,7 +226,7 @@ permission prompts do not stop it. A phase ends with one of these in
 | Status | Meaning | What you do |
 |--------|---------|-------------|
 | `IN_PROGRESS` | The phase is finished, more are open in this milestone | Start the next one with `/wcc:phase`, best in a new session |
-| `DONE` | The milestone is finished | Try it; tidy the repository with `/wcc:cleanup`, then plan the next milestone with `/wcc:change` |
+| `DONE` | The milestone is finished | Try it; bring it into `main` and publish it with `/wcc:release`, then plan the next milestone with `/wcc:change` |
 | `MANUAL_CHECK` | A later phase depends on something only you can check | `/wcc:report` walks you through it; then `/wcc:phase` continues |
 | `BLOCKED` | A plan needs a decision, an approval, a credential or a step only you can take | `/wcc:phase` shows the question and continues after your answer |
 
@@ -288,7 +292,7 @@ what it would change and asks once; `/wcc:upgrade --check` only shows it.
 | `/wcc:report [what you noticed]` | any time | Without text: the open manual checks, one at a time. With text: a bug or a wish about what is built, sorted with you and recorded where it is built |
 | `/wcc:change [change]` | any time | A new idea worked into all documents, the next milestone planned, open decisions answered, backlog items taken in |
 | `/wcc:status` | any time | Where the project stands and which command comes next |
-| `/wcc:cleanup [--check]` | after a milestone | Folders of its finished phases removed (its tag keeps them), merged phase branches, leftover worktrees and stray files cleaned up |
+| `/wcc:release [--check] [version]` | after a milestone | Folders of its finished phases removed (its tag keeps them), the milestone merged into `main`, branches, worktrees and stray files tidied, and the version published if SPEC.md describes a release |
 | `/wcc:upgrade [--check]` | after a plugin update | Project files brought up to the installed plugin version |
 | `/wcc:prototype <what to try>` | optional, before the interview | Throwaway prototype to find out what you want |
 
