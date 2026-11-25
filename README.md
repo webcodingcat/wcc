@@ -222,7 +222,7 @@ permission prompts do not stop it. A phase ends with one of these in
 | Status | Meaning | What you do |
 |--------|---------|-------------|
 | `IN_PROGRESS` | The phase is finished, more are open in this milestone | Start the next one with `/wcc:phase`, best in a new session |
-| `DONE` | The milestone is finished | Try it; plan the next milestone with `/wcc:change` |
+| `DONE` | The milestone is finished | Try it; tidy the repository with `/wcc:cleanup`, then plan the next milestone with `/wcc:change` |
 | `MANUAL_CHECK` | A later phase depends on something only you can check | `/wcc:report` walks you through it; then `/wcc:phase` continues |
 | `BLOCKED` | A plan needs a decision, an approval, a credential or a step only you can take | `/wcc:phase` shows the question and continues after your answer |
 
@@ -288,6 +288,7 @@ what it would change and asks once; `/wcc:upgrade --check` only shows it.
 | `/wcc:report [what you noticed]` | any time | Without text: the open manual checks, one at a time. With text: a bug or a wish about what is built, sorted with you and recorded where it is built |
 | `/wcc:change [change]` | any time | A new idea worked into all documents, the next milestone planned, open decisions answered, backlog items taken in |
 | `/wcc:status` | any time | Where the project stands and which command comes next |
+| `/wcc:cleanup [--check]` | after a milestone | Folders of its finished phases removed (its tag keeps them), merged phase branches, leftover worktrees and stray files cleaned up |
 | `/wcc:upgrade [--check]` | after a plugin update | Project files brought up to the installed plugin version |
 | `/wcc:prototype <what to try>` | optional, before the interview | Throwaway prototype to find out what you want |
 

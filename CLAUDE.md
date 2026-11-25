@@ -67,6 +67,8 @@ The words wcc uses:
 /wcc:change     new ideas, next milestone,         -> all documents updated consistently
                 open decisions, backlog items
 /wcc:status     state and next command             -> read only
+/wcc:cleanup    after a milestone                  -> phase folders removed (kept by the tag),
+                                                      merged branches and worktrees gone
 /wcc:upgrade    after a plugin update              -> project files on the new version
 /wcc:prototype  throwaway prototype (optional)     -> decisions/prototype-learnings.md
 ```
@@ -87,6 +89,7 @@ skills/phase/                     one phase; references/ = e2e, backlog, feedbac
                                   read only when they apply
 skills/change/                    changes, next milestone, open decisions, backlog
 skills/status/                    state and next command, read only
+skills/cleanup/                   tidy the repository after a milestone
 skills/report/                    guided manual checks and findings
 skills/upgrade/                   bring a project up to the installed version;
                                   references/migrations.md = catalogue per version
@@ -141,7 +144,7 @@ folders; a plain `rg` needs `--hidden`, which the project CLAUDE.md says.
 | `IN_PROGRESS` | Between two phases, or a phase interrupted | `/wcc:phase`, best in a new session |
 | `MANUAL_CHECK` | A phase waits for a manual check | `/wcc:report`, then `/wcc:phase` |
 | `BLOCKED` | A plan needs a decision or a step of the user | `/wcc:phase` or `/wcc:change` |
-| `DONE` | Current milestone finished | `/wcc:change` for the next one |
+| `DONE` | Current milestone finished | `/wcc:cleanup`, then `/wcc:change` for the next one |
 
 ## Design principles
 
@@ -543,6 +546,16 @@ Code works on a project without such rules.
   came before that. An entry that revokes or changes one names it under
   `Replaces:`, and the old one moves to DECISIONS-DONE.md, as finished
   phases and backlog items do.
+- **A finished milestone leaves no phase folders behind.** At the end of
+  the reference project's first milestone `.project/phases/` held 33
+  folders that no skill reads, with plans and assumptions long out of
+  date, next to five references from DECISIONS.md into them. The
+  milestone tag keeps them, so `/wcc:cleanup` removes them and points the
+  references at the tag, together with merged phase branches, leftover
+  worktrees and stray files (an experiment had left a file `NUL` in the
+  root). It is a skill of its own, run between the tag and the next
+  milestone, because it deletes and asks first; it needs no migration,
+  since no file changes its form.
 - **`/wcc:upgrade` brings projects along.** It knows no project, only the
   migration catalogue and the current templates, changes the form of the
   files, never their decisions, and asks once.

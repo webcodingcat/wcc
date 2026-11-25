@@ -116,8 +116,9 @@ Then act on the status:
   When none is open, close the waiting phase (step 10) and stop as "After
   the phase" describes. If no phase waits (a milestone ended with open
   checks), only run the checks, then set `DONE`.
-- `DONE`: say so; the next milestone is planned with `/wcc:change`, which
-  also takes the open decisions (name how many). Stop.
+- `DONE`: say so; `/wcc:cleanup` tidies the repository, and the next
+  milestone is planned with `/wcc:change`, which also takes the open
+  decisions (name how many). Stop.
 - anything earlier: point to `/wcc:spec` and stop.
 
 ### Discuss
@@ -370,5 +371,5 @@ is a feedback phase it just inserted. The next starts with the user's next
 
 End the report with the next command: `/wcc:phase` in a new session for
 `IN_PROGRESS` and `BLOCKED`, `/wcc:report` and then `/wcc:phase` for
-`MANUAL_CHECK`, `/wcc:change` for `DONE`. Never start an item of "Later" on
-your own.
+`MANUAL_CHECK`, `/wcc:cleanup` and then `/wcc:change` for `DONE`. Never
+start an item of "Later" on your own.
