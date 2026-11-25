@@ -49,7 +49,7 @@ The words wcc uses:
   `Q<n>`, `waits for Q<n>`, `In clarification`,
   `Context`/`Options`/`Recommendation`/`Affects`, "Open manual checks",
   "Open decisions", `Start`/`Setup`/`Steps`/`Expected`, `Cost of change`,
-  `Type`, `(working title)`, "Documentation", `D<n>`, "References", "Release", the backlog
+  `Type`, `(working title)`, "Documentation", `D<n>`, "References", "Repository", "Repository and publication", "Release", the backlog
   severities `security`/`data`/`bug`/`later`/`minor`, `wcc version:`,
   `Replaces:`.
   Whoever renames one changes it everywhere.
@@ -328,6 +328,18 @@ Code works on a project without such rules.
   planner lists in "Discuss" each tool, extension or plugin the phase
   uses first that the package manager does not install, the main session
   runs its check, and the user installs what is missing while there.
+- **Where the code lives is asked in the interview.** The reference
+  project got its repository, CI and release workflow only by a change at
+  the end of its first milestone. The CI then ran for the first time after
+  thirty phases, and what a fresh machine lacked showed up only then: the
+  pinned copies of the original API description had changed upstream and
+  could no longer be fetched. So the interview asks where the code lives
+  and how it is published, SPEC.md names host, licence and CI under
+  "Repository", `/wcc:prepare` creates the remote, private, on the user's
+  yes, and the CI with the fast commands, and every phase pushes its
+  milestone branch and reads the CI result at the start of the next.
+  Making a repository public stays the user's step, and `main` gets only
+  what `/wcc:release` merges.
 - **The project folder is the only source.** In the reference project,
   `/wcc:prepare` searched sibling folders for a module path, found an older
   copy of the project and took its scaffold over, with decisions nobody had

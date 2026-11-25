@@ -287,7 +287,7 @@ what it would change and asks once; `/wcc:upgrade --check` only shows it.
 |---------|------|--------------|
 | `/wcc:idea <idea>` | start | Interview, then `IDEA.md` |
 | `/wcc:spec` | after the interview | Stack, feasibility check, requirements, spec, architecture, roadmap, summary for approval |
-| `/wcc:prepare` | after the approval, on a new machine or checkout | Machine, accounts and secrets checked, git repository, scaffold, working build and test commands |
+| `/wcc:prepare` | after the approval, on a new machine or checkout | Machine, accounts and secrets checked, git repository and, if you want one, a private remote with CI, scaffold, working build and test commands |
 | `/wcc:phase` | to build | The next phase: discuss, plan, test, build, then it stops; start each one in a new session |
 | `/wcc:report [what you noticed]` | any time | Without text: the open manual checks, one at a time. With text: a bug or a wish about what is built, sorted with you and recorded where it is built |
 | `/wcc:change [change]` | any time | A new idea worked into all documents, the next milestone planned, open decisions answered, backlog items taken in |

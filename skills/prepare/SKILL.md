@@ -79,6 +79,14 @@ STATUS.md names no base branch (`Base branch: -`), create
 branch), check it out, and write it as `Base branch` into STATUS.md. Later
 commits of this skill go to that branch.
 
+If "Repository" in SPEC.md names a host, check the login of its tool with a
+read-only call. If the remote does not exist yet, show the user what will be
+created (name, host, private) and create it on their yes, private, through
+the tool (for GitHub `gh repo create <owner>/<name> --private --source .
+--remote origin`), or add `origin` if the user created it. Making it public
+is the user's step. If the licence is named, add its standard text as
+`LICENSE`.
+
 ## Step 3: accounts and secrets
 
 Read "Accounts and secrets" in SPEC.md. For an environment variable:
@@ -157,7 +165,14 @@ Run build, linter and tests. All three must succeed. Then:
   its close
 - write a section "Prerequisites and setup" into the project README, so
   someone without this plugin can set up their machine too
+- if "Repository" in SPEC.md names a CI, write its workflow with exactly
+  these fast commands and the tool versions of SPEC.md, on pushes to
+  `main` and `wcc/milestone-*` and on pull requests
 - commit
+- with a remote: push `main` and the base branch, wait for the CI run of
+  the base branch's pushed commit inside your turn, with a time limit, and fix what fails
+  on the hosted runner without changing what a test checks; this skill is
+  done when it is green
 
 ## Step 6: report
 

@@ -59,7 +59,8 @@ assuming. There is no cap on the number of questions; the limit is on their kind
 Rules:
 
 1. Ask only what the user can answer: problem, goals, non-goals, growth,
-   constraints, success criterion, project type, who needs documentation.
+   constraints, success criterion, project type, who needs documentation,
+   where the code lives and how it is published.
    Decide technical details
    yourself later.
 2. Every question must be answerable in seconds: offer 2 to 4 options and mark
@@ -96,6 +97,12 @@ Mandatory topics, each of which must end up answered or marked as an assumption:
   `references/project-types.md`. Ask this also for small projects: the
   answer decides whether every phase writes documentation, and
   documentation added later has to describe everything at once.
+- Repository and publication: where the code lives (only on this machine,
+  a private repository on a host such as GitHub or GitLab, or a public
+  open-source project, then with its licence), and whether versions are
+  published (release artifacts, a package registry, a deployment, or not
+  at all). A host brings a CI from the first phase on, so problems a fresh
+  machine shows come up early, not at the end of a milestone.
 - Project type: read `references/project-types.md` and ask the additional
   mandatory questions for that type.
 - Project name: ask in the last round, when the idea is clear. Ideas often

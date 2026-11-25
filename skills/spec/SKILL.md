@@ -92,12 +92,18 @@ Use `assets/REQUIREMENTS.md` and `assets/SPEC.md`. Rules:
   credentials themselves. If the project itself issues that access, mark
   the entry optional until the phase that builds it.
 - Name the project's identifiers in code under "Stack": module or package
-  name, repository URL if known. The scaffold, imports and every phase use
-  them, so a later change touches every file.
-- Fill "Release" when IDEA.md or the stack says how the project is
-  published (a package registry, release artifacts, a deployment);
-  otherwise write `none`. Building what it needs (a CI workflow, a
-  release workflow) is a phase like any other.
+  name. The scaffold, imports and every phase use them, so a later change
+  touches every file.
+- Fill "Repository" from "Repository and publication" in IDEA.md: host and
+  URL, the tool that reaches it, the licence and what the CI runs. A CI on
+  a hosted runner runs the fast commands; end-to-end tests that need the
+  real environment stay local. A project only on this machine gets
+  `none`.
+- Fill "Release" when "Repository and publication" in IDEA.md or the
+  stack says how the project is published (a package registry, release
+  artifacts, a deployment); otherwise write `none`. The CI comes from
+  `/wcc:prepare`; what the release needs beyond it (a release workflow,
+  packaging) is a phase like any other.
 - Derive "Documentation" from IDEA.md and `references/project-types.md`:
   one entry `D<n>` per document with path, audience and content, kept apart
   from `.project/`, which holds planning documents and is no documentation

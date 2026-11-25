@@ -129,6 +129,10 @@ to the base branch: commit them there now, before the phase branches
 off. Name any other uncommitted change to the user and ask whether to
 commit it or leave it; never stash or discard it.
 
+If "Repository" in SPEC.md names a CI, read the last CI run of the base
+branch through its tool. A red run is named to the user, and its fix
+becomes the first plan of this phase.
+
 Pick the phase (step 1 below). If `phases/<id>/PLAN.md` already holds
 plans, it was interrupted: skip this and resume.
 
@@ -271,7 +275,10 @@ From here on the phase asks nothing.
     `../idea/assets/ROADMAP-DONE.md` if missing) and leave one line: `- [x]
     03 <title> (<requirement IDs>) → phases/03/`. Mark its requirements
     done in "Coverage" of REQUIREMENTS.md. Update STATUS.md; the next
-    phase is the first open one in ROADMAP.md as it reads now.
+    phase is the first open one in ROADMAP.md as it reads now. If
+    "Repository" in SPEC.md names a host, push the base branch to it, and
+    nothing else: `main` gets only what `/wcc:release` merges. Do not wait
+    for the CI; the next phase reads its result.
 11. **Report**, at most ten lines: what runs now, decisions taken (titles),
     the manual checks waiting, with the hint that `/wcc:report` walks the
     user through them, the new open decisions (ID and question) and how many

@@ -110,8 +110,9 @@ out of this run.
 Only with a release the user agreed to; otherwise leave the push to the
 user. Follow the steps of the section "Release" in SPEC.md, from `main`:
 
-1. Push `main` to the remote it names. Push nothing else: no milestone or
-   phase branch, no `wcc-milestone-*` tag, never `--all` or `--tags`.
+1. Push `main` to the remote it names. Push nothing else: no
+   `wcc-milestone-*` tag, never `--all` or `--tags`. The milestone branch
+   reaches the remote with each phase, if "Repository" names one.
 2. If it names a check before the tag (CI green on the pushed commit),
    wait for it inside your turn, with a time limit of about twice its
    usual run. If it fails, stop before the tag and report what failed.

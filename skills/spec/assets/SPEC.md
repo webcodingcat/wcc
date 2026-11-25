@@ -6,7 +6,7 @@ Goals and non-goals are in IDEA.md, the requirements in REQUIREMENTS.md.
 
 - <language, framework, tools, each with its version> (reasoning and sources
   in DECISIONS.md)
-- Module or package name: <name>; repository: <URL or "not yet">
+- Module or package name: <name>
 
 ## References
 
@@ -32,6 +32,21 @@ appear here, only names.
 - Elevated rights (administrator, root): <none | what for: build, tests or
   operation, and why they cannot be avoided>
 - <further prerequisites, e.g. virtualization enabled, free ports>
+
+## Repository
+
+Where the code lives, from "Repository and publication" in IDEA.md.
+`/wcc:prepare` creates the remote and the CI; `none` keeps the project on
+this machine.
+
+- Host: <none | URL of the repository>, <private | public>; the user makes
+  it public themselves
+- Tool: <e.g. `gh` logged in with the scopes repo and workflow>
+- Licence: <SPDX identifier, or none>
+- CI: <workflow file>, on pushes to `main` and `wcc/milestone-*` and on pull
+  requests: <the fast build, test and lint commands>; end-to-end tests
+  <stay local | run there because …>
+- none
 
 ## Release
 

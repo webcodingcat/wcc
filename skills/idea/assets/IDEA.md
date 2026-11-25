@@ -39,6 +39,13 @@ is built for now.
 
 - <Environment, requirements for stack and tools>
 
+## Repository and publication
+
+- Repository: <only on this machine | private on <host> | public on <host>
+  under <licence>>
+- Publication: <none | release artifacts | package registry | deployment,
+  with what is published>
+
 ## Documentation
 
 - End users: <who reads it, what they need it for, in which form: README,

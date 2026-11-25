@@ -126,8 +126,11 @@ ask for the decision here.
      <title>` with phases and their success criteria to ROADMAP.md before
      "Later", remove the item from "Later", and fill "Coverage". Phase
      numbers continue.
-   - **Release** (how the project is published): change "Release" in
-     SPEC.md; what has to be built for it becomes a phase.
+   - **Repository or release** (where the code lives, how it is
+     published): change "Repository and publication" in IDEA.md and
+     "Repository" or "Release" in SPEC.md. A new host or CI is set up by
+     running `/wcc:prepare` again; what a release needs beyond it becomes
+     a phase.
    - **Tooling for Claude** (for example an MCP server): besides the
      documents, it must be configured in the project so Claude Code can use it.
      Add one sentence to the project CLAUDE.md on what it is for.
