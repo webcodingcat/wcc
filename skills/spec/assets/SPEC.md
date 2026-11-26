@@ -62,6 +62,9 @@ nothing.
   command that shows it>
 - The tag starts: <e.g. the workflow `release.yml`, which builds and
   uploads the artifacts>
+- Notes: <where the release takes its notes from: the message of the
+  annotated tag, which `/wcc:release` writes; e.g. `gh release create
+  --notes-from-tag`>
 - Done when: <check, e.g. `gh release view <tag>` lists the artifacts>
 - none
 

@@ -50,7 +50,8 @@ here. When the user asks for the backlog, or names items:
 2. Take the user's choice. Items to take in become one entry `- [ ] B<n>
    Backlog: <short title>`, a phase inserted in ROADMAP.md before the first
    phase of the current milestone that has not started (after the last one
-   if all are checked; numbers continue from the highest `B`), with the
+   if all are checked; numbers continue from the highest `B`, counting the
+   `Done:` lines of finished milestones), with the
    items copied into `phases/B<n>/PLAN.md` under "Items". If STATUS.md says `DONE`,
    set `READY`.
 3. Dropped items are checked off with ` - dropped by the user`; they move to
@@ -125,7 +126,8 @@ ask for the decision here.
      in step 2 of `../spec/SKILL.md`, add a section `## Milestone <n>:
      <title>` with phases and their success criteria to ROADMAP.md before
      "Later", remove the item from "Later", and fill "Coverage". Phase
-     numbers continue.
+     numbers continue from the highest, counting the `Done:` lines of
+     finished milestones.
    - **Repository or release** (where the code lives, how it is
      published): change "Repository and publication" in IDEA.md and
      "Repository" or "Release" in SPEC.md. A new host or CI is set up by

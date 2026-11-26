@@ -344,7 +344,14 @@ Code works on a project without such rules.
   phase that built the release workflow; the milestone could not reach
   `DONE` before the check, and the release could not run before `DONE`.
   So requirements promise what a phase builds for the release, and the
-  release is proven by "Done when" in SPEC.md.
+  release is proven by "Done when" in SPEC.md. The first release of the
+  reference project went out with GitHub's generated notes, which without
+  pull requests are a single link to the commits, and ROADMAP.md kept the
+  whole section of the finished milestone. So `/wcc:release` writes the
+  notes for users from the milestone's success criteria, shows them in its
+  one question and puts them into the annotated tag, which the release
+  workflow takes; and it moves the milestone's section to ROADMAP-DONE.md,
+  leaving one line with the phase range for the numbering.
 - **The project folder is the only source.** In the reference project,
   `/wcc:prepare` searched sibling folders for a module path, found an older
   copy of the project and took its scaffold over, with decisions nobody had

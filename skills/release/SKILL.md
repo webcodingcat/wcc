@@ -71,7 +71,14 @@ Find, without changing anything:
    missing, nothing is published. Otherwise check what it names under
    "Tools" and "Remote" (a login, the remote and its URL), and propose the
    version by its rule, or take the one given as argument. A version tag
-   that exists already is never reused.
+   that exists already is never reused. Draft the release notes in
+   English, for people who use the project, not for its developers: what
+   they can do now that they could not before, from the success criteria
+   of the milestone's phases in ROADMAP-DONE.md, in their terms; how to
+   install or update, from the user documentation; known limitations the
+   documentation names. A few short sections, no requirement IDs, phase
+   numbers or commit lists.
+9. **Roadmap**: the section of the finished milestone in ROADMAP.md.
 
 ## 3. Ask once
 
@@ -79,7 +86,8 @@ Show the result as one short list, grouped as above, with numbers (folders,
 references, branches) instead of every path where there are many; name
 every stray file. For a release, name the version, the remote and each
 step that leaves this machine (the push of `main`, the tag, what the tag
-starts). Ask once whether to apply it, whether the version fits, and for
+starts), and the release notes in full. Ask once whether to apply it,
+whether the version and the notes fit, and for
 each stray file whether to delete it; a file the user wants to keep stays
 untracked. With `--check`, stop after the list. If a tool or the remote
 the release needs is missing, say how to set it up and leave the release
@@ -92,16 +100,23 @@ out of this run.
    `wcc-milestone-<n>`)``; the arrow `→ phases/<id>/` of a phase line in
    ROADMAP.md or ROADMAP-DONE.md becomes `→ wcc-milestone-<n>`. Change
    nothing else in those lines.
-2. Remove the phase folders with `git rm -r -q`, one per command or in
+2. Move the phase lines of the milestone's section in ROADMAP.md to
+   ROADMAP-DONE.md, at the top of the milestone's section there (create
+   it if missing), and leave in ROADMAP.md only its
+   heading with one line below it: `Done: phases <lowest>–<highest>,
+   <B and F phases, each as a range>; tag wcc-milestone-<n>` and the
+   version, if one is published. `/wcc:change` numbers new phases on from
+   that line.
+3. Remove the phase folders with `git rm -r -q`, one per command or in
    one command with all their paths.
-3. Remove each worktree with `git worktree remove <path>`, never with
+4. Remove each worktree with `git worktree remove <path>`, never with
    `--force`. A worktree git refuses because of changes is named and kept.
    Then `git worktree prune`.
-4. Delete the merged branches with `git branch -d`, never `-D`.
-5. Delete `research/experiments/` and the stray files the user agreed to.
-6. Commit the removed folders and the changed files, staged by name, with
+5. Delete the merged branches with `git branch -d`, never `-D`.
+6. Delete `research/experiments/` and the stray files the user agreed to.
+7. Commit the removed folders and the changed files, staged by name, with
    the message `Clean up after milestone <n>`, on the base branch.
-7. If the merge is due, check out `main` and merge the milestone branch
+8. If the merge is due, check out `main` and merge the milestone branch
    with `git merge --no-ff wcc/milestone-<n>`, message `Milestone <n>`. On
    a conflict, abort the merge, name the files and stop.
 
@@ -117,10 +132,14 @@ user. Follow the steps of the section "Release" in SPEC.md, from `main`:
    wait for it inside your turn, with a time limit of about twice its
    usual run. If it fails, stop before the tag and report what failed.
 3. Create the version tag as an annotated tag on the commit just pushed,
-   and push it alone, by name.
+   with the agreed release notes as its message, and push it alone, by
+   name. The release takes its notes from the tag as "Notes" under
+   "Release" says; if it names nothing, set them with its tool after the
+   release exists.
 4. Wait for what the tag starts, then run the check under "Done when".
    A tag that was pushed is never moved or deleted; if the release failed,
    report what is missing, and a repaired release takes the next version.
+
 Check out the base branch again at the end. Note in STATUS.md under
 "Current state" what reached `main` and the version published, and commit
 it there.
