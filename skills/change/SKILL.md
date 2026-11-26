@@ -130,7 +130,8 @@ ask for the decision here.
      published): change "Repository and publication" in IDEA.md and
      "Repository" or "Release" in SPEC.md. A new host or CI is set up by
      running `/wcc:prepare` again; what a release needs beyond it becomes
-     a phase.
+     a phase, with requirements as in "Release" of step 2 in
+     `../spec/SKILL.md`.
    - **Tooling for Claude** (for example an MCP server): besides the
      documents, it must be configured in the project so Claude Code can use it.
      Add one sentence to the project CLAUDE.md on what it is for.

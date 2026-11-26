@@ -103,7 +103,10 @@ Use `assets/REQUIREMENTS.md` and `assets/SPEC.md`. Rules:
   stack says how the project is published (a package registry, release
   artifacts, a deployment); otherwise write `none`. The CI comes from
   `/wcc:prepare`; what the release needs beyond it (a release workflow,
-  packaging) is a phase like any other.
+  packaging) is a phase like any other. A requirement promises what that
+  phase builds, never that a version is published: `/wcc:release`
+  publishes only after the milestone is `DONE`, so no phase and no manual
+  check could prove it; the line "Done when" under "Release" does.
 - Derive "Documentation" from IDEA.md and `references/project-types.md`:
   one entry `D<n>` per document with path, audience and content, kept apart
   from `.project/`, which holds planning documents and is no documentation

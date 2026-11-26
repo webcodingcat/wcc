@@ -339,7 +339,12 @@ Code works on a project without such rules.
   yes, and the CI with the fast commands, and every phase pushes its
   milestone branch and reads the CI result at the start of the next.
   Making a repository public stays the user's step, and `main` gets only
-  what `/wcc:release` merges.
+  what `/wcc:release` merges. In the reference project a requirement
+  promised the first release itself and became a manual check of the
+  phase that built the release workflow; the milestone could not reach
+  `DONE` before the check, and the release could not run before `DONE`.
+  So requirements promise what a phase builds for the release, and the
+  release is proven by "Done when" in SPEC.md.
 - **The project folder is the only source.** In the reference project,
   `/wcc:prepare` searched sibling folders for a module path, found an older
   copy of the project and took its scaffold over, with decisions nobody had
